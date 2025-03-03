@@ -22,21 +22,20 @@ class RepositoryBudgetImpl @Inject constructor(
     override fun getBudget(): Flow<Budget> {
         return flow {
             val budget = budgetDao.getAllBudget()
-            budget?.let {
-                emit(it.toUi())
+            budget.collect{
+                it?.let {
+                    emit(it.toUi())
+                }
             }
         }.flowOn(Dispatchers.IO)
     }
 
     override fun insertBudget(budget: Budget) {
-
         CoroutineScope(Dispatchers.IO).launch {
             try {
-
                 budgetDao.insertBudget(budget.toEntity())
             }catch (e:Exception){
                 Log.e("RepositoryBudgetImpl", "Error al insertar el presupuesto: ${e.message}", e)
-
             }
 
         }
