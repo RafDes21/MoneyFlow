@@ -6,8 +6,8 @@ plugins {
 }
 
 android {
-    namespace = "com.rafdev.data"
-    compileSdk = 35
+    namespace = "com.rafdev.domain"
+    compileSdk = 34
 
     defaultConfig {
         minSdk = 26
@@ -36,8 +36,6 @@ android {
 
 dependencies {
 
-    implementation(project(":domain"))
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -45,9 +43,8 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-    implementation(libs.androidx.room.runtime)
-    kapt(libs.androidx.room.compiler)
-    implementation(libs.androidx.room.ktx)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
 
     implementation(libs.hilt)
     kapt(libs.hilt.compiler)

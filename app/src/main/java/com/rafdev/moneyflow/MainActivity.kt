@@ -4,26 +4,41 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.ui.unit.dp
+import com.rafdev.domain.model.Budget
 import com.rafdev.moneyflow.ui.theme.MoneyFlowTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             MoneyFlowTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                    Greeting(modifier = Modifier.padding(innerPadding))
                 }
             }
         }
@@ -31,17 +46,46 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+fun Greeting(
+    modifier: Modifier = Modifier,
+    viewModel: MainViewModel = hiltViewModel()
+) {
+    val budget by viewModel.budget.collectAsState(initial = 0.0)
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    MoneyFlowTheme {
-        Greeting("Android")
+    var newBudget by remember { mutableStateOf("") }
+
+    Column(modifier = modifier.padding(16.dp)) {
+        if (budget != null) {
+            Text(text = "Budget: $${budget}")
+        } else {
+            Text(text = "Loading budget...")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        OutlinedTextField(
+            value = newBudget,
+            onValueChange = { newBudget = it },
+            label = { Text("Enter new budget") },
+            keyboardOptions = KeyboardOptions.Default.copy(
+                keyboardType = KeyboardType.Number
+            ),
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Button(
+            onClick = {
+                val parsedBudget = newBudget.toDoubleOrNull()
+                if (parsedBudget != null) {
+                    viewModel.updateBudget(Budget( totalBudget = parsedBudget))
+                    newBudget = ""
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text = "Save Budget")
+        }
     }
 }
