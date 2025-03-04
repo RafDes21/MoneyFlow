@@ -26,6 +26,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.ui.unit.dp
 import com.rafdev.domain.model.Budget
+import com.rafdev.moneyflow.ui.navigation.AppNavigation
 import com.rafdev.moneyflow.ui.theme.MoneyFlowTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -34,12 +35,9 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
             MoneyFlowTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(modifier = Modifier.padding(innerPadding))
-                }
+                AppNavigation()
             }
         }
     }
