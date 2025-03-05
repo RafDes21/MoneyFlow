@@ -16,6 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import com.rafdev.moneyflow.ui.navigation.screen.Screen
 import com.rafdev.moneyflow.ui.screens.home.HomeScreen
 import com.rafdev.moneyflow.ui.screens.note.NoteScreen
+import com.rafdev.moneyflow.ui.screens.planned.PlannedExpensesScreen
 
 @Composable
 fun AppNavigation() {
@@ -30,7 +31,16 @@ fun AppNavigation() {
             startDestination = Screen.Home.route,
             modifier = Modifier.padding(paddingValues)
         ) {
-            composable(Screen.Home.route) { HomeScreen(navController) }
+            composable(Screen.Home.route) {
+                HomeScreen(
+                    onNavigate = {
+                        navController.navigate("planned")
+                    }
+                )
+            }
+            composable("planned") {
+                PlannedExpensesScreen()
+            }
             composable(Screen.Notas.route) { NoteScreen(navController) }
         }
     }

@@ -12,25 +12,45 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.rafdev.domain.model.Budget
 import com.rafdev.moneyflow.ui.theme.CustomTypography
 import com.rafdev.moneyflow.utils.Constants
+import java.text.DecimalFormat
 
 @Composable
-fun HomeScreen(navController: NavHostController) {
+fun HomeScreen(
+    viewModel: HomeViewModel = hiltViewModel(),
+    onNavigate: () -> Unit
+) {
+
+    val budget by viewModel.budget.collectAsState()
+    var showDialog by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -51,13 +71,13 @@ fun HomeScreen(navController: NavHostController) {
             horizontalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "$ 0.0",
+                text = "$ ${formatBudgetInput(budget)}",
                 style = CustomTypography.titleLarge,
             )
 
             Spacer(modifier = Modifier.width(8.dp))
             IconButton(
-                onClick = { },
+                onClick = { showDialog = true },
                 modifier = Modifier
                     .size(22.dp)
             ) {
@@ -69,10 +89,25 @@ fun HomeScreen(navController: NavHostController) {
 
         }
 
+        if (showDialog) {
+            BudgetEditDialog(
+                currentBudget = budget,
+                onDismiss = { showDialog = false },
+                onSave = { newBudget ->
+                    viewModel.updateBudget(Budget(newBudget))
+                    showDialog = false
+                }
+            )
+        }
+
+        Spacer(modifier = Modifier.height(50.dp))
+
         Text(text = Constants.EXPENSES_SCHEDULED)
-
-        ExpenseCard(text = "0.0")
-
+        ExpenseCard(
+            text = "0.0",
+        ){
+            onNavigate()
+        }
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -84,9 +119,7 @@ fun HomeScreen(navController: NavHostController) {
             )
 
             IconButton(
-                onClick = {
-                    //navController.navigate("addActivityScreen")
-                }
+                onClick = {}
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
@@ -94,7 +127,6 @@ fun HomeScreen(navController: NavHostController) {
                 )
             }
         }
-
     }
 
 }
@@ -130,4 +162,58 @@ fun ExpenseCard(
             }
         }
     }
+}
+
+@Composable
+fun BudgetEditDialog(
+    currentBudget: Double,
+    onDismiss: () -> Unit,
+    onSave: (Double) -> Unit
+) {
+    var newBudget by remember { mutableDoubleStateOf(currentBudget) }
+
+    val formattedBudget = formatBudgetInput(newBudget)
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(text = Constants.NEW_BUDGET_TITLE) },
+        text = {
+            TextField(
+                value = formattedBudget,
+                onValueChange = {
+                    newBudget = formatBudgetInputReverse(it)
+                },
+                label = { Text(text = Constants.NEW_BUDGET_TITLE) },
+                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+            )
+        },
+        confirmButton = {
+            TextButton(onClick = { onSave(newBudget) }) {
+                Text(Constants.SAVE_BUTTON_TEXT)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(Constants.CANCEL_BUTTON_TEXT)
+            }
+        }
+    )
+}
+
+fun formatBudgetInput(input: Double): String {
+    return try {
+        if (input >= 1000) {
+            val formatter = DecimalFormat("#,###")
+            formatter.format(input)
+        } else {
+            input.toString()
+        }
+    } catch (e: Exception) {
+        input.toString()
+    }
+}
+
+fun formatBudgetInputReverse(input: String): Double {
+    val cleanedInput = input.replace("[^\\d]".toRegex(), "")
+    return cleanedInput.toDoubleOrNull() ?: 0.0
 }
