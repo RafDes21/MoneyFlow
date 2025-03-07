@@ -20,43 +20,63 @@ import com.rafdev.moneyflow.ui.screens.planned.PlannedExpensesScreen
 
 @Composable
 fun AppNavigation() {
-
     val navController = rememberNavController()
+    val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+
+    val bottomNavScreens = Screen.bottomNavScreens.map { it.route }
 
     Scaffold(
-        bottomBar = { BottomNavigationBar(navController) }
+        bottomBar = {
+            if (currentRoute in bottomNavScreens) {
+                BottomNavigationBar(navController)
+            }
+        }
     ) { paddingValues ->
         NavHost(
             navController = navController,
             startDestination = Screen.Home.route,
             modifier = Modifier.padding(paddingValues)
         ) {
-            composable(Screen.Home.route) {
-                HomeScreen(
-                    onNavigate = {
-                        navController.navigate("planned")
+
+            Screen.bottomNavScreens.forEach { screen ->
+                composable(screen.route) {
+                    when (screen) {
+                        Screen.Home -> HomeScreen(
+                            onNavigate = {
+                                navController.navigate(Screen.PlannedExpensesScreen.route)
+                            }
+                        )
+                        Screen.Notas -> NoteScreen()
+                        else -> {}
                     }
-                )
+                }
             }
-            composable("planned") {
+
+            composable(Screen.PlannedExpensesScreen.route) {
                 PlannedExpensesScreen()
             }
-            composable(Screen.Notas.route) { NoteScreen(navController) }
         }
     }
-
 }
 
 @Composable
 fun BottomNavigationBar(navController: NavController) {
-    val screens = listOf(Screen.Home, Screen.Notas)
+    val screens = Screen.bottomNavScreens
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
 
     NavigationBar {
         screens.forEach { screen ->
             NavigationBarItem(
-                icon = { Icon(imageVector = screen.icon, contentDescription = screen.title) },
-                label = { Text(screen.title) },
+                icon = {
+                    screen.icon?.let {
+                        Icon(imageVector = it, contentDescription = screen.title)
+                    }
+                },
+                label = {
+                    screen.title?.let {
+                        Text(it)
+                    }
+                },
                 selected = currentRoute == screen.route,
                 onClick = {
                     navController.navigate(screen.route) {
