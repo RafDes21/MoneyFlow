@@ -6,4 +6,6 @@ interface RepositoryExpense {
 
     fun getExpense() : Flow<List<Expense>>
 
+    fun insertExpense(expense: Expense)
+
 }

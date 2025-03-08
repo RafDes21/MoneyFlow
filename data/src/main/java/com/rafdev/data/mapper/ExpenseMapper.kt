@@ -19,3 +19,9 @@ fun ExpenseEntity.toUi() = Expense(
     notes = notes ?: "",
     isPaid = isPaid ?: false
 )
+
+fun Expense.toDb() = ExpenseEntity(
+    name = name,
+    description = description,
+    amount = amount
+)

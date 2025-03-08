@@ -1,12 +1,18 @@
 package com.rafdev.data.database.dao
 
 import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.rafdev.data.model.entities.ExpenseEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ExpenseDao {
 
     @Query("SELECT * FROM expenses")
-    fun getAllExpenses(): List<ExpenseEntity>
+    fun getAllExpenses(): Flow<List<ExpenseEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertExpense(expenseEntity: ExpenseEntity)
 }
