@@ -48,8 +48,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.rafdev.moneyflow.ui.components.CustomDialog
 import com.rafdev.moneyflow.ui.components.ExpenseCard
 import com.rafdev.moneyflow.utils.Constants
+import com.rafdev.moneyflow.utils.formatBudgetInput
+import com.rafdev.moneyflow.utils.getCurrentDateTime
+import com.rafdev.moneyflow.utils.toFormattedBudget
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -60,8 +64,6 @@ fun PlannedExpensesScreen(viewModel: PlannedExpensesViewModel = hiltViewModel())
 
     var showDialog by remember { mutableStateOf(false) }
     val state by viewModel.state.collectAsState()
-    val context = LocalContext.current
-
 
     Column(
         modifier = Modifier
@@ -128,128 +130,7 @@ fun PlannedExpensesScreen(viewModel: PlannedExpensesViewModel = hiltViewModel())
     }
 }
 
-@Composable
-fun CustomDialog(
-    onDismiss: () -> Unit,
-    onSave: (String, String, Double, String) -> Unit
-) {
-
-    var title by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
-    var amount by remember { mutableDoubleStateOf(0.0) }
-
-    val formatAmount = formatBudgetInput(amount)
-
-    Dialog(
-        properties = DialogProperties(usePlatformDefaultWidth = false),
-        onDismissRequest = onDismiss
-    ) {
-        Surface(
-            modifier = Modifier
-                .fillMaxSize(),
-            color = Color.White,
-            shape = RoundedCornerShape(16.dp),
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(
-                        onClick = { onDismiss() }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = Constants.ADD_ACTIVITY
-                        )
-                    }
-
-                    Text(
-                        text = Constants.NEW_FIXED_EXPENSE,
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically),
-                    )
-                }
 
 
-                OutlinedTextField(
-                    value = title,
-                    onValueChange = { title = it },
-                    label = { Constants.LABEL_TITLE },
-                    modifier = Modifier.fillMaxWidth()
-                )
 
-                Spacer(modifier = Modifier.height(8.dp))
-
-                OutlinedTextField(
-                    value = description,
-                    onValueChange = { description = it },
-                    label = { Constants.LABEL_DESCRIPTION },
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                OutlinedTextField(
-                    value = formatAmount,
-                    onValueChange = { amount = formatBudgetInputReverse(it) },
-                    label = { Constants.LABEL_AMOUNT },
-                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    Button(
-                        onClick = {
-                            val currentDateTime = getCurrentDateTime()
-                            onSave(title, description, amount, currentDateTime)
-                            onDismiss()
-                        }
-                    ) {
-                        Text(Constants.SAVE)
-                    }
-
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    Button(
-                        onClick = { onDismiss() }
-                    ) {
-                        Text(Constants.CANCEL)
-                    }
-                }
-            }
-        }
-    }
-}
-
-private fun getCurrentDateTime(): String {
-    val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-    return sdf.format(Date())
-}
-
-fun formatBudgetInput(input: Double): String {
-    return try {
-        if (input >= 1000) {
-            val formatter = DecimalFormat("#,###")
-            formatter.format(input)
-        } else {
-            input.toString()
-        }
-    } catch (e: Exception) {
-        input.toString()
-    }
-}
-
-fun formatBudgetInputReverse(input: String): Double {
-    val cleanedInput = input.replace("[^\\d]".toRegex(), "")
-    return cleanedInput.toDoubleOrNull() ?: 0.0
-}
 

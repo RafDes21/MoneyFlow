@@ -30,15 +30,13 @@ class PlannedExpensesViewModel @Inject constructor(
         fetchExpenses()
     }
 
-
-
     fun saveExpense(title: String, description: String,currentDateTime:String, amount: Double) {
 
         val expense = Expense(
             id = 0,
             name = title,
             amount = amount,
-            type = "",
+            type = "fixed",
             description = description,
             image = "",
             color = "",
@@ -64,8 +62,9 @@ class PlannedExpensesViewModel @Inject constructor(
 
     private fun fetchExpenses() {
         viewModelScope.launch {
-           getExpenseUseCase.invoke().collect{
-               _state.value = ExpenseState(success = it)
+           getExpenseUseCase.invoke().collect{expenses ->
+               val fixedExpenses = expenses.filter { it.type == "fixed" }
+               _state.value = ExpenseState(success = fixedExpenses)
            }
         }
     }

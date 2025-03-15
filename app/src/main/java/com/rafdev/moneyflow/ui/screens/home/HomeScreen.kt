@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -43,9 +44,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.rafdev.domain.model.Budget
 import com.rafdev.moneyflow.ui.components.BudgetSummary
+import com.rafdev.moneyflow.ui.components.CustomDialog
+import com.rafdev.moneyflow.ui.components.ExpenseCard
 import com.rafdev.moneyflow.ui.theme.CustomTypography
 import com.rafdev.moneyflow.utils.BudgetLabels
 import com.rafdev.moneyflow.utils.Constants
+import com.rafdev.moneyflow.utils.formatBudgetInput
+import com.rafdev.moneyflow.utils.toFormattedBudget
 import java.text.DecimalFormat
 
 @Composable
@@ -55,7 +60,12 @@ fun HomeScreen(
 ) {
 
     val budget by viewModel.budget.collectAsState()
+    val expense by viewModel.fixedExpensesAmount.collectAsState()
+    val remainingBudget by viewModel.remainingBudget.collectAsState()
     var showDialog by remember { mutableStateOf(false) }
+    var showDialogAdd by remember { mutableStateOf(false) }
+    val state by viewModel.state.collectAsState()
+
 
     Column(
         modifier = Modifier
@@ -105,11 +115,19 @@ fun HomeScreen(
             )
         }
 
+        if (showDialogAdd) {
+            CustomDialog(
+                onDismiss = { showDialogAdd = false }
+            ) { title, description, amount, currentDaTime ->
+                viewModel.saveExpense(title, description, currentDaTime, amount)
+            }
+        }
+
         Spacer(modifier = Modifier.height(50.dp))
 
         Text(text = Constants.EXPENSES_SCHEDULED)
         ExpenseCard(
-            text = "0.0",
+            text = "$ ${formatBudgetInput(expense)}",
         ) {
             onNavigate()
         }
@@ -124,7 +142,7 @@ fun HomeScreen(
             )
 
             IconButton(
-                onClick = {}
+                onClick = {showDialogAdd = true}
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
@@ -132,11 +150,29 @@ fun HomeScreen(
                 )
             }
         }
+
         LazyColumn(
             modifier = Modifier.weight(1f)
         ) {
-            items(0) { index ->
-                Text(text = "Item $index")
+            state.success?.let { expenses ->
+                items(expenses, key = { it.id }) { expense ->
+
+                    val dateTimeParts = expense.date.split(" ")
+                    val date = dateTimeParts.getOrNull(0) ?: ""
+                    val time = dateTimeParts.getOrNull(1) ?: ""
+
+                    ExpenseCard(
+                        title = expense.name,
+                        description = expense.description,
+                        time = time,
+                        amount = expense.amount.toString(),
+                        date = date,
+                        onUpdate = { /* Acción para actualizar */ },
+                        onDelete = {
+                            viewModel.deleteExpenseById(expense.id)
+                        }
+                    )
+                }
             }
         }
         Box(
@@ -150,9 +186,9 @@ fun HomeScreen(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 BudgetSummary(label = BudgetLabels.BUDGET, value = "$ ${formatBudgetInput(budget)}")
-                BudgetSummary(label = BudgetLabels.SCHEDULED, value = "$ ${formatBudgetInput(budget)}")
+                BudgetSummary(label = BudgetLabels.SCHEDULED, value = "$ ${formatBudgetInput(expense)}")
                 BudgetSummary(label = BudgetLabels.ACTIVITIES, value = "$ ${formatBudgetInput(budget)}")
-                BudgetSummary(label = BudgetLabels.TOTAL, value = "$ ${formatBudgetInput(budget)}")
+                BudgetSummary(label = BudgetLabels.TOTAL, value = "$ ${formatBudgetInput(remainingBudget)}")
             }
         }
 
@@ -210,7 +246,7 @@ fun BudgetEditDialog(
             TextField(
                 value = formattedBudget,
                 onValueChange = {
-                    newBudget = formatBudgetInputReverse(it)
+                    newBudget = it.toFormattedBudget()
                 },
                 label = { Text(text = Constants.NEW_BUDGET_TITLE) },
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
@@ -229,20 +265,3 @@ fun BudgetEditDialog(
     )
 }
 
-fun formatBudgetInput(input: Double): String {
-    return try {
-        if (input >= 1000) {
-            val formatter = DecimalFormat("#,###")
-            formatter.format(input)
-        } else {
-            input.toString()
-        }
-    } catch (e: Exception) {
-        input.toString()
-    }
-}
-
-fun formatBudgetInputReverse(input: String): Double {
-    val cleanedInput = input.replace("[^\\d]".toRegex(), "")
-    return cleanedInput.toDoubleOrNull() ?: 0.0
-}
