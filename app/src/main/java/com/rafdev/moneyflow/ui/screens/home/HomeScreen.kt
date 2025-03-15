@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -35,11 +36,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.rafdev.domain.model.Budget
+import com.rafdev.moneyflow.ui.components.BudgetSummary
 import com.rafdev.moneyflow.ui.theme.CustomTypography
+import com.rafdev.moneyflow.utils.BudgetLabels
 import com.rafdev.moneyflow.utils.Constants
 import java.text.DecimalFormat
 
@@ -55,7 +60,7 @@ fun HomeScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(10.dp, 20.dp, 10.dp, 0.dp)
+            .padding(0.dp, 20.dp, 10.dp, 0.dp)
     ) {
         Text(
             text = Constants.BUDGET,
@@ -105,7 +110,7 @@ fun HomeScreen(
         Text(text = Constants.EXPENSES_SCHEDULED)
         ExpenseCard(
             text = "0.0",
-        ){
+        ) {
             onNavigate()
         }
 
@@ -127,6 +132,30 @@ fun HomeScreen(
                 )
             }
         }
+        LazyColumn(
+            modifier = Modifier.weight(1f)
+        ) {
+            items(0) { index ->
+                Text(text = "Item $index")
+            }
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.DarkGray)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                BudgetSummary(label = BudgetLabels.BUDGET, value = "$ ${formatBudgetInput(budget)}")
+                BudgetSummary(label = BudgetLabels.SCHEDULED, value = "$ ${formatBudgetInput(budget)}")
+                BudgetSummary(label = BudgetLabels.ACTIVITIES, value = "$ ${formatBudgetInput(budget)}")
+                BudgetSummary(label = BudgetLabels.TOTAL, value = "$ ${formatBudgetInput(budget)}")
+            }
+        }
+
     }
 
 }

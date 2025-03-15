@@ -22,3 +22,10 @@ object Constants {
     const val CANCEL = "Cancelar"
 
 }
+
+object BudgetLabels {
+    const val BUDGET = "Presupuesto"
+    const val SCHEDULED = "Programados"
+    const val ACTIVITIES = "Actividades"
+    const val TOTAL = "Total"
+}
