@@ -20,11 +20,11 @@ class RepositoryExpenseImpl @Inject constructor(
     private val expenseDao: ExpenseDao
 ) : RepositoryExpense {
     override fun getExpense(): Flow<List<Expense>> {
-        return expenseDao.getAllExpenses()  // Esta función devuelve un Flow<List<ExpenseEntity>>
-            .map { listOfEntities ->   // Mapea los datos de ExpenseEntity a Expense
-                listOfEntities.map { it.toUi() }  // Convertir cada ExpenseEntity a Expense usando toUi
+        return expenseDao.getAllExpenses()
+            .map { listOfEntities ->
+                listOfEntities.map { it.toUi() }
             }
-            .flowOn(Dispatchers.IO)  // Asegúrate de que este flujo se ejecute en un hilo de IO
+            .flowOn(Dispatchers.IO)
     }
 
     override fun insertExpense(expense: Expense) {
@@ -33,6 +33,17 @@ class RepositoryExpenseImpl @Inject constructor(
                 expenseDao.insertExpense(expense.toDb())
             }catch (e:Exception){
                 Log.e("RepositoryBudgetImpl", "Error al insertar el presupuesto: ${e.message}", e)
+            }
+
+        }
+    }
+
+    override fun deleteExpenseById(expenseId: Int) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                expenseDao.deleteExpenseById(expenseId)
+            }catch (e:Exception){
+                Log.e("RepositoryBudgetImpl", "Error al eliminar: ${e.message}", e)
             }
 
         }

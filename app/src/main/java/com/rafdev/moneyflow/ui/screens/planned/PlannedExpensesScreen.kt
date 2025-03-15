@@ -1,5 +1,6 @@
 package com.rafdev.moneyflow.ui.screens.planned
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -40,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -49,12 +51,16 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.rafdev.moneyflow.ui.components.ExpenseCard
 import com.rafdev.moneyflow.utils.Constants
 import java.text.DecimalFormat
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun PlannedExpensesScreen(viewModel: PlannedExpensesViewModel = hiltViewModel()) {
 
     var showDialog by remember { mutableStateOf(false) }
     val state by viewModel.state.collectAsState()
+    val context = LocalContext.current
 
 
     Column(
@@ -89,13 +95,22 @@ fun PlannedExpensesScreen(viewModel: PlannedExpensesViewModel = hiltViewModel())
 
         LazyColumn {
             state.success?.let { expenses ->
-                items(expenses) { expense ->
+                items(expenses, key = { it.id }) { expense ->
+
+                    val dateTimeParts = expense.date.split(" ")
+                    val date = dateTimeParts.getOrNull(0) ?: ""
+                    val time = dateTimeParts.getOrNull(1) ?: ""
+
                     ExpenseCard(
                         title = expense.name,
                         description = expense.description,
-                        time = expense.date,
+                        time = "",
                         amount = expense.amount.toString(),
-                        date = expense.date
+                        date = "",
+                        onUpdate = { /* Acción para actualizar */ },
+                        onDelete = {
+                            viewModel.deleteExpenseById(expense.id)
+                        }
                     )
                 }
             }
@@ -105,8 +120,8 @@ fun PlannedExpensesScreen(viewModel: PlannedExpensesViewModel = hiltViewModel())
         if (showDialog) {
             CustomDialog(
                 onDismiss = { showDialog = false }
-            ) { title, description, amount ->
-                viewModel.saveExpense(title, description, amount)
+            ) { title, description, amount, currentDaTime ->
+                viewModel.saveExpense(title, description, currentDaTime, amount)
             }
         }
 
@@ -116,7 +131,7 @@ fun PlannedExpensesScreen(viewModel: PlannedExpensesViewModel = hiltViewModel())
 @Composable
 fun CustomDialog(
     onDismiss: () -> Unit,
-    onSave: (String, String, Double) -> Unit
+    onSave: (String, String, Double, String) -> Unit
 ) {
 
     var title by remember { mutableStateOf("") }
@@ -194,7 +209,8 @@ fun CustomDialog(
                 ) {
                     Button(
                         onClick = {
-                            onSave(title, description, amount)
+                            val currentDateTime = getCurrentDateTime()
+                            onSave(title, description, amount, currentDateTime)
                             onDismiss()
                         }
                     ) {
@@ -212,6 +228,11 @@ fun CustomDialog(
             }
         }
     }
+}
+
+private fun getCurrentDateTime(): String {
+    val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+    return sdf.format(Date())
 }
 
 fun formatBudgetInput(input: Double): String {

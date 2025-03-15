@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rafdev.domain.model.Expense
+import com.rafdev.domain.usecase.expense.DeleteExpenseUseCase
 import com.rafdev.domain.usecase.expense.GetExpenseUseCase
 import com.rafdev.domain.usecase.expense.InsertExpenseUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +19,8 @@ import javax.inject.Inject
 @HiltViewModel
 class PlannedExpensesViewModel @Inject constructor(
     private val getExpenseUseCase: GetExpenseUseCase,
-    private val insertExpenseUseCase: InsertExpenseUseCase
+    private val insertExpenseUseCase: InsertExpenseUseCase,
+    private val deleteExpenseUseCase: DeleteExpenseUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ExpenseState())
@@ -30,10 +32,8 @@ class PlannedExpensesViewModel @Inject constructor(
 
 
 
-    fun saveExpense(title: String, description: String, amount: Double) {
-        val currentDateTime = getCurrentDateTime()
+    fun saveExpense(title: String, description: String,currentDateTime:String, amount: Double) {
 
-        Log.e("pruebas", "ss $currentDateTime")
         val expense = Expense(
             id = 0,
             name = title,
@@ -56,6 +56,12 @@ class PlannedExpensesViewModel @Inject constructor(
         }
     }
 
+    fun deleteExpenseById(id:Int){
+        viewModelScope.launch {
+            deleteExpenseUseCase.execute(id)
+        }
+    }
+
     private fun fetchExpenses() {
         viewModelScope.launch {
            getExpenseUseCase.invoke().collect{
@@ -64,10 +70,6 @@ class PlannedExpensesViewModel @Inject constructor(
         }
     }
 
-    private fun getCurrentDateTime(): String {
-        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-        return sdf.format(Date()) // Genera la fecha actual
-    }
 }
 
 data class ExpenseState(

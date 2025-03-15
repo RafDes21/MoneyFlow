@@ -23,5 +23,6 @@ fun ExpenseEntity.toUi() = Expense(
 fun Expense.toDb() = ExpenseEntity(
     name = name,
     description = description,
-    amount = amount
+    amount = amount,
+    date = date
 )

@@ -5,7 +5,6 @@ import kotlinx.coroutines.flow.Flow
 interface RepositoryExpense {
 
     fun getExpense() : Flow<List<Expense>>
-
     fun insertExpense(expense: Expense)
-
+    fun deleteExpenseById(expenseId: Int)
 }
