@@ -1,26 +1,24 @@
 package com.rafdev.moneyflow.ui.screens.planned
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rafdev.domain.model.Expense
 import com.rafdev.domain.usecase.expense.DeleteExpenseUseCase
 import com.rafdev.domain.usecase.expense.GetExpenseUseCase
 import com.rafdev.domain.usecase.expense.InsertExpenseUseCase
+import com.rafdev.moneyflow.utils.NumberFormatter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
 class PlannedExpensesViewModel @Inject constructor(
     private val getExpenseUseCase: GetExpenseUseCase,
     private val insertExpenseUseCase: InsertExpenseUseCase,
-    private val deleteExpenseUseCase: DeleteExpenseUseCase
+    private val deleteExpenseUseCase: DeleteExpenseUseCase,
+    private val numberFormatter: NumberFormatter
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ExpenseState())
@@ -66,6 +64,16 @@ class PlannedExpensesViewModel @Inject constructor(
                val fixedExpenses = expenses.filter { it.type == "fixed" }
                _state.value = ExpenseState(success = fixedExpenses)
            }
+        }
+    }
+
+
+    fun handleNumberInput(input: String): Double? {
+        val result = numberFormatter.parseAndFormatToDouble(input)
+        result?.let {
+            return it
+        }?: run {
+            return null
         }
     }
 

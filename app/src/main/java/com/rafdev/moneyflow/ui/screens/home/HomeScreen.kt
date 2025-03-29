@@ -1,5 +1,6 @@
 package com.rafdev.moneyflow.ui.screens.home
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,44 +15,35 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
-import com.rafdev.domain.model.Budget
+import com.rafdev.moneyflow.ui.components.AlertDialogCustom
 import com.rafdev.moneyflow.ui.components.BudgetSummary
 import com.rafdev.moneyflow.ui.components.CustomDialog
 import com.rafdev.moneyflow.ui.components.ExpenseCard
+import com.rafdev.moneyflow.ui.components.TextNumber
 import com.rafdev.moneyflow.ui.theme.CustomTypography
 import com.rafdev.moneyflow.utils.BudgetLabels
 import com.rafdev.moneyflow.utils.Constants
-import com.rafdev.moneyflow.utils.formatBudgetInput
-import com.rafdev.moneyflow.utils.toFormattedBudget
-import java.text.DecimalFormat
 
 @Composable
 fun HomeScreen(
@@ -59,13 +51,26 @@ fun HomeScreen(
     onNavigate: () -> Unit
 ) {
 
+    val context = LocalContext.current
     val budget by viewModel.budget.collectAsState()
-    val expense by viewModel.fixedExpensesAmount.collectAsState()
-    val remainingBudget by viewModel.remainingBudget.collectAsState()
+    val split by viewModel.split.collectAsState()
+
+    val expenseFixed by viewModel.fixedExpensesAmount.collectAsState()
+    val expenseRecurrent by viewModel.expensesRecurrent.collectAsState()
+    val remainingBudget by viewModel.numericRemainingBudget.collectAsState()
+
     var showDialog by remember { mutableStateOf(false) }
     var showDialogAdd by remember { mutableStateOf(false) }
     val state by viewModel.state.collectAsState()
 
+    var showToast by remember { mutableStateOf(false) }
+
+    LaunchedEffect(showToast) {
+        if (showToast) {
+            Toast.makeText(context, "Error en el valor ingresado", Toast.LENGTH_SHORT).show()
+            showToast = false
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -73,7 +78,7 @@ fun HomeScreen(
             .padding(0.dp, 20.dp, 10.dp, 0.dp)
     ) {
         Text(
-            text = Constants.BUDGET,
+            text = Constants.ShortTexts.BUDGET,
             style = CustomTypography.titleLarge,
             modifier = Modifier.align(alignment = Alignment.CenterHorizontally)
         )
@@ -85,9 +90,10 @@ fun HomeScreen(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-            Text(
-                text = "$ ${formatBudgetInput(budget)}",
-                style = CustomTypography.titleLarge,
+            TextNumber(
+                integer = split.integerPart,
+                separator = split.separator,
+                decimal = split.decimalPart
             )
 
             Spacer(modifier = Modifier.width(8.dp))
@@ -98,36 +104,40 @@ fun HomeScreen(
             ) {
                 Icon(
                     imageVector = Icons.Default.Edit,
-                    contentDescription = Constants.EDIT_BUDGET
+                    contentDescription = Constants.ShortTexts.UPDATE
                 )
             }
 
         }
 
         if (showDialog) {
-            BudgetEditDialog(
-                currentBudget = budget,
-                onDismiss = { showDialog = false },
-                onSave = { newBudget ->
-                    viewModel.updateBudget(Budget(newBudget))
+            AlertDialogCustom(
+                initialValue = budget,
+                title = Constants.Labels.NEW_BUDGET_TITLE,
+                onDismiss = { showDialog = false })
+            {
+                val result = viewModel.handleNumberInput(it)
+                if (result) {
                     showDialog = false
+                } else {
+                    showToast = true
                 }
-            )
+            }
         }
 
         if (showDialogAdd) {
             CustomDialog(
                 onDismiss = { showDialogAdd = false }
             ) { title, description, amount, currentDaTime ->
-                viewModel.saveExpense(title, description, currentDaTime, amount)
+                viewModel.saveExpense(title, description, currentDaTime, amount.toDouble())
             }
         }
 
         Spacer(modifier = Modifier.height(50.dp))
 
-        Text(text = Constants.EXPENSES_SCHEDULED)
+        Text(text = Constants.ShortTexts.SCHEDULED)
         ExpenseCard(
-            text = "$ ${formatBudgetInput(expense)}",
+            text = "$ $expenseFixed",
         ) {
             onNavigate()
         }
@@ -138,15 +148,15 @@ fun HomeScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = Constants.ACTIVITIES,
+                text = Constants.ShortTexts.ACTIVITIES,
             )
 
             IconButton(
-                onClick = {showDialogAdd = true}
+                onClick = { showDialogAdd = true }
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = Constants.ADD_ACTIVITY
+                    contentDescription = Constants.ShortTexts.ADD
                 )
             }
         }
@@ -185,10 +195,22 @@ fun HomeScreen(
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                BudgetSummary(label = BudgetLabels.BUDGET, value = "$ ${formatBudgetInput(budget)}")
-                BudgetSummary(label = BudgetLabels.SCHEDULED, value = "$ ${formatBudgetInput(expense)}")
-                BudgetSummary(label = BudgetLabels.ACTIVITIES, value = "$ ${formatBudgetInput(budget)}")
-                BudgetSummary(label = BudgetLabels.TOTAL, value = "$ ${formatBudgetInput(remainingBudget)}")
+                BudgetSummary(
+                    label = BudgetLabels.BUDGET,
+                    value = "$ $budget "
+                )
+                BudgetSummary(
+                    label = BudgetLabels.SCHEDULED,
+                    value = "$ $expenseFixed"
+                )
+                BudgetSummary(
+                    label = BudgetLabels.ACTIVITIES,
+                    value = "$ $expenseRecurrent"
+                )
+                BudgetSummary(
+                    label = BudgetLabels.TOTAL,
+                    value = "$ $remainingBudget"
+                )
             }
         }
 
@@ -222,46 +244,11 @@ fun ExpenseCard(
             IconButton(onClick = onClick) {
                 Icon(
                     imageVector = Icons.Default.Info,
-                    contentDescription = Constants.DETAILS
+                    contentDescription = Constants.ShortTexts.DETAILS
                 )
             }
         }
     }
 }
 
-@Composable
-fun BudgetEditDialog(
-    currentBudget: Double,
-    onDismiss: () -> Unit,
-    onSave: (Double) -> Unit
-) {
-    var newBudget by remember { mutableDoubleStateOf(currentBudget) }
-
-    val formattedBudget = formatBudgetInput(newBudget)
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(text = Constants.NEW_BUDGET_TITLE) },
-        text = {
-            TextField(
-                value = formattedBudget,
-                onValueChange = {
-                    newBudget = it.toFormattedBudget()
-                },
-                label = { Text(text = Constants.NEW_BUDGET_TITLE) },
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-            )
-        },
-        confirmButton = {
-            TextButton(onClick = { onSave(newBudget) }) {
-                Text(Constants.SAVE_BUTTON_TEXT)
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(Constants.CANCEL_BUTTON_TEXT)
-            }
-        }
-    )
-}
 

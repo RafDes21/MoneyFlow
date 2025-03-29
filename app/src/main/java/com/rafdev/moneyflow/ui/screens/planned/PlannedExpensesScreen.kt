@@ -32,6 +32,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
@@ -62,8 +63,19 @@ import java.util.Locale
 @Composable
 fun PlannedExpensesScreen(viewModel: PlannedExpensesViewModel = hiltViewModel()) {
 
+    val context = LocalContext.current
+
     var showDialog by remember { mutableStateOf(false) }
     val state by viewModel.state.collectAsState()
+
+    var showToast by remember { mutableStateOf(false) }
+
+    LaunchedEffect(showToast) {
+        if (showToast) {
+            Toast.makeText(context, "Error en el valor ingresado", Toast.LENGTH_SHORT).show()
+            showToast = false
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -72,7 +84,7 @@ fun PlannedExpensesScreen(viewModel: PlannedExpensesViewModel = hiltViewModel())
     ) {
         Text(
             modifier = Modifier.fillMaxWidth(),
-            text = Constants.EXPENSES_SCHEDULED,
+            text = Constants.Labels.EXPENSES_SCHEDULED,
             textAlign = TextAlign.Center
         )
 
@@ -86,11 +98,11 @@ fun PlannedExpensesScreen(viewModel: PlannedExpensesViewModel = hiltViewModel())
             Row(modifier = Modifier
                 .clickable { showDialog = true }
             ) {
-                Text(text = Constants.ADD)
+                Text(text = Constants.ShortTexts.ADD)
                 Spacer(modifier = Modifier.width(8.dp))
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = Constants.ADD_ACTIVITY
+                    contentDescription = Constants.Labels.NEW_BUDGET_TITLE
                 )
             }
         }
@@ -123,7 +135,14 @@ fun PlannedExpensesScreen(viewModel: PlannedExpensesViewModel = hiltViewModel())
             CustomDialog(
                 onDismiss = { showDialog = false }
             ) { title, description, amount, currentDaTime ->
-                viewModel.saveExpense(title, description, currentDaTime, amount)
+                val result = viewModel.handleNumberInput(amount)
+                result?.let{
+                    viewModel.saveExpense(title, description, currentDaTime, it)
+                    showDialog = false
+                }?: run {
+                    showToast = true
+                }
+
             }
         }
 

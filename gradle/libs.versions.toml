@@ -42,11 +42,11 @@ androidx-room-ktx = {group = "androidx.room", name = "room-ktx", version.ref = "
 
 hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "dagger_hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "dagger_hilt" }
+androidx-navigation-hilt = {module="androidx.hilt:hilt-navigation-compose", version.ref="hilt-navigation"}
 
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
 
-androidx-navigation-hilt = {module="androidx.hilt:hilt-navigation-compose", version.ref="hilt-navigation"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

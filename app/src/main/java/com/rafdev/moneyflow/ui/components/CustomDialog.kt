@@ -21,7 +21,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -33,21 +32,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.rafdev.moneyflow.utils.Constants
-import com.rafdev.moneyflow.utils.formatBudgetInput
 import com.rafdev.moneyflow.utils.getCurrentDateTime
-import com.rafdev.moneyflow.utils.toFormattedBudget
 
 @Composable
 fun CustomDialog(
     onDismiss: () -> Unit,
-    onSave: (String, String, Double, String) -> Unit
+    onSave: (String, String, String, String) -> Unit
 ) {
 
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
-    var amount by remember { mutableDoubleStateOf(0.0) }
-
-    val formatAmount = formatBudgetInput(amount)
+    var amount by remember { mutableStateOf("") }
 
     Dialog(
         properties = DialogProperties(usePlatformDefaultWidth = false),
@@ -72,7 +67,7 @@ fun CustomDialog(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Close,
-                            contentDescription = Constants.ADD_ACTIVITY
+                            contentDescription = Constants.ShortTexts.ADD
                         )
                     }
 
@@ -103,8 +98,8 @@ fun CustomDialog(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 OutlinedTextField(
-                    value = formatAmount,
-                    onValueChange = { amount = it.toFormattedBudget() },
+                    value = amount,
+                    onValueChange = { amount = it},
                     label = { Constants.LABEL_AMOUNT },
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                     modifier = Modifier.fillMaxWidth()
@@ -120,7 +115,6 @@ fun CustomDialog(
                         onClick = {
                             val currentDateTime = getCurrentDateTime()
                             onSave(title, description, amount, currentDateTime)
-                            onDismiss()
                         }
                     ) {
                         Text(Constants.SAVE)
