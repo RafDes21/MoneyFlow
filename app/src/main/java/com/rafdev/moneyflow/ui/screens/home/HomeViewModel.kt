@@ -19,8 +19,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val getBudgetUseCase: GetBudgetUseCase,
-    private val saveBudgetUseCase: SaveBudgetUseCase,
     private val getExpenseUseCase: GetExpenseUseCase,
     private val insertExpenseUseCase: InsertExpenseUseCase,
     private val deleteExpenseUseCase: DeleteExpenseUseCase,
@@ -28,8 +26,14 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
 
 
-    private val _split = MutableStateFlow(SplitNumber())
-    val split: StateFlow<SplitNumber> = _split
+    private val _splitRecurrent = MutableStateFlow(SplitNumber())
+    val splitRecurrent: StateFlow<SplitNumber> = _splitRecurrent
+
+    private val _splitFixed = MutableStateFlow(SplitNumber())
+    val splitFixed: StateFlow<SplitNumber> = _splitFixed
+
+    private val _total = MutableStateFlow(SplitNumber())
+    val total: StateFlow<SplitNumber> = _total
 
     private val _budget = MutableStateFlow("")
     val budget: StateFlow<String> = _budget
@@ -56,48 +60,18 @@ class HomeViewModel @Inject constructor(
     val state: StateFlow<ExpenseStateHome> = _state
 
     init {
-        getBudget()
-        getExpenses()
         fetchExpenses()
         observeValues()
     }
 
-    private fun getExpenses() {
-        viewModelScope.launch {
-            getExpenseUseCase.invoke().collect { expenses ->
-                val fixedExpenses = expenses.filter { it.type == "fixed" }
-                val totalFixedExpenses = fixedExpenses.sumOf { it.amount }
-                _numericFixedExpenses.value = totalFixedExpenses
-                val result = numberFormatter.formatToString(totalFixedExpenses)
-                _fixedExpensesAmount.value = result
-            }
-        }
-    }
-
-    private fun getBudget() {
-        viewModelScope.launch {
-            getBudgetUseCase.invoke().collect { value ->
-                _numericBudget.value = value.totalBudget
-                val formattedBudget = numberFormatter.formatToString(value.totalBudget)
-                val splitResult = numberFormatter.splitNumBer(formattedBudget)
-                _split.value = splitResult
-                _budget.value = formattedBudget
-            }
-        }
-    }
-
-    private fun updateBudget(newBudget: Budget) {
-        viewModelScope.launch {
-            saveBudgetUseCase.invoke(newBudget)
-        }
-    }
-
     private fun observeValues() {
         viewModelScope.launch {
-            combine(numericBudget, numericFixedExpenses, numericRecurrentExpenses) { budget, fixed, recurrent ->
-                budget - fixed - recurrent
+            combine(numericFixedExpenses, numericRecurrentExpenses) { fixed, recurrent ->
+                fixed + recurrent
             }.collect { newRemainingBudget ->
-                _numericRemainingBudget.value = numberFormatter.formatToString(newRemainingBudget)
+                val formattedBudget = numberFormatter.formatToString(newRemainingBudget)
+                val splitResult = numberFormatter.splitNumBer(formattedBudget)
+                _total.value = splitResult
             }
         }
     }
@@ -135,27 +109,29 @@ class HomeViewModel @Inject constructor(
     private fun fetchExpenses() {
         viewModelScope.launch {
             getExpenseUseCase.invoke().collect { expenses ->
+                _state.value = ExpenseStateHome(success = expenses)
+
                 val expensesRecurring = expenses.filter { it.type == "recurring" }
-                _state.value = ExpenseStateHome(success = expensesRecurring)
-                val totalFixedExpenses = expensesRecurring.sumOf { it.amount }
-                _numericRecurrentExpenses.value = totalFixedExpenses
-                val result = numberFormatter.formatToString(totalFixedExpenses)
-                _expensesRecurrent.value = result
+                val totalRecurrentExpenses = expensesRecurring.sumOf { it.amount }
+                _numericRecurrentExpenses.value = totalRecurrentExpenses
+
+                val formattedBudget = numberFormatter.formatToString(totalRecurrentExpenses)
+                val splitResult = numberFormatter.splitNumBer(formattedBudget)
+                _splitRecurrent.value = splitResult
+
+
+                val expensesFixed = expenses.filter { it.type == "fixed" }
+                val totalFixedExpenses = expensesFixed .sumOf { it.amount }
+                _numericFixedExpenses.value = totalFixedExpenses
+
+                val formattedFixed = numberFormatter.formatToString(totalFixedExpenses)
+                val splitFixedResult = numberFormatter.splitNumBer(formattedFixed)
+                _splitFixed.value = splitFixedResult
+
+
+
+
             }
-        }
-    }
-
-
-    fun handleNumberInput(input: String): Boolean {
-        val result = numberFormatter.parseAndFormatToDouble(input)
-        result?.let {
-            val new = Budget(
-                totalBudget = it
-            )
-            updateBudget(new)
-            return true
-        } ?: run {
-            return false
         }
     }
 

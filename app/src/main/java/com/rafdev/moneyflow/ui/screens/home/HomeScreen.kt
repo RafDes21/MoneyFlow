@@ -35,13 +35,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.rafdev.domain.model.Expense
 import com.rafdev.moneyflow.ui.components.AlertDialogCustom
 import com.rafdev.moneyflow.ui.components.BudgetSummary
 import com.rafdev.moneyflow.ui.components.CustomDialog
+import com.rafdev.moneyflow.ui.components.DialogApp
 import com.rafdev.moneyflow.ui.components.ExpenseCard
+import com.rafdev.moneyflow.ui.components.ExpenseDetailBottomSheet
 import com.rafdev.moneyflow.ui.components.TextNumber
+import com.rafdev.moneyflow.ui.screens.home.components.ExpenseCardFixed
 import com.rafdev.moneyflow.ui.theme.CustomTypography
+import com.rafdev.moneyflow.ui.theme.Palette
 import com.rafdev.moneyflow.utils.BudgetLabels
 import com.rafdev.moneyflow.utils.Constants
 
@@ -52,8 +58,9 @@ fun HomeScreen(
 ) {
 
     val context = LocalContext.current
-    val budget by viewModel.budget.collectAsState()
-    val split by viewModel.split.collectAsState()
+    val splitRecurrent by viewModel.splitRecurrent.collectAsState()
+    val splitFixed by viewModel.splitFixed.collectAsState()
+    val total by viewModel.total.collectAsState()
 
     val expenseFixed by viewModel.fixedExpensesAmount.collectAsState()
     val expenseRecurrent by viewModel.expensesRecurrent.collectAsState()
@@ -61,6 +68,10 @@ fun HomeScreen(
 
     var showDialog by remember { mutableStateOf(false) }
     var showDialogAdd by remember { mutableStateOf(false) }
+    var showBottomSheet by remember { mutableStateOf(false) }
+    var showDialogApp by remember { mutableStateOf(false) }
+    var expenseItem by remember { mutableStateOf<Expense?>(null) }
+
     val state by viewModel.state.collectAsState()
 
     var showToast by remember { mutableStateOf(false) }
@@ -72,183 +83,155 @@ fun HomeScreen(
         }
     }
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(0.dp, 20.dp, 10.dp, 0.dp)
+            .background(Palette.BackgroundColor)
     ) {
-        Text(
-            text = Constants.ShortTexts.BUDGET,
-            style = CustomTypography.titleLarge,
-            modifier = Modifier.align(alignment = Alignment.CenterHorizontally)
-        )
-
-        Row(
+        Column(
             modifier = Modifier
-                .align(alignment = Alignment.CenterHorizontally)
-                .padding(top = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            TextNumber(
-                integer = split.integerPart,
-                separator = split.separator,
-                decimal = split.decimalPart
-            )
-
-            Spacer(modifier = Modifier.width(8.dp))
-            IconButton(
-                onClick = { showDialog = true },
-                modifier = Modifier
-                    .size(22.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Edit,
-                    contentDescription = Constants.ShortTexts.UPDATE
-                )
-            }
-
-        }
-
-        if (showDialog) {
-            AlertDialogCustom(
-                initialValue = budget,
-                title = Constants.Labels.NEW_BUDGET_TITLE,
-                onDismiss = { showDialog = false })
-            {
-                val result = viewModel.handleNumberInput(it)
-                if (result) {
-                    showDialog = false
-                } else {
-                    showToast = true
-                }
-            }
-        }
-
-        if (showDialogAdd) {
-            CustomDialog(
-                onDismiss = { showDialogAdd = false }
-            ) { title, description, amount, currentDaTime ->
-                viewModel.saveExpense(title, description, currentDaTime, amount.toDouble())
-            }
-        }
-
-        Spacer(modifier = Modifier.height(50.dp))
-
-        Text(text = Constants.ShortTexts.SCHEDULED)
-        ExpenseCard(
-            text = "$ $expenseFixed",
-        ) {
-            onNavigate()
-        }
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+                .fillMaxSize()
+                .padding(0.dp, 20.dp, 0.dp, 0.dp)
         ) {
             Text(
-                text = Constants.ShortTexts.ACTIVITIES,
+                text = Constants.ShortTexts.TOTAL,
+                color = Palette.TextColor,
+                style = CustomTypography.titleLarge,
+                modifier = Modifier.align(alignment = Alignment.CenterHorizontally)
             )
-
-            IconButton(
-                onClick = { showDialogAdd = true }
+            Spacer(modifier = Modifier.height(8.dp))
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = Constants.ShortTexts.ADD
+                TextNumber(
+                    integer = total.integerPart,
+                    separator = total.separator,
+                    decimal = total.decimalPart
                 )
+
             }
-        }
 
-        LazyColumn(
-            modifier = Modifier.weight(1f)
-        ) {
-            state.success?.let { expenses ->
-                items(expenses, key = { it.id }) { expense ->
+            if (showDialogAdd) {
+                CustomDialog(
+                    onDismiss = { showDialogAdd = false }
+                ) { title, description, amount, currentDaTime ->
+                    viewModel.saveExpense(title, description, currentDaTime, amount.toDouble())
+                }
+            }
 
-                    val dateTimeParts = expense.date.split(" ")
-                    val date = dateTimeParts.getOrNull(0) ?: ""
-                    val time = dateTimeParts.getOrNull(1) ?: ""
-
-                    ExpenseCard(
-                        title = expense.name,
-                        description = expense.description,
-                        time = time,
-                        amount = expense.amount.toString(),
-                        date = date,
-                        onUpdate = { /* Acción para actualizar */ },
-                        onDelete = {
-                            viewModel.deleteExpenseById(expense.id)
+            if (showDialogApp) {
+                DialogApp(
+                    title = "Eliminar",
+                    description = "¿Estás seguro de que deseas eliminar este elemento? Esta acción no se puede deshacer.",
+                    onConfirm = {
+                        expenseItem?.id?.let {
+                            viewModel.deleteExpenseById(it)
                         }
+                        showDialogApp = false
+                    }) {
+                    showDialogApp = false
+                }
+            }
+
+            Spacer(modifier = Modifier.height(50.dp))
+
+            Text(
+                text = Constants.ShortTexts.SCHEDULED,
+                color = Palette.TextColor
+            )
+            ExpenseCardFixed(
+                splitFixed,
+            ) {
+                onNavigate()
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = Constants.ShortTexts.ACTIVITIES,
+                    color = Palette.TextColor
+                )
+
+                IconButton(
+                    onClick = { showDialogAdd = true }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        tint = Palette.ActiveIconColor,
+                        contentDescription = Constants.ShortTexts.ADD
                     )
                 }
             }
-        }
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.DarkGray)
-        ) {
+
+            LazyColumn(
+                modifier = Modifier.weight(1f)
+            ) {
+                state.success?.let { expenses ->
+                    items(expenses, key = { it.id }) { expense ->
+                        if (expense.type == "recurring") {
+                            val dateTimeParts = expense.date.split(" ")
+                            val date = dateTimeParts.getOrNull(0) ?: ""
+                            val time = dateTimeParts.getOrNull(1) ?: ""
+
+                            ExpenseCard(
+                                title = expense.name,
+                                description = expense.description,
+                                time = time,
+                                amount = expense.amount.toString(),
+                                date = date,
+                                onDetail = {
+                                    showBottomSheet = true
+                                    expenseItem = expense
+                                },
+                                onUpdate = { /* Acción para actualizar */ },
+                                onDelete = {
+                                    showDialogApp = true
+                                    expenseItem = expense
+                                }
+                            )
+                        }
+                    }
+                }
+            }
             Row(
                 modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                    .fillMaxWidth()
+                    .background(Palette.CardColor)
+                    .padding(10.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                BudgetSummary(
-                    label = BudgetLabels.BUDGET,
-                    value = "$ $budget "
+                Text(
+                    text = Constants.TOTAL
                 )
-                BudgetSummary(
-                    label = BudgetLabels.SCHEDULED,
-                    value = "$ $expenseFixed"
+                TextNumber(
+                    integer = splitRecurrent.integerPart,
+                    separator = splitRecurrent.separator,
+                    decimal = splitRecurrent.decimalPart,
+                    integerSize = 17.sp,
+                    decimalSize = 12.sp,
+                    horizontalArrangement = Arrangement.Start
                 )
-                BudgetSummary(
-                    label = BudgetLabels.ACTIVITIES,
-                    value = "$ $expenseRecurrent"
-                )
-                BudgetSummary(
-                    label = BudgetLabels.TOTAL,
-                    value = "$ $remainingBudget"
-                )
-            }
-        }
 
+            }
+
+        }
+        if (showBottomSheet) {
+            expenseItem?.let {
+                ExpenseDetailBottomSheet(
+                    expense = it
+                ) {
+                    showBottomSheet = false
+                }
+            }
+
+        }
     }
 
 }
 
-@Composable
-fun ExpenseCard(
-    text: String,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit = {}
-) {
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .height(60.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = text,
-            )
-
-            IconButton(onClick = onClick) {
-                Icon(
-                    imageVector = Icons.Default.Info,
-                    contentDescription = Constants.ShortTexts.DETAILS
-                )
-            }
-        }
-    }
-}
 
 

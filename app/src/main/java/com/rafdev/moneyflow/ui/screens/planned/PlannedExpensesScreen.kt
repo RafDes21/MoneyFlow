@@ -95,6 +95,7 @@ fun PlannedExpensesScreen(viewModel: PlannedExpensesViewModel = hiltViewModel())
                         time = "",
                         amount = expense.amount.toString(),
                         date = "",
+                        onDetail = {},
                         onUpdate = { /* Acción para actualizar */ },
                         onDelete = {
                             viewModel.deleteExpenseById(expense.id)

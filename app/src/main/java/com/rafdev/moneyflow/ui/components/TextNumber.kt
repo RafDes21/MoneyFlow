@@ -1,6 +1,9 @@
 package com.rafdev.moneyflow.ui.components
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -9,6 +12,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
+import com.rafdev.moneyflow.ui.theme.Palette
 
 @Composable
 fun TextNumber(
@@ -17,20 +21,34 @@ fun TextNumber(
     decimal: String,
     integerSize: TextUnit = 32.sp,
     separatorSize: TextUnit = 24.sp,
-    decimalSize: TextUnit = 16.sp
+    decimalSize: TextUnit = 16.sp,
+    horizontalArrangement: Arrangement.Horizontal = Arrangement.Center
+
 ) {
-    Row {
+    Row(
+        modifier = Modifier,
+        horizontalArrangement = horizontalArrangement,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text =  "$",
+            color = Palette.TextColor,
+            modifier = Modifier.align(alignment = Alignment.CenterVertically)
+        )
         Text(
             text = integer,
+            color = Palette.TextColor,
             style = TextStyle(fontSize = integerSize)
         )
         Text(
             text = separator,
+            color = Palette.TextColor,
             style = TextStyle(fontSize = separatorSize),
             modifier = Modifier.align(Alignment.Bottom)
         )
         Text(
             text = decimal,
+            color = Palette.TextColor,
             style = TextStyle(fontSize = decimalSize),
             modifier = Modifier.align(Alignment.Top)
         )

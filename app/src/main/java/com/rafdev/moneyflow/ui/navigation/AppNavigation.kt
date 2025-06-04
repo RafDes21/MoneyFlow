@@ -13,10 +13,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.rafdev.moneyflow.ui.navigation.components.BottomNavigationBar
+import com.rafdev.moneyflow.ui.navigation.components.TopBar
 import com.rafdev.moneyflow.ui.navigation.screen.Screen
 import com.rafdev.moneyflow.ui.screens.home.HomeScreen
 import com.rafdev.moneyflow.ui.screens.note.NoteScreen
 import com.rafdev.moneyflow.ui.screens.planned.PlannedExpensesScreen
+import com.rafdev.moneyflow.ui.theme.Palette
 
 @Composable
 fun AppNavigation() {
@@ -26,6 +29,11 @@ fun AppNavigation() {
     val bottomNavScreens = Screen.bottomNavScreens.map { it.route }
 
     Scaffold(
+        topBar = {
+            if (currentRoute in bottomNavScreens) {
+                TopBar()
+            }
+        },
         bottomBar = {
             if (currentRoute in bottomNavScreens) {
                 BottomNavigationBar(navController)
@@ -55,36 +63,6 @@ fun AppNavigation() {
             composable(Screen.PlannedExpensesScreen.route) {
                 PlannedExpensesScreen()
             }
-        }
-    }
-}
-
-@Composable
-fun BottomNavigationBar(navController: NavController) {
-    val screens = Screen.bottomNavScreens
-    val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
-
-    NavigationBar {
-        screens.forEach { screen ->
-            NavigationBarItem(
-                icon = {
-                    screen.icon?.let {
-                        Icon(imageVector = it, contentDescription = screen.title)
-                    }
-                },
-                label = {
-                    screen.title?.let {
-                        Text(it)
-                    }
-                },
-                selected = currentRoute == screen.route,
-                onClick = {
-                    navController.navigate(screen.route) {
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                }
-            )
         }
     }
 }

@@ -25,6 +25,8 @@ object Constants {
         const val ACTIVITIES = "Actividades"
         const val UPDATE = "Actualizar"
         const val SCHEDULED = "Programados"
+        const val TOTAL = "Gastos Total"
+
     }
 
     const val NEW_BUDGET_LABEL = "Nuevo monto"
@@ -37,6 +39,7 @@ object Constants {
     const val LABEL_AMOUNT = "Monto"
     const val SAVE = "Guardar"
     const val CANCEL = "Cancelar"
+    const val TOTAL = "Actividad Total: "
 
 }
 
@@ -44,5 +47,5 @@ object BudgetLabels {
     const val BUDGET = "Presupuesto"
     const val SCHEDULED = "Programados"
     const val ACTIVITIES = "Actividades"
-    const val TOTAL = "Total"
+    const val TOTAL = "Actividad Total: "
 }

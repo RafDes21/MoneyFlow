@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
+import com.rafdev.moneyflow.ui.theme.Palette
 
 @Composable
 fun BudgetSummary(
@@ -17,6 +18,7 @@ fun BudgetSummary(
     ) {
         Text(
             text = label,
+            color = Palette.TextOnDark,
             textAlign = TextAlign.Center,
             fontSize = 12.sp
         )
