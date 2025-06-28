@@ -8,10 +8,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 
 sealed class Screen(val route: String, val icon: ImageVector? = null, val title: String? = null) {
     data object Home : Screen("Home", Icons.Default.Home, "Home")
-    data object Notas : Screen("notas", Icons.Default.List, "Notas")
+    data object Cards : Screen("Tarjetas", Icons.Default.List, "Tarjetas")
     data object PlannedExpensesScreen : Screen("detailExpense")
 
     companion object {
-        val bottomNavScreens = listOf(Home, Notas)
+        val bottomNavScreens = listOf(Home, Cards)
     }
 }

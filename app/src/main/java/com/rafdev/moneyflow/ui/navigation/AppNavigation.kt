@@ -54,7 +54,7 @@ fun AppNavigation() {
                                 navController.navigate(Screen.PlannedExpensesScreen.route)
                             }
                         )
-                        Screen.Notas -> NoteScreen()
+                        Screen.Cards -> NoteScreen(){}
                         else -> {}
                     }
                 }
