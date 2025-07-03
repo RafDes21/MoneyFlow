@@ -1,9 +1,16 @@
 package com.rafdev.moneyflow.ui.navigation
 
+import android.app.Activity
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -18,13 +25,39 @@ import com.rafdev.moneyflow.ui.screens.planned.PlannedExpensesScreen
 import com.rafdev.moneyflow.ui.screens.splash.SplashScreen
 
 @Composable
-fun AppNavigation(onSplashFinished: () -> Unit) {
+fun AppNavigation() {
     val navController = rememberNavController()
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
 
     val bottomNavScreens = Screen.bottomNavScreens.map { it.route }
 
     val showBackButton = currentRoute == Screen.UserCard.route
+
+    val view = LocalView.current
+    val context = LocalContext.current
+    val activity = context as Activity
+    val window = activity.window
+
+    val windowInsetsController = remember {
+        WindowInsetsControllerCompat(window, view)
+    }
+
+    // Ocultar o mostrar barras del sistema según la ruta actual
+    DisposableEffect(currentRoute) {
+        if (currentRoute == Screen.Splash.route) {
+            windowInsetsController.hide(
+                WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.navigationBars()
+            )
+            windowInsetsController.systemBarsBehavior =
+                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        } else {
+            windowInsetsController.show(
+                WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.navigationBars()
+            )
+        }
+
+        onDispose { /* no-op */ }
+    }
 
     Scaffold(
         topBar = {
@@ -48,7 +81,6 @@ fun AppNavigation(onSplashFinished: () -> Unit) {
         ) {
             composable(Screen.Splash.route) {
                 SplashScreen {
-                    onSplashFinished()
                     navController.navigate(Screen.Home.route) {
                         popUpTo(Screen.Splash.route) { inclusive = true }
                     }
