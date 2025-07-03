@@ -32,7 +32,6 @@ fun NoteScreen(onAddClick: () -> Unit) {
             )
         }
     ) { padding ->
-        // Texto centrado vertical y horizontalmente
         Box(
             modifier = Modifier
                 .fillMaxSize()

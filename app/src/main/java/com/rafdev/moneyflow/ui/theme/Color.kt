@@ -12,6 +12,8 @@ val Pink40 = Color(0xFF7D5260)
 
 object Palette {
 
+    val primary = Color(0xFF111827)
+
     val background = Color(0xFFF9FAFB)
     val Surface = Color(0xFFFFFFFF)
 
@@ -24,6 +26,8 @@ object Palette {
     val IconSecondary = Color(0xFF6B7280)
     val IconOnDark = Color(0xFFF9FAFB)
     val IconAccent = Color(0xFF2563EB)
+
+    val Black = Color(0xFF000000)
 
     val BackgroundColor = Color(0xFF0F1115)         // Fondo general (muy oscuro, elegante)
     val CardColor = Color(0xFF1C1F24)               // Fondo para tarjetas

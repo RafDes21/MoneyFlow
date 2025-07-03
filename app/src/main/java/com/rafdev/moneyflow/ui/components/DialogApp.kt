@@ -26,7 +26,8 @@ fun DialogApp(
     title: String,
     description: String,
     onConfirm: () -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    content: (@Composable (() -> Unit))? = null
 ) {
 
     Dialog(onDismissRequest = onDismiss) {
@@ -49,6 +50,7 @@ fun DialogApp(
                     color = CardPalette.Description,
                     style = MaterialTheme.typography.bodyMedium
                 )
+                content?.invoke()
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End

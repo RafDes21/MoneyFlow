@@ -73,6 +73,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation(libs.androidx.navigation.compose)
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
 
     implementation(libs.hilt)
     kapt(libs.hilt.compiler)

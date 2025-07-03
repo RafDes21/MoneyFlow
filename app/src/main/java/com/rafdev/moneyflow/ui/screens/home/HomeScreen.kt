@@ -129,9 +129,9 @@ fun HomeScreen(
                             viewModel.deleteExpenseById(it)
                         }
                         showDialogApp = false
-                    }) {
-                    showDialogApp = false
-                }
+                    },
+                    onDismiss = { showDialogApp = false }
+                )
             }
 
             Spacer(modifier = Modifier.height(50.dp))

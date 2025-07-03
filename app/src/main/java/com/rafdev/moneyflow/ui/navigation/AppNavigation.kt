@@ -16,6 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import com.rafdev.moneyflow.ui.navigation.components.BottomNavigationBar
 import com.rafdev.moneyflow.ui.navigation.components.TopBar
 import com.rafdev.moneyflow.ui.navigation.screen.Screen
+import com.rafdev.moneyflow.ui.screens.card.UserCard
 import com.rafdev.moneyflow.ui.screens.home.HomeScreen
 import com.rafdev.moneyflow.ui.screens.note.NoteScreen
 import com.rafdev.moneyflow.ui.screens.planned.PlannedExpensesScreen
@@ -28,10 +29,16 @@ fun AppNavigation() {
 
     val bottomNavScreens = Screen.bottomNavScreens.map { it.route }
 
+    val showTopBar = currentRoute in bottomNavScreens || currentRoute == Screen.UserCard.route
+    val showBackButton = currentRoute == Screen.UserCard.route
+
     Scaffold(
         topBar = {
-            if (currentRoute in bottomNavScreens) {
-                TopBar()
+            if (currentRoute in bottomNavScreens || currentRoute == Screen.UserCard.route) {
+                TopBar(
+                    showBackButton = showBackButton,
+                    onBackClick = { navController.popBackStack() }
+                )
             }
         },
         bottomBar = {
@@ -54,7 +61,13 @@ fun AppNavigation() {
                                 navController.navigate(Screen.PlannedExpensesScreen.route)
                             }
                         )
-                        Screen.Cards -> NoteScreen(){}
+
+                        Screen.Cards -> NoteScreen(
+                            onAddClick = {
+                                navController.navigate(Screen.UserCard.route)
+                            }
+                        )
+
                         else -> {}
                     }
                 }
@@ -62,6 +75,9 @@ fun AppNavigation() {
 
             composable(Screen.PlannedExpensesScreen.route) {
                 PlannedExpensesScreen()
+            }
+            composable(Screen.UserCard.route) {
+                UserCard()
             }
         }
     }
