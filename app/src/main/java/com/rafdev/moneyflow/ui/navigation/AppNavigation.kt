@@ -1,14 +1,9 @@
 package com.rafdev.moneyflow.ui.navigation
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -20,16 +15,15 @@ import com.rafdev.moneyflow.ui.screens.card.UserCard
 import com.rafdev.moneyflow.ui.screens.home.HomeScreen
 import com.rafdev.moneyflow.ui.screens.note.NoteScreen
 import com.rafdev.moneyflow.ui.screens.planned.PlannedExpensesScreen
-import com.rafdev.moneyflow.ui.theme.Palette
+import com.rafdev.moneyflow.ui.screens.splash.SplashScreen
 
 @Composable
-fun AppNavigation() {
+fun AppNavigation(onSplashFinished: () -> Unit) {
     val navController = rememberNavController()
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
 
     val bottomNavScreens = Screen.bottomNavScreens.map { it.route }
 
-    val showTopBar = currentRoute in bottomNavScreens || currentRoute == Screen.UserCard.route
     val showBackButton = currentRoute == Screen.UserCard.route
 
     Scaffold(
@@ -49,9 +43,17 @@ fun AppNavigation() {
     ) { paddingValues ->
         NavHost(
             navController = navController,
-            startDestination = Screen.Home.route,
+            startDestination = Screen.Splash.route,
             modifier = Modifier.padding(paddingValues)
         ) {
+            composable(Screen.Splash.route) {
+                SplashScreen {
+                    onSplashFinished()
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Splash.route) { inclusive = true }
+                    }
+                }
+            }
 
             Screen.bottomNavScreens.forEach { screen ->
                 composable(screen.route) {

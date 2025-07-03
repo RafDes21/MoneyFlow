@@ -50,19 +50,21 @@ fun DialogApp(
                     color = CardPalette.Description,
                     style = MaterialTheme.typography.bodyMedium
                 )
-                content?.invoke()
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    TextButton(onClick = onDismiss) {
-                        Text("Cancelar", color = Palette.InactiveIconColor)
-                    }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    TextButton(onClick = onConfirm) {
-                        Text("Aceptar", color = Palette.ActiveIconColor)
+                content?.invoke() ?: run {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        TextButton(onClick = onDismiss) {
+                            Text("Cancelar", color = Palette.InactiveIconColor)
+                        }
+                        Spacer(modifier = Modifier.width(8.dp))
+                        TextButton(onClick = onConfirm) {
+                            Text("Aceptar", color = Palette.ActiveIconColor)
+                        }
                     }
                 }
+
             }
         }
     }

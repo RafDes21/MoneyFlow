@@ -14,7 +14,7 @@ object Palette {
 
     val primary = Color(0xFF111827)
 
-    val background = Color(0xFFF9FAFB)
+    val background = Color(0xFF111827)
     val Surface = Color(0xFFFFFFFF)
 
     val TextPrimary = Color(0xFF111827)

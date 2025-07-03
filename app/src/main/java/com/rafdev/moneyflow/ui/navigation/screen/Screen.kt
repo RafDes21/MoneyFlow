@@ -12,6 +12,7 @@ sealed class Screen(val route: String, val icon: ImageVector? = null, val title:
     data object PlannedExpensesScreen : Screen("detailExpense")
 
     data object UserCard : Screen("userCard")
+    data object Splash : Screen("splash")
 
     companion object {
         val bottomNavScreens = listOf(Home, Cards)
