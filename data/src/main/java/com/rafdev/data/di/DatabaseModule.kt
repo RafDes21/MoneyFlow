@@ -3,7 +3,9 @@ package com.rafdev.data.di
 import android.content.Context
 import androidx.room.Room
 import com.rafdev.data.database.AppDatabase
+import com.rafdev.data.database.MIGRATION_1_2
 import com.rafdev.data.database.dao.BudgetDao
+import com.rafdev.data.database.dao.CreditCardDao
 import com.rafdev.data.database.dao.ExpenseDao
 import dagger.Module
 import dagger.Provides
@@ -23,7 +25,7 @@ object DatabaseModule {
             context.applicationContext,
             AppDatabase::class.java,
             "money_flow_database"
-        ).build()
+        ).addMigrations(MIGRATION_1_2).build()
     }
 
 
@@ -35,8 +37,14 @@ object DatabaseModule {
 
     @Singleton
     @Provides
-    fun provideExpenseDao(db: AppDatabase): ExpenseDao{
+    fun provideExpenseDao(db: AppDatabase): ExpenseDao {
         return db.expenseDao()
+    }
+
+    @Singleton
+    @Provides
+    fun provideCreditCard(db: AppDatabase): CreditCardDao {
+        return db.creditCardDao()
     }
 
 }

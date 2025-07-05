@@ -1,10 +1,13 @@
 package com.rafdev.data.di
 
 import com.rafdev.data.database.dao.BudgetDao
+import com.rafdev.data.database.dao.CreditCardDao
 import com.rafdev.data.database.dao.ExpenseDao
 import com.rafdev.data.repository.RepositoryBudgetImpl
+import com.rafdev.data.repository.RepositoryCreditCardImpl
 import com.rafdev.data.repository.RepositoryExpenseImpl
 import com.rafdev.domain.repository.RepositoryBudget
+import com.rafdev.domain.repository.RepositoryCreditCard
 import com.rafdev.domain.repository.RepositoryExpense
 import dagger.Module
 import dagger.Provides
@@ -23,5 +26,10 @@ object RepositoryModule {
     @Provides
     fun provideExpense(expenseDao: ExpenseDao): RepositoryExpense {
         return RepositoryExpenseImpl(expenseDao)
+    }
+
+    @Provides
+    fun provideCreditCard(creditCardDao: CreditCardDao):RepositoryCreditCard{
+        return RepositoryCreditCardImpl(creditCardDao)
     }
 }
