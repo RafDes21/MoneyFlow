@@ -1,14 +1,20 @@
 package com.rafdev.moneyflow.ui.screens.card
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.rafdev.domain.model.CreditCardDomain
+import com.rafdev.domain.usecase.InsertCreditCardUC
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class UserCardViewModel @Inject constructor() : ViewModel() {
+class UserCardViewModel @Inject constructor(
+    private val insertCreditCardUC: InsertCreditCardUC
+) : ViewModel() {
 
     private val _title = MutableStateFlow("")
     val title: StateFlow<String> = _title.asStateFlow()
@@ -36,6 +42,21 @@ class UserCardViewModel @Inject constructor() : ViewModel() {
 
     fun onColorIdChange(newColor: Int) {
         _colorId.value = newColor
+    }
+
+    fun createCreditCard() {
+        val request = CreditCardDomain(
+            title = _title.value,
+            number = _number.value,
+            type = _cardType.value,
+            color = _colorId.value,
+            total = 0.0
+        )
+
+        viewModelScope.launch {
+            insertCreditCardUC(request)
+        }
+
     }
 
 }

@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.rafdev.moneyflow.R
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material3.Button
 import com.rafdev.moneyflow.ui.components.CreditCard
 import com.rafdev.moneyflow.ui.components.DialogApp
 import com.rafdev.moneyflow.ui.navigation.screen.Screen
@@ -163,6 +164,10 @@ fun UserCard(viewModel: UserCardViewModel = hiltViewModel()) {
                         )
                     }
                 }
+            }
+            Spacer(modifier = Modifier.height(20.dp))
+            Button(modifier = Modifier.fillMaxWidth(), onClick = { viewModel.createCreditCard() }) {
+                Text(text = "Crear Tarjeta")
             }
         }
 
