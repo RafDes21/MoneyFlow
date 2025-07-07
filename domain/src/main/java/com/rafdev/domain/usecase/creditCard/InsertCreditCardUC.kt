@@ -1,4 +1,4 @@
-package com.rafdev.domain.usecase
+package com.rafdev.domain.usecase.creditCard
 
 import com.rafdev.domain.model.CreditCardDomain
 import com.rafdev.domain.repository.RepositoryCreditCard
@@ -6,7 +6,7 @@ import javax.inject.Inject
 
 class InsertCreditCardUC @Inject constructor(private val repositoryCreditCard: RepositoryCreditCard) {
 
-    operator fun invoke(creditCardDomain: CreditCardDomain) =
+    suspend operator fun invoke(creditCardDomain: CreditCardDomain) =
         repositoryCreditCard.insertCreditCard(creditCardDomain)
 
 }

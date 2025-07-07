@@ -7,7 +7,7 @@ interface RepositoryCreditCard {
 
     fun getAllCreditCard(): Flow<Result<List<CreditCardDomain>>>
 
-    fun insertCreditCard(creditCardDomain: CreditCardDomain)
+    suspend fun insertCreditCard(creditCardDomain: CreditCardDomain)
 
     fun deleteCreditCard(creditCardId: Int)
 

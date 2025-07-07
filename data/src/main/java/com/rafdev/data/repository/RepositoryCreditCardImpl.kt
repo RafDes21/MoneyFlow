@@ -1,19 +1,26 @@
 package com.rafdev.data.repository
 
 import com.rafdev.data.database.dao.CreditCardDao
+import com.rafdev.data.mapper.toDomain
+import com.rafdev.data.mapper.toEntity
 import com.rafdev.domain.model.CreditCardDomain
 import com.rafdev.domain.repository.RepositoryCreditCard
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class RepositoryCreditCardImpl @Inject constructor(private val creditCardDao: CreditCardDao) :
     RepositoryCreditCard {
     override fun getAllCreditCard(): Flow<Result<List<CreditCardDomain>>> {
-        TODO("Not yet implemented")
+        return creditCardDao.getAllCreditCard()
+            .map { list -> Result.success(list.map { it.toDomain() }) }
+            .catch { e -> emit(Result.failure(e)) }
     }
 
-    override fun insertCreditCard(creditCardDomain: CreditCardDomain) {
-        TODO("Not yet implemented")
+    override suspend fun insertCreditCard(creditCardDomain: CreditCardDomain) {
+        creditCardDao.insertCreditCard(creditCardDomain.toEntity())
     }
 
     override fun deleteCreditCard(creditCardId: Int) {

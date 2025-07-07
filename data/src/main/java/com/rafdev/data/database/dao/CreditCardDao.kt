@@ -14,9 +14,9 @@ interface CreditCardDao {
     fun getAllCreditCard(): Flow<List<CreditCardEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertCreditCard(creditCardEntity: CreditCardEntity)
+    suspend fun insertCreditCard(creditCardEntity: CreditCardEntity)
 
     @Query("DELETE FROM creditCard WHERE id= :creditCardId")
-    fun deleteCreditCard(creditCardId:Int)
+    fun deleteCreditCard(creditCardId: Int)
 
 }

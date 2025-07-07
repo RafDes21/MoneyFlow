@@ -3,7 +3,7 @@ package com.rafdev.moneyflow.ui.screens.card
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rafdev.domain.model.CreditCardDomain
-import com.rafdev.domain.usecase.InsertCreditCardUC
+import com.rafdev.domain.usecase.creditCard.InsertCreditCardUC
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
