@@ -1,6 +1,6 @@
 [versions]
-agp = "8.4.0"
-kotlin = "1.9.0"
+agp = "8.6.1"
+kotlin = "2.0.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -13,6 +13,7 @@ material = "1.12.0"
 room_version = "2.6.1"
 dagger_hilt = "2.48.1"
 hilt-navigation = "1.2.0"
+ksp = "2.0.0-1.0.21"
 kotlinx-coroutines = "1.7.3"
 navigationCompose = "2.8.0"
 
@@ -34,15 +35,15 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
-androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose" , version.ref = "navigationCompose"}
+androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 
-androidx-room-runtime = {group = "androidx.room", name = "room-runtime", version.ref = "room_version"}
-androidx-room-compiler = {group = "androidx.room", name = "room-compiler" , version.ref = "room_version"}
-androidx-room-ktx = {group = "androidx.room", name = "room-ktx", version.ref = "room_version"}
+androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room_version" }
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room_version" }
+androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room_version" }
 
 hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "dagger_hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "dagger_hilt" }
-androidx-navigation-hilt = {module="androidx.hilt:hilt-navigation-compose", version.ref="hilt-navigation"}
+androidx-navigation-hilt = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hilt-navigation" }
 
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
@@ -52,8 +53,10 @@ kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutine
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 android-library = { id = "com.android.library", version.ref = "agp" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 
-dagger-hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger_hilt"}
+dagger-hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger_hilt" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 
 
 
