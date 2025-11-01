@@ -54,7 +54,8 @@ import com.rafdev.moneyflow.utils.Constants
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
-    onNavigate: () -> Unit
+    onNavigate: () -> Unit,
+    activeBottomSheet: () -> Unit
 ) {
 
     val context = LocalContext.current
@@ -142,6 +143,7 @@ fun HomeScreen(
             )
             ExpenseCardFixed(
                 splitFixed,
+                showBottomSheet = activeBottomSheet
             ) {
                 onNavigate()
             }

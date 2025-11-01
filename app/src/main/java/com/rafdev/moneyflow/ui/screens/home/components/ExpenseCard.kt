@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -30,7 +31,8 @@ import com.rafdev.moneyflow.utils.Constants
 fun ExpenseCardFixed(
     splitFixed: SplitNumber,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit = {}
+    activeBottomSheet: () -> Unit,
+    onClick: () -> Unit = {},
 ) {
     Card(
         modifier = modifier
@@ -58,6 +60,13 @@ fun ExpenseCardFixed(
                 horizontalArrangement = Arrangement.Start
             )
             Spacer(modifier = Modifier.weight(1f))
+            IconButton(onClick = activeBottomSheet) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    tint = Palette.ActiveIconColor,
+                    contentDescription = Constants.ShortTexts.DETAILS
+                )
+            }
             IconButton(onClick = onClick) {
                 Icon(
                     imageVector = Icons.Default.Info,

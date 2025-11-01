@@ -5,7 +5,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
@@ -15,6 +18,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.rafdev.moneyflow.ui.components.BottomSheet
 import com.rafdev.moneyflow.ui.navigation.components.BottomNavigationBar
 import com.rafdev.moneyflow.ui.navigation.components.TopBar
 import com.rafdev.moneyflow.ui.navigation.screen.Screen
@@ -32,6 +36,8 @@ fun AppNavigation() {
     val bottomNavScreens = Screen.bottomNavScreens.map { it.route }
 
     val showBackButton = currentRoute == Screen.UserCard.route
+
+    var showBottomSheet by remember { mutableStateOf(false) }
 
     val view = LocalView.current
     val context = LocalContext.current
@@ -93,7 +99,8 @@ fun AppNavigation() {
                         Screen.Home -> HomeScreen(
                             onNavigate = {
                                 navController.navigate(Screen.PlannedExpensesScreen.route)
-                            }
+                            },
+                            activeBottomSheet = {showBottomSheet = true}
                         )
 
                         Screen.Cards -> NoteScreen(
@@ -113,6 +120,10 @@ fun AppNavigation() {
             composable(Screen.UserCard.route) {
                 UserCard()
             }
+        }
+
+        if (showBottomSheet) {
+            BottomSheet(onDismiss = { showBottomSheet = false })
         }
     }
 }
