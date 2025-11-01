@@ -3,6 +3,7 @@ package com.rafdev.moneyflow
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,9 +28,11 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rafdev.domain.model.Budget
 import com.rafdev.moneyflow.ui.navigation.AppNavigation
 import com.rafdev.moneyflow.ui.theme.MoneyFlowTheme
+import com.rafdev.moneyflow.ui.viewmodel.GlobalFinanceViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 //@AndroidEntryPoint
@@ -76,6 +79,8 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
+    private val globalVM: GlobalFinanceViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -87,7 +92,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             MoneyFlowTheme {
-                AppNavigation()
+                AppNavigation(globalVM)
             }
         }
     }

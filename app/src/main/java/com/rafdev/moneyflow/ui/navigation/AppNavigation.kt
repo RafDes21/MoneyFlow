@@ -27,9 +27,12 @@ import com.rafdev.moneyflow.ui.screens.home.HomeScreen
 import com.rafdev.moneyflow.ui.screens.note.NoteScreen
 import com.rafdev.moneyflow.ui.screens.planned.PlannedExpensesScreen
 import com.rafdev.moneyflow.ui.screens.splash.SplashScreen
+import com.rafdev.moneyflow.ui.viewmodel.GlobalFinanceViewModel
 
 @Composable
-fun AppNavigation() {
+fun AppNavigation(
+    globalVM: GlobalFinanceViewModel
+) {
     val navController = rememberNavController()
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
 
@@ -100,7 +103,9 @@ fun AppNavigation() {
                             onNavigate = {
                                 navController.navigate(Screen.PlannedExpensesScreen.route)
                             },
-                            activeBottomSheet = {showBottomSheet = true}
+                            activeBottomSheet = {
+                                showBottomSheet = true
+                            }
                         )
 
                         Screen.Cards -> NoteScreen(
@@ -123,7 +128,13 @@ fun AppNavigation() {
         }
 
         if (showBottomSheet) {
-            BottomSheet(onDismiss = { showBottomSheet = false })
+            BottomSheet(
+                title = "Agregar monto fijo mensual",
+                onDismiss = { showBottomSheet = false }
+            ) { inputTitle, description, amount, currentDaTime ->
+                globalVM.saveExpense(inputTitle, description, currentDaTime, amount.toDouble(),1)
+                showBottomSheet = false
+            }
         }
     }
 }

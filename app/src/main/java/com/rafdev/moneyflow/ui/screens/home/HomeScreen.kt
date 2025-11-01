@@ -143,7 +143,7 @@ fun HomeScreen(
             )
             ExpenseCardFixed(
                 splitFixed,
-                showBottomSheet = activeBottomSheet
+                activeBottomSheet = activeBottomSheet,
             ) {
                 onNavigate()
             }
