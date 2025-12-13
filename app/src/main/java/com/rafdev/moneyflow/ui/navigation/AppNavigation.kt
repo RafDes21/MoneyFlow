@@ -1,31 +1,22 @@
 package com.rafdev.moneyflow.ui.navigation
 
-import android.app.Activity
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalView
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.rafdev.moneyflow.ui.components.BottomSheet
-import com.rafdev.moneyflow.ui.navigation.components.BottomNavigationBar
-import com.rafdev.moneyflow.ui.navigation.components.TopBar
-import com.rafdev.moneyflow.ui.navigation.screen.Screen
-import com.rafdev.moneyflow.ui.screens.card.UserCard
+import com.rafdev.moneyflow.ui.components.bottombar.CustomBottomBar
+import com.rafdev.moneyflow.ui.components.topbar.CustomTopBar
 import com.rafdev.moneyflow.ui.screens.home.HomeScreen
 import com.rafdev.moneyflow.ui.screens.note.NoteScreen
-import com.rafdev.moneyflow.ui.screens.planned.PlannedExpensesScreen
 import com.rafdev.moneyflow.ui.screens.splash.SplashScreen
 import com.rafdev.moneyflow.ui.viewmodel.GlobalFinanceViewModel
 
@@ -33,97 +24,57 @@ import com.rafdev.moneyflow.ui.viewmodel.GlobalFinanceViewModel
 fun AppNavigation(
     globalVM: GlobalFinanceViewModel
 ) {
+
     val navController = rememberNavController()
-    val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
-
-    val bottomNavScreens = Screen.bottomNavScreens.map { it.route }
-
-    val showBackButton = currentRoute == Screen.UserCard.route
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = backStackEntry?.destination?.route
 
     var showBottomSheet by remember { mutableStateOf(false) }
 
-    val view = LocalView.current
-    val context = LocalContext.current
-    val activity = context as Activity
-    val window = activity.window
-
-    val windowInsetsController = remember {
-        WindowInsetsControllerCompat(window, view)
-    }
-
-    // Ocultar o mostrar barras del sistema según la ruta actual
-    DisposableEffect(currentRoute) {
-        if (currentRoute == Screen.Splash.route) {
-            windowInsetsController.hide(
-                WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.navigationBars()
-            )
-            windowInsetsController.systemBarsBehavior =
-                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-        } else {
-            windowInsetsController.show(
-                WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.navigationBars()
-            )
-        }
-
-        onDispose { /* no-op */ }
-    }
+    val showBars = currentRoute != Splash::class.qualifiedName
 
     Scaffold(
         topBar = {
-            if (currentRoute in bottomNavScreens || currentRoute == Screen.UserCard.route) {
-                TopBar(
-                    showBackButton = showBackButton,
+            if (showBars) {
+                CustomTopBar(
+                    showBackButton = false,
                     onBackClick = { navController.popBackStack() }
                 )
             }
         },
         bottomBar = {
-            if (currentRoute in bottomNavScreens) {
-                BottomNavigationBar(navController)
+            if (showBars) {
+                CustomBottomBar(navController)
             }
         }
     ) { paddingValues ->
         NavHost(
             navController = navController,
-            startDestination = Screen.Splash.route,
+            startDestination = Splash,
             modifier = Modifier.padding(paddingValues)
         ) {
-            composable(Screen.Splash.route) {
+            composable<Splash> {
                 SplashScreen {
-                    navController.navigate(Screen.Home.route) {
-                        popUpTo(Screen.Splash.route) { inclusive = true }
+                    navController.navigate(Home) {
+                        popUpTo(Splash) { inclusive = true }
                     }
                 }
             }
 
-            Screen.bottomNavScreens.forEach { screen ->
-                composable(screen.route) {
-                    when (screen) {
-                        Screen.Home -> HomeScreen(
-                            onNavigate = {
-                                navController.navigate(Screen.PlannedExpensesScreen.route)
-                            },
-                            activeBottomSheet = {
-                                showBottomSheet = true
-                            }
-                        )
-
-                        Screen.Cards -> NoteScreen(
-                            onAddClick = {
-                                navController.navigate(Screen.UserCard.route)
-                            }
-                        )
-
-                        else -> {}
+            composable<Home> {
+                HomeScreen(
+                    onNavigate = {},
+                    activeBottomSheet = {
+                        showBottomSheet = true
                     }
-                }
+                )
             }
 
-            composable(Screen.PlannedExpensesScreen.route) {
-                PlannedExpensesScreen()
-            }
-            composable(Screen.UserCard.route) {
-                UserCard()
+            composable<Cards> {
+                NoteScreen(
+                    onAddClick = {
+                    }
+                )
             }
         }
 
@@ -132,7 +83,7 @@ fun AppNavigation(
                 title = "Agregar monto fijo mensual",
                 onDismiss = { showBottomSheet = false }
             ) { inputTitle, description, amount, currentDaTime ->
-                globalVM.saveExpense(inputTitle, description, currentDaTime, amount.toDouble(),1)
+                globalVM.saveExpense(inputTitle, description, currentDaTime, amount.toDouble(), 1)
                 showBottomSheet = false
             }
         }

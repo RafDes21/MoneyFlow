@@ -1,5 +1,7 @@
 package com.rafdev.moneyflow.ui.theme
 
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
 
 val Purple80 = Color(0xFFD0BCFF)
@@ -51,3 +53,43 @@ object CardPalette {
     val AmountNegative = Palette.ErrorColor           // Monto negativo (rojo coral)
     val IconTint = Palette.Highlight                  // Íconos de editar/eliminar
 }
+val LightColorScheme = lightColorScheme(
+    primary = Color(0xFF2563EB),
+    onPrimary = Color(0xFFFFFFFF),
+
+    secondary = Color(0xFF64748B),
+    onSecondary = Color(0xFFFFFFFF),
+
+    tertiary = Color(0xFF22C55E),
+    onTertiary = Color(0xFFFFFFFF),
+
+    background = Color(0xFFF8FAFC),
+    onBackground = Color(0xFF0F172A),
+
+    surface = Color(0xFFFFFFFF),
+    onSurface = Color(0xFF0F172A),
+
+    error = Color(0xFFEF4444),
+    onError = Color(0xFFFFFFFF)
+)
+
+val DarkColorScheme = darkColorScheme(
+    primary = Color(0xFF60A5FA),
+    onPrimary = Color(0xFF020617),
+
+    secondary = Color(0xFF94A3B8),
+    onSecondary = Color(0xFF020617),
+
+    tertiary = Color(0xFF4ADE80),
+    onTertiary = Color(0xFF020617),
+
+    background = Color(0xFF020617),
+    onBackground = Color(0xFFE5E7EB),
+
+    surface = Color(0xFF020617),
+    onSurface = Color(0xFFE5E7EB),
+
+    error = Color(0xFFF87171),
+    onError = Color(0xFF020617)
+)
+

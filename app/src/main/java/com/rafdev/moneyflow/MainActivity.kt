@@ -3,6 +3,7 @@ package com.rafdev.moneyflow
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -35,47 +36,6 @@ import com.rafdev.moneyflow.ui.theme.MoneyFlowTheme
 import com.rafdev.moneyflow.ui.viewmodel.GlobalFinanceViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
-//@AndroidEntryPoint
-//class MainActivity : ComponentActivity() {
-//
-//    private val _isSplashVisible = mutableStateOf(true)
-//    val isSplashVisible: State<Boolean> get() = _isSplashVisible
-//
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        setContent {
-//            MoneyFlowTheme {
-//                val splashVisible = isSplashVisible.value
-//
-//                // Controlar visibilidad de barras según splashVisible
-//                val windowInsetsController = remember {
-//                    WindowInsetsControllerCompat(window, window.decorView)
-//                }
-//
-//                LaunchedEffect(splashVisible) {
-//                    if (splashVisible) {
-//                        windowInsetsController.hide(
-//                            WindowInsetsCompat.Type.statusBars() or
-//                                    WindowInsetsCompat.Type.navigationBars()
-//                        )
-//                        windowInsetsController.systemBarsBehavior =
-//                            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-//                    } else {
-//                        windowInsetsController.show(
-//                            WindowInsetsCompat.Type.statusBars() or
-//                                    WindowInsetsCompat.Type.navigationBars()
-//                        )
-//                    }
-//                }
-//
-//                AppNavigation(
-//                    onSplashFinished = { _isSplashVisible.value = false }
-//                )
-//            }
-//        }
-//    }
-//}
-
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
@@ -83,13 +43,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-//        WindowCompat.setDecorFitsSystemWindows(window, false)
-//        val controller = WindowInsetsControllerCompat(window, window.decorView)
-//        controller.hide(WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.navigationBars())
-//        controller.systemBarsBehavior =
-//            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-
+        enableEdgeToEdge()
         setContent {
             MoneyFlowTheme {
                 AppNavigation(globalVM)

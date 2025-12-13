@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -87,7 +88,7 @@ fun HomeScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Palette.BackgroundColor)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         Column(
             modifier = Modifier
@@ -96,7 +97,7 @@ fun HomeScreen(
         ) {
             Text(
                 text = Constants.ShortTexts.TOTAL,
-                color = Palette.TextColor,
+                color = MaterialTheme.colorScheme.onBackground,
                 style = CustomTypography.titleLarge,
                 modifier = Modifier.align(alignment = Alignment.CenterHorizontally)
             )
@@ -139,7 +140,7 @@ fun HomeScreen(
 
             Text(
                 text = Constants.ShortTexts.SCHEDULED,
-                color = Palette.TextColor
+                color = MaterialTheme.colorScheme.onBackground
             )
             ExpenseCardFixed(
                 splitFixed,
@@ -155,7 +156,7 @@ fun HomeScreen(
             ) {
                 Text(
                     text = Constants.ShortTexts.ACTIVITIES,
-                    color = Palette.TextColor
+                    color = MaterialTheme.colorScheme.onBackground
                 )
 
                 IconButton(
@@ -163,7 +164,7 @@ fun HomeScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
-                        tint = Palette.ActiveIconColor,
+                        tint = MaterialTheme.colorScheme.primary,
                         contentDescription = Constants.ShortTexts.ADD
                     )
                 }
@@ -202,12 +203,13 @@ fun HomeScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Palette.CardColor)
+                    .background(MaterialTheme.colorScheme.surface)
                     .padding(10.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = Constants.TOTAL
+                    text = Constants.TOTAL,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 TextNumber(
                     integer = splitRecurrent.integerPart,

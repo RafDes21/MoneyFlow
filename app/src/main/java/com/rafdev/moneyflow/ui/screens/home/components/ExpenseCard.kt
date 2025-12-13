@@ -15,6 +15,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -40,7 +41,7 @@ fun ExpenseCardFixed(
             .height(60.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Palette.CardColor
+            containerColor = MaterialTheme.colorScheme.surface
         )
     ) {
         Row(
@@ -63,14 +64,14 @@ fun ExpenseCardFixed(
             IconButton(onClick = activeBottomSheet) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    tint = Palette.ActiveIconColor,
+                    tint = MaterialTheme.colorScheme.primary,
                     contentDescription = Constants.ShortTexts.DETAILS
                 )
             }
             IconButton(onClick = onClick) {
                 Icon(
                     imageVector = Icons.Default.Info,
-                    tint = Palette.ActiveIconColor,
+                    tint = MaterialTheme.colorScheme.primary,
                     contentDescription = Constants.ShortTexts.DETAILS
                 )
             }
