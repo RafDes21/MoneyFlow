@@ -42,6 +42,9 @@ class HomeViewModel @Inject constructor(
     private val _totalFixedExpenses = MutableStateFlow("")
     val totalFixedExpenses: StateFlow<String> = _totalFixedExpenses
 
+    private val _totalRecurrentExpenses = MutableStateFlow("")
+    val totalRecurrentExpenses: StateFlow<String> = _totalRecurrentExpenses
+
     private val _budget = MutableStateFlow("")
     val budget: StateFlow<String> = _budget
 
@@ -122,6 +125,7 @@ class HomeViewModel @Inject constructor(
                 val expensesRecurring = expenses.filter { it.type == "recurring" }
                 val totalRecurrentExpenses = expensesRecurring.sumOf { it.amount }
                 _numericRecurrentExpenses.value = totalRecurrentExpenses
+                _totalRecurrentExpenses.value = totalRecurrentExpenses.toString()
 
                 val formattedBudget = numberFormatter.formatToString(totalRecurrentExpenses)
                 val splitResult = numberFormatter.splitNumBer(formattedBudget)

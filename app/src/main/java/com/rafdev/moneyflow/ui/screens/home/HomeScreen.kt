@@ -70,7 +70,7 @@ fun HomeScreen(
     val total by viewModel.total.collectAsState()
     val totalExpenses by viewModel.totalExpenses.collectAsState()
     val totalFixedExpenses by viewModel.totalFixedExpenses.collectAsState()
-
+    val totalRecurrentExpenses by viewModel.totalRecurrentExpenses.collectAsState()
     val expenseFixed by viewModel.fixedExpensesAmount.collectAsState()
     val expenseRecurrent by viewModel.expensesRecurrent.collectAsState()
     val remainingBudget by viewModel.numericRemainingBudget.collectAsState()
@@ -201,17 +201,15 @@ fun HomeScreen(
                     }
                 }
             }
-            Box(
-                modifier = Modifier.fillMaxWidth()
-                    .padding(20.dp)
-            ) {
-                FloatingCard(
-                    text = totalFixedExpenses,
-                    modifier = Modifier.align(Alignment.CenterEnd)
-                )
-            }
+
 
         }
+        FloatingCard(
+            text = totalRecurrentExpenses,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp)
+        )
         if (showBottomSheet) {
             expenseItem?.let {
                 ExpenseDetailBottomSheet(
