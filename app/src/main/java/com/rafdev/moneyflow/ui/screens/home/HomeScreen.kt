@@ -46,6 +46,7 @@ import com.rafdev.moneyflow.ui.components.CustomDialog
 import com.rafdev.moneyflow.ui.components.DialogApp
 import com.rafdev.moneyflow.ui.components.ExpenseCard
 import com.rafdev.moneyflow.ui.components.ExpenseDetailBottomSheet
+import com.rafdev.moneyflow.ui.components.FloatingCard
 import com.rafdev.moneyflow.ui.components.TextNumber
 import com.rafdev.moneyflow.ui.screens.home.components.ExpenseCardFixed
 import com.rafdev.moneyflow.ui.theme.Background
@@ -200,26 +201,14 @@ fun HomeScreen(
                     }
                 }
             }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.surface)
-                    .padding(10.dp),
-                verticalAlignment = Alignment.CenterVertically
+            Box(
+                modifier = Modifier.fillMaxWidth()
+                    .padding(20.dp)
             ) {
-                Text(
-                    text = Constants.TOTAL,
-                    color = MaterialTheme.colorScheme.onSurface
+                FloatingCard(
+                    text = totalFixedExpenses,
+                    modifier = Modifier.align(Alignment.CenterEnd)
                 )
-                TextNumber(
-                    integer = splitRecurrent.integerPart,
-                    separator = splitRecurrent.separator,
-                    decimal = splitRecurrent.decimalPart,
-                    integerSize = 17.sp,
-                    decimalSize = 12.sp,
-                    horizontalArrangement = Arrangement.Start
-                )
-
             }
 
         }
