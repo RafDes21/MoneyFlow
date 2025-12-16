@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.rafdev.domain.model.Expense
 import com.rafdev.moneyflow.ui.theme.CardPalette
 import com.rafdev.moneyflow.ui.theme.Palette
+import com.rafdev.moneyflow.ui.uikit.text.UIKitText
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,11 +39,8 @@ fun ExpenseDetailBottomSheet(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             // Título y Monto
-            Text(
+            UIKitText(
                 text = expense.name,
-                color = CardPalette.Title,
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
             )
 
             Text(

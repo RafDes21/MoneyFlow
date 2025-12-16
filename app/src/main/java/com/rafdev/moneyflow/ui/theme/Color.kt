@@ -12,6 +12,16 @@ val Purple40 = Color(0xFF6650a4)
 val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
+val Background = Color(0xFF121212)
+val Surface    = Color(0xFF0B0B0B)
+val SurfaceAlt = Color(0xFF000000)
+val Primary        = Color(0xFF22C55E)
+val PrimaryVariant = Color(0xFF16A34A)
+val TextPrimary = (0xFFFFFFFF)
+val TextSecondary = Color(0xFFA1A1AA)
+val TextMuted     = Color(0xFF9CA3AF)
+val Gray = Color(0xFF1E1E1E)
+
 object Palette {
 
     val primary = Color(0xFF111827)
@@ -53,6 +63,7 @@ object CardPalette {
     val AmountNegative = Palette.ErrorColor           // Monto negativo (rojo coral)
     val IconTint = Palette.Highlight                  // Íconos de editar/eliminar
 }
+
 val LightColorScheme = lightColorScheme(
     primary = Color(0xFF2563EB),
     onPrimary = Color(0xFFFFFFFF),

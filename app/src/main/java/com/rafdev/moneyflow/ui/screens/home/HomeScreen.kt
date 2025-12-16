@@ -35,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -47,8 +48,11 @@ import com.rafdev.moneyflow.ui.components.ExpenseCard
 import com.rafdev.moneyflow.ui.components.ExpenseDetailBottomSheet
 import com.rafdev.moneyflow.ui.components.TextNumber
 import com.rafdev.moneyflow.ui.screens.home.components.ExpenseCardFixed
+import com.rafdev.moneyflow.ui.theme.Background
 import com.rafdev.moneyflow.ui.theme.CustomTypography
 import com.rafdev.moneyflow.ui.theme.Palette
+import com.rafdev.moneyflow.ui.theme.Primary
+import com.rafdev.moneyflow.ui.uikit.text.UIKitText
 import com.rafdev.moneyflow.utils.BudgetLabels
 import com.rafdev.moneyflow.utils.Constants
 
@@ -63,6 +67,8 @@ fun HomeScreen(
     val splitRecurrent by viewModel.splitRecurrent.collectAsState()
     val splitFixed by viewModel.splitFixed.collectAsState()
     val total by viewModel.total.collectAsState()
+    val totalExpenses by viewModel.totalExpenses.collectAsState()
+    val totalFixedExpenses by viewModel.totalFixedExpenses.collectAsState()
 
     val expenseFixed by viewModel.fixedExpensesAmount.collectAsState()
     val expenseRecurrent by viewModel.expensesRecurrent.collectAsState()
@@ -88,28 +94,24 @@ fun HomeScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(Background)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(0.dp, 20.dp, 0.dp, 0.dp)
         ) {
-            Text(
-                text = Constants.ShortTexts.TOTAL,
-                color = MaterialTheme.colorScheme.onBackground,
-                style = CustomTypography.titleLarge,
-                modifier = Modifier.align(alignment = Alignment.CenterHorizontally)
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Box(
+            Column(
                 modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                TextNumber(
-                    integer = total.integerPart,
-                    separator = total.separator,
-                    decimal = total.decimalPart
+
+                UIKitText(
+                    text = Constants.ShortTexts.TOTAL,
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                UIKitText(
+                    text = "$ $totalExpenses"
                 )
 
             }
@@ -138,12 +140,11 @@ fun HomeScreen(
 
             Spacer(modifier = Modifier.height(50.dp))
 
-            Text(
+            UIKitText(
                 text = Constants.ShortTexts.SCHEDULED,
-                color = MaterialTheme.colorScheme.onBackground
             )
             ExpenseCardFixed(
-                splitFixed,
+                "$ $totalFixedExpenses",
                 activeBottomSheet = activeBottomSheet,
             ) {
                 onNavigate()
@@ -154,9 +155,8 @@ fun HomeScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
+                UIKitText(
                     text = Constants.ShortTexts.ACTIVITIES,
-                    color = MaterialTheme.colorScheme.onBackground
                 )
 
                 IconButton(
@@ -164,7 +164,7 @@ fun HomeScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
-                        tint = MaterialTheme.colorScheme.primary,
+                        tint = Primary,
                         contentDescription = Constants.ShortTexts.ADD
                     )
                 }

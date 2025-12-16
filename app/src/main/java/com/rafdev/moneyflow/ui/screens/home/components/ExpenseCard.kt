@@ -25,12 +25,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rafdev.moneyflow.ui.components.TextNumber
 import com.rafdev.moneyflow.ui.screens.home.SplitNumber
+import com.rafdev.moneyflow.ui.theme.Gray
 import com.rafdev.moneyflow.ui.theme.Palette
+import com.rafdev.moneyflow.ui.theme.Primary
+import com.rafdev.moneyflow.ui.uikit.text.UIKitText
 import com.rafdev.moneyflow.utils.Constants
 
 @Composable
 fun ExpenseCardFixed(
-    splitFixed: SplitNumber,
+    splitFixed: String,
     modifier: Modifier = Modifier,
     activeBottomSheet: () -> Unit,
     onClick: () -> Unit = {},
@@ -41,7 +44,7 @@ fun ExpenseCardFixed(
             .height(60.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = Gray
         )
     ) {
         Row(
@@ -51,27 +54,21 @@ fun ExpenseCardFixed(
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            TextNumber(
-                integer = splitFixed.integerPart,
-                separator = splitFixed.separator,
-                decimal = splitFixed.decimalPart,
-                integerSize = 16.sp,
-                decimalSize = 13.sp,
-                separatorSize = 12.sp,
-                horizontalArrangement = Arrangement.Start
+            UIKitText(
+              text = splitFixed
             )
             Spacer(modifier = Modifier.weight(1f))
             IconButton(onClick = activeBottomSheet) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    tint = MaterialTheme.colorScheme.primary,
+                    tint = Primary,
                     contentDescription = Constants.ShortTexts.DETAILS
                 )
             }
             IconButton(onClick = onClick) {
                 Icon(
                     imageVector = Icons.Default.Info,
-                    tint = MaterialTheme.colorScheme.primary,
+                    tint = Primary,
                     contentDescription = Constants.ShortTexts.DETAILS
                 )
             }

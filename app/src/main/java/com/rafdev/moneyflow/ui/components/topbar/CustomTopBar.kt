@@ -12,9 +12,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.rafdev.moneyflow.R
+import com.rafdev.moneyflow.ui.theme.Background
+import com.rafdev.moneyflow.ui.theme.TextPrimary
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -25,14 +28,18 @@ fun CustomTopBar(
 
     Row(
         modifier = Modifier
-            .background(MaterialTheme.colorScheme.primary)
+            .background(Background)
             .fillMaxWidth()
             .statusBarsPadding()
             .height(76.dp)
             .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = stringResource(R.string.app_name))
+        Text(
+            text = stringResource(R.string.app_name),
+            color = Color(TextPrimary)
+
+        )
     }
 
 }

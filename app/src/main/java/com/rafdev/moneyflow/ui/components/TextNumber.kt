@@ -13,7 +13,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
+import com.rafdev.moneyflow.ui.theme.Background
 import com.rafdev.moneyflow.ui.theme.Palette
+import com.rafdev.moneyflow.ui.uikit.text.UIKitText
 
 @Composable
 fun TextNumber(
@@ -31,27 +33,17 @@ fun TextNumber(
         horizontalArrangement = horizontalArrangement,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
+        UIKitText(
             text =  "$",
-            color = MaterialTheme.colorScheme.onBackground,
-            modifier = Modifier.align(alignment = Alignment.CenterVertically)
         )
-        Text(
+        UIKitText(
             text = integer,
-            color = MaterialTheme.colorScheme.onBackground,
-            style = TextStyle(fontSize = integerSize)
         )
-        Text(
+        UIKitText(
             text = separator,
-            color = MaterialTheme.colorScheme.onBackground,
-            style = TextStyle(fontSize = separatorSize),
-            modifier = Modifier.align(Alignment.Bottom)
         )
-        Text(
+        UIKitText(
             text = decimal,
-            color = MaterialTheme.colorScheme.onBackground,
-            style = TextStyle(fontSize = decimalSize),
-            modifier = Modifier.align(Alignment.Top)
         )
     }
 }

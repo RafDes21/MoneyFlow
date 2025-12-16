@@ -30,6 +30,12 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.rafdev.moneyflow.ui.navigation.Home
 import com.rafdev.moneyflow.ui.navigation.bottomNavItems
+import com.rafdev.moneyflow.ui.theme.Background
+import com.rafdev.moneyflow.ui.theme.Gray
+import com.rafdev.moneyflow.ui.theme.Primary
+import com.rafdev.moneyflow.ui.theme.Surface
+import com.rafdev.moneyflow.ui.theme.SurfaceAlt
+import com.rafdev.moneyflow.ui.theme.TextMuted
 
 @Composable
 fun CustomBottomBar(navController: NavController) {
@@ -39,7 +45,7 @@ fun CustomBottomBar(navController: NavController) {
 
     Row(
         modifier = Modifier
-            .background(MaterialTheme.colorScheme.surface)
+            .background(SurfaceAlt)
             .fillMaxWidth()
             .navigationBarsPadding()
             .padding(vertical = 16.dp),
@@ -74,9 +80,9 @@ fun CustomBottomBar(navController: NavController) {
                         painter = painterResource(id = item.icon),
                         contentDescription = stringResource(id = item.label),
                         tint = if (isSelected)
-                            MaterialTheme.colorScheme.primary
+                            Primary
                         else
-                            MaterialTheme.colorScheme.onSurfaceVariant
+                            TextMuted
 
                     )
                     Text(
@@ -84,9 +90,9 @@ fun CustomBottomBar(navController: NavController) {
                         fontSize = 12.sp,
                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
                         color = if (isSelected)
-                            MaterialTheme.colorScheme.primary
+                            Primary
                         else
-                            MaterialTheme.colorScheme.onSurfaceVariant
+                            TextMuted
                     )
                 }
             }
