@@ -1,6 +1,8 @@
 package com.rafdev.moneyflow.ui.screens.home.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,9 +27,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rafdev.moneyflow.ui.components.TextNumber
 import com.rafdev.moneyflow.ui.screens.home.SplitNumber
+import com.rafdev.moneyflow.ui.theme.Background
 import com.rafdev.moneyflow.ui.theme.Gray
 import com.rafdev.moneyflow.ui.theme.Palette
 import com.rafdev.moneyflow.ui.theme.Primary
+import com.rafdev.moneyflow.ui.uikit.card.UIKitCard
 import com.rafdev.moneyflow.ui.uikit.text.UIKitText
 import com.rafdev.moneyflow.utils.Constants
 
@@ -38,14 +42,11 @@ fun ExpenseCardFixed(
     activeBottomSheet: () -> Unit,
     onClick: () -> Unit = {},
 ) {
-    Card(
+    UIKitCard(
         modifier = modifier
             .padding(vertical = 8.dp)
             .height(60.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Gray
-        )
+        onClick
     ) {
         Row(
             modifier = Modifier
@@ -73,6 +74,24 @@ fun ExpenseCardFixed(
                 )
             }
         }
+    }
+}
+
+
+@Preview
+@Composable
+fun ExpenseCardPreview(){
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Background)
+            .padding(16.dp)
+    ) {
+        ExpenseCardFixed(
+            splitFixed = "title",
+            activeBottomSheet = {}
+        )
     }
 }
 

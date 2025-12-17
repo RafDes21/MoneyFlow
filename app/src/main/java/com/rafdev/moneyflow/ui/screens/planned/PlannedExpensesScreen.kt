@@ -91,7 +91,6 @@ fun PlannedExpensesScreen(viewModel: PlannedExpensesViewModel = hiltViewModel())
 
                     ExpenseCard(
                         title = expense.name,
-                        description = expense.description,
                         time = "",
                         amount = expense.amount.toString(),
                         date = "",

@@ -5,25 +5,19 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -33,28 +27,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.rafdev.domain.model.Expense
-import com.rafdev.moneyflow.ui.components.AlertDialogCustom
-import com.rafdev.moneyflow.ui.components.BudgetSummary
 import com.rafdev.moneyflow.ui.components.CustomDialog
 import com.rafdev.moneyflow.ui.components.DialogApp
 import com.rafdev.moneyflow.ui.components.ExpenseCard
 import com.rafdev.moneyflow.ui.components.ExpenseDetailBottomSheet
 import com.rafdev.moneyflow.ui.components.FloatingCard
-import com.rafdev.moneyflow.ui.components.TextNumber
 import com.rafdev.moneyflow.ui.screens.home.components.ExpenseCardFixed
 import com.rafdev.moneyflow.ui.theme.Background
-import com.rafdev.moneyflow.ui.theme.CustomTypography
-import com.rafdev.moneyflow.ui.theme.Palette
 import com.rafdev.moneyflow.ui.theme.Primary
 import com.rafdev.moneyflow.ui.uikit.text.UIKitText
-import com.rafdev.moneyflow.utils.BudgetLabels
 import com.rafdev.moneyflow.utils.Constants
 
 @Composable
@@ -65,15 +50,9 @@ fun HomeScreen(
 ) {
 
     val context = LocalContext.current
-    val splitRecurrent by viewModel.splitRecurrent.collectAsState()
-    val splitFixed by viewModel.splitFixed.collectAsState()
-    val total by viewModel.total.collectAsState()
     val totalExpenses by viewModel.totalExpenses.collectAsState()
     val totalFixedExpenses by viewModel.totalFixedExpenses.collectAsState()
     val totalRecurrentExpenses by viewModel.totalRecurrentExpenses.collectAsState()
-    val expenseFixed by viewModel.fixedExpensesAmount.collectAsState()
-    val expenseRecurrent by viewModel.expensesRecurrent.collectAsState()
-    val remainingBudget by viewModel.numericRemainingBudget.collectAsState()
 
     var showDialog by remember { mutableStateOf(false) }
     var showDialogAdd by remember { mutableStateOf(false) }
@@ -97,107 +76,86 @@ fun HomeScreen(
             .fillMaxSize()
             .background(Background)
     ) {
-        Column(
+        LazyColumn(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(0.dp, 20.dp, 0.dp, 0.dp)
+                .fillMaxSize(),
+            contentPadding = PaddingValues(bottom = 96.dp)
+
         ) {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-
-                UIKitText(
-                    text = Constants.ShortTexts.TOTAL,
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                UIKitText(
-                    text = "$ $totalExpenses"
-                )
-
-            }
-
-            if (showDialogAdd) {
-                CustomDialog(
-                    onDismiss = { showDialogAdd = false }
-                ) { title, description, amount, currentDaTime ->
-                    viewModel.saveExpense(title, description, currentDaTime, amount.toDouble())
-                }
-            }
-
-            if (showDialogApp) {
-                DialogApp(
-                    title = "Eliminar",
-                    description = "¿Estás seguro de que deseas eliminar este elemento? Esta acción no se puede deshacer.",
-                    onConfirm = {
-                        expenseItem?.id?.let {
-                            viewModel.deleteExpenseById(it)
-                        }
-                        showDialogApp = false
-                    },
-                    onDismiss = { showDialogApp = false }
-                )
-            }
-
-            Spacer(modifier = Modifier.height(50.dp))
-
-            UIKitText(
-                text = Constants.ShortTexts.SCHEDULED,
-            )
-            ExpenseCardFixed(
-                "$ $totalFixedExpenses",
-                activeBottomSheet = activeBottomSheet,
-            ) {
-                onNavigate()
-            }
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                UIKitText(
-                    text = Constants.ShortTexts.ACTIVITIES,
-                )
-
-                IconButton(
-                    onClick = { showDialogAdd = true }
+            item {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        tint = Primary,
-                        contentDescription = Constants.ShortTexts.ADD
+
+                    UIKitText(
+                        text = Constants.ShortTexts.TOTAL,
                     )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    UIKitText(
+                        text = "$ $totalExpenses"
+                    )
+
                 }
+                Spacer(modifier = Modifier.height(50.dp))
+
+            }
+            item {
+                UIKitText(
+                    text = Constants.ShortTexts.SCHEDULED,
+                )
+                ExpenseCardFixed(
+                    "$ $totalFixedExpenses",
+                    activeBottomSheet = activeBottomSheet,
+                ) {
+                    onNavigate()
+                }
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    UIKitText(
+                        text = Constants.ShortTexts.ACTIVITIES,
+                    )
+
+                    IconButton(
+                        onClick = { showDialogAdd = true }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            tint = Primary,
+                            contentDescription = Constants.ShortTexts.ADD
+                        )
+                    }
+                }
+
             }
 
-            LazyColumn(
-                modifier = Modifier.weight(1f)
-            ) {
-                state.success?.let { expenses ->
-                    items(expenses, key = { it.id }) { expense ->
-                        if (expense.type == "recurring") {
-                            val dateTimeParts = expense.date.split(" ")
-                            val date = dateTimeParts.getOrNull(0) ?: ""
-                            val time = dateTimeParts.getOrNull(1) ?: ""
+            state.success?.let { expenses ->
+                items(expenses, key = { it.id }) { expense ->
+                    if (expense.type == "recurring") {
+                        val dateTimeParts = expense.date.split(" ")
+                        val date = dateTimeParts.getOrNull(0) ?: ""
+                        val time = dateTimeParts.getOrNull(1) ?: ""
 
-                            ExpenseCard(
-                                title = expense.name,
-                                description = expense.description,
-                                time = time,
-                                amount = expense.amount.toString(),
-                                date = date,
-                                onDetail = {
-                                    showBottomSheet = true
-                                    expenseItem = expense
-                                },
-                                onUpdate = { /* Acción para actualizar */ },
-                                onDelete = {
-                                    showDialogApp = true
-                                    expenseItem = expense
-                                }
-                            )
-                        }
+                        ExpenseCard(
+                            title = expense.name,
+                            time = time,
+                            amount = expense.amount.toString(),
+                            date = date,
+                            onDetail = {
+                                showBottomSheet = true
+                                expenseItem = expense
+                            },
+                            onUpdate = { /* Acción para actualizar */ },
+                            onDelete = {
+                                showDialogApp = true
+                                expenseItem = expense
+                            }
+                        )
+                        Spacer(Modifier.height(8.dp))
                     }
                 }
             }
@@ -210,6 +168,29 @@ fun HomeScreen(
                 .align(Alignment.BottomEnd)
                 .padding(16.dp)
         )
+
+        if (showDialogAdd) {
+            CustomDialog(
+                onDismiss = { showDialogAdd = false }
+            ) { title, description, amount, currentDaTime ->
+                viewModel.saveExpense(title, description, currentDaTime, amount.toDouble())
+            }
+        }
+
+        if (showDialogApp) {
+            DialogApp(
+                title = "Eliminar",
+                description = "¿Estás seguro de que deseas eliminar este elemento? Esta acción no se puede deshacer.",
+                onConfirm = {
+                    expenseItem?.id?.let {
+                        viewModel.deleteExpenseById(it)
+                    }
+                    showDialogApp = false
+                },
+                onDismiss = { showDialogApp = false }
+            )
+        }
+
         if (showBottomSheet) {
             expenseItem?.let {
                 ExpenseDetailBottomSheet(

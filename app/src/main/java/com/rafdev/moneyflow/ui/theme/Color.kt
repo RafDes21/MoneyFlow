@@ -22,6 +22,12 @@ val TextSecondary = Color(0xFFA1A1AA)
 val TextMuted     = Color(0xFF9CA3AF)
 val Gray = Color(0xFF1E1E1E)
 
+val CardColor            = Color(0xFF181818)
+val CardFocused     = Color(0xFF1F1F1F)
+val CardPressed     = Color(0xFF242424)
+val CardBorder      = Color(0xFF262626)
+
+
 object Palette {
 
     val primary = Color(0xFF111827)
