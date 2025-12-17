@@ -3,6 +3,8 @@ package com.rafdev.moneyflow
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,113 +29,26 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rafdev.domain.model.Budget
 import com.rafdev.moneyflow.ui.navigation.AppNavigation
 import com.rafdev.moneyflow.ui.theme.MoneyFlowTheme
+import com.rafdev.moneyflow.ui.viewmodel.GlobalFinanceViewModel
 import dagger.hilt.android.AndroidEntryPoint
-
-//@AndroidEntryPoint
-//class MainActivity : ComponentActivity() {
-//
-//    private val _isSplashVisible = mutableStateOf(true)
-//    val isSplashVisible: State<Boolean> get() = _isSplashVisible
-//
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        setContent {
-//            MoneyFlowTheme {
-//                val splashVisible = isSplashVisible.value
-//
-//                // Controlar visibilidad de barras según splashVisible
-//                val windowInsetsController = remember {
-//                    WindowInsetsControllerCompat(window, window.decorView)
-//                }
-//
-//                LaunchedEffect(splashVisible) {
-//                    if (splashVisible) {
-//                        windowInsetsController.hide(
-//                            WindowInsetsCompat.Type.statusBars() or
-//                                    WindowInsetsCompat.Type.navigationBars()
-//                        )
-//                        windowInsetsController.systemBarsBehavior =
-//                            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-//                    } else {
-//                        windowInsetsController.show(
-//                            WindowInsetsCompat.Type.statusBars() or
-//                                    WindowInsetsCompat.Type.navigationBars()
-//                        )
-//                    }
-//                }
-//
-//                AppNavigation(
-//                    onSplashFinished = { _isSplashVisible.value = false }
-//                )
-//            }
-//        }
-//    }
-//}
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
+    private val globalVM: GlobalFinanceViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-//        WindowCompat.setDecorFitsSystemWindows(window, false)
-//        val controller = WindowInsetsControllerCompat(window, window.decorView)
-//        controller.hide(WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.navigationBars())
-//        controller.systemBarsBehavior =
-//            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-
+        enableEdgeToEdge()
         setContent {
             MoneyFlowTheme {
-                AppNavigation()
+                AppNavigation(globalVM)
             }
         }
     }
 }
 
-@Composable
-fun Greeting(
-    modifier: Modifier = Modifier,
-    viewModel: MainViewModel = hiltViewModel()
-) {
-    val budget by viewModel.budget.collectAsState(initial = 0.0)
-
-    var newBudget by remember { mutableStateOf("") }
-
-    Column(modifier = modifier.padding(16.dp)) {
-        if (budget != null) {
-            Text(text = "Budget: $${budget}")
-        } else {
-            Text(text = "Loading budget...")
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
-            value = newBudget,
-            onValueChange = { newBudget = it },
-            label = { Text("Enter new budget") },
-            keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType = KeyboardType.Number
-            ),
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(
-            onClick = {
-                val parsedBudget = newBudget.toDoubleOrNull()
-                if (parsedBudget != null) {
-                    viewModel.updateBudget(Budget( totalBudget = parsedBudget))
-                    newBudget = ""
-                }
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(text = "Save Budget")
-        }
-    }
-}

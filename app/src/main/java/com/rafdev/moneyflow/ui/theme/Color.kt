@@ -1,5 +1,7 @@
 package com.rafdev.moneyflow.ui.theme
 
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
 
 val Purple80 = Color(0xFFD0BCFF)
@@ -9,6 +11,22 @@ val Pink80 = Color(0xFFEFB8C8)
 val Purple40 = Color(0xFF6650a4)
 val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
+
+val Background = Color(0xFF121212)
+val Surface    = Color(0xFF0B0B0B)
+val SurfaceAlt = Color(0xFF000000)
+val Primary        = Color(0xFF22C55E)
+val PrimaryVariant = Color(0xFF16A34A)
+val TextPrimary = (0xFFFFFFFF)
+val TextSecondary = Color(0xFFA1A1AA)
+val TextMuted     = Color(0xFF9CA3AF)
+val Gray = Color(0xFF1E1E1E)
+
+val CardColor            = Color(0xFF181818)
+val CardFocused     = Color(0xFF1F1F1F)
+val CardPressed     = Color(0xFF242424)
+val CardBorder      = Color(0xFF262626)
+
 
 object Palette {
 
@@ -51,3 +69,44 @@ object CardPalette {
     val AmountNegative = Palette.ErrorColor           // Monto negativo (rojo coral)
     val IconTint = Palette.Highlight                  // Íconos de editar/eliminar
 }
+
+val LightColorScheme = lightColorScheme(
+    primary = Color(0xFF2563EB),
+    onPrimary = Color(0xFFFFFFFF),
+
+    secondary = Color(0xFF64748B),
+    onSecondary = Color(0xFFFFFFFF),
+
+    tertiary = Color(0xFF22C55E),
+    onTertiary = Color(0xFFFFFFFF),
+
+    background = Color(0xFFF8FAFC),
+    onBackground = Color(0xFF0F172A),
+
+    surface = Color(0xFFFFFFFF),
+    onSurface = Color(0xFF0F172A),
+
+    error = Color(0xFFEF4444),
+    onError = Color(0xFFFFFFFF)
+)
+
+val DarkColorScheme = darkColorScheme(
+    primary = Color(0xFF60A5FA),
+    onPrimary = Color(0xFF020617),
+
+    secondary = Color(0xFF94A3B8),
+    onSecondary = Color(0xFF020617),
+
+    tertiary = Color(0xFF4ADE80),
+    onTertiary = Color(0xFF020617),
+
+    background = Color(0xFF020617),
+    onBackground = Color(0xFFE5E7EB),
+
+    surface = Color(0xFF020617),
+    onSurface = Color(0xFFE5E7EB),
+
+    error = Color(0xFFF87171),
+    onError = Color(0xFF020617)
+)
+

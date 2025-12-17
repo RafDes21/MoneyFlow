@@ -32,8 +32,18 @@ class HomeViewModel @Inject constructor(
     private val _splitFixed = MutableStateFlow(SplitNumber())
     val splitFixed: StateFlow<SplitNumber> = _splitFixed
 
+
     private val _total = MutableStateFlow(SplitNumber())
     val total: StateFlow<SplitNumber> = _total
+
+    private val _totalExpenses = MutableStateFlow("")
+    val totalExpenses: StateFlow<String> = _totalExpenses
+
+    private val _totalFixedExpenses = MutableStateFlow("")
+    val totalFixedExpenses: StateFlow<String> = _totalFixedExpenses
+
+    private val _totalRecurrentExpenses = MutableStateFlow("")
+    val totalRecurrentExpenses: StateFlow<String> = _totalRecurrentExpenses
 
     private val _budget = MutableStateFlow("")
     val budget: StateFlow<String> = _budget
@@ -72,6 +82,7 @@ class HomeViewModel @Inject constructor(
                 val formattedBudget = numberFormatter.formatToString(newRemainingBudget)
                 val splitResult = numberFormatter.splitNumBer(formattedBudget)
                 _total.value = splitResult
+                _totalExpenses.value = newRemainingBudget.toString()
             }
         }
     }
@@ -114,6 +125,7 @@ class HomeViewModel @Inject constructor(
                 val expensesRecurring = expenses.filter { it.type == "recurring" }
                 val totalRecurrentExpenses = expensesRecurring.sumOf { it.amount }
                 _numericRecurrentExpenses.value = totalRecurrentExpenses
+                _totalRecurrentExpenses.value = totalRecurrentExpenses.toString()
 
                 val formattedBudget = numberFormatter.formatToString(totalRecurrentExpenses)
                 val splitResult = numberFormatter.splitNumBer(formattedBudget)
@@ -121,14 +133,13 @@ class HomeViewModel @Inject constructor(
 
 
                 val expensesFixed = expenses.filter { it.type == "fixed" }
-                val totalFixedExpenses = expensesFixed .sumOf { it.amount }
+                val totalFixedExpenses = expensesFixed.sumOf { it.amount }
                 _numericFixedExpenses.value = totalFixedExpenses
 
                 val formattedFixed = numberFormatter.formatToString(totalFixedExpenses)
                 val splitFixedResult = numberFormatter.splitNumBer(formattedFixed)
                 _splitFixed.value = splitFixedResult
-
-
+                _totalFixedExpenses.value = totalFixedExpenses.toString()
 
 
             }
