@@ -31,6 +31,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.rafdev.domain.model.Expense
+import com.rafdev.moneyflow.R
+import com.rafdev.moneyflow.ui.components.ActionTitleItem
 import com.rafdev.moneyflow.ui.components.CustomDialog
 import com.rafdev.moneyflow.ui.components.DialogApp
 import com.rafdev.moneyflow.ui.components.ExpenseCard
@@ -39,6 +41,7 @@ import com.rafdev.moneyflow.ui.components.FloatingCard
 import com.rafdev.moneyflow.ui.screens.home.components.ExpenseCardFixed
 import com.rafdev.moneyflow.ui.theme.Background
 import com.rafdev.moneyflow.ui.theme.Primary
+import com.rafdev.moneyflow.ui.uikit.card.UIKitCard
 import com.rafdev.moneyflow.ui.uikit.text.UIKitText
 import com.rafdev.moneyflow.utils.Constants
 
@@ -101,34 +104,30 @@ fun HomeScreen(
 
             }
             item {
-                UIKitText(
-                    text = Constants.ShortTexts.SCHEDULED,
-                )
-                ExpenseCardFixed(
-                    "$ $totalFixedExpenses",
-                    activeBottomSheet = activeBottomSheet,
+                ActionTitleItem(
+                    modifier = Modifier.padding(bottom = 8.dp),
+                    title = "PROGRAMADOS",
+                    iconRes = R.drawable.ic_add
                 ) {
-                    onNavigate()
+                    activeBottomSheet()
                 }
-
-                Row(
+                UIKitCard(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    onClick = { onNavigate() }
                 ) {
                     UIKitText(
-                        text = Constants.ShortTexts.ACTIVITIES,
+                        modifier = Modifier.padding(16.dp),
+                        text = "$ $totalFixedExpenses"
                     )
+                }
 
-                    IconButton(
-                        onClick = { showDialogAdd = true }
+                ActionTitleItem(
+                    title = "ACTIVIDADES",
+                    iconRes = R.drawable.ic_add,
+                    modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
+
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            tint = Primary,
-                            contentDescription = Constants.ShortTexts.ADD
-                        )
-                    }
+                    showDialogAdd = true
                 }
 
             }
