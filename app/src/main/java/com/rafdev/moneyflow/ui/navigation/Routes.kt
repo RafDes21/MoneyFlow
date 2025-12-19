@@ -11,3 +11,6 @@ data object Home
 @Serializable
 data object Cards
 
+@Serializable
+data object FixedExpenses
+

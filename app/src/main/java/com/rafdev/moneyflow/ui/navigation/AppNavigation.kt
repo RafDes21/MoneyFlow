@@ -8,15 +8,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.rafdev.moneyflow.R
 import com.rafdev.moneyflow.ui.components.BottomSheet
 import com.rafdev.moneyflow.ui.components.bottombar.CustomBottomBar
 import com.rafdev.moneyflow.ui.components.topbar.CustomTopBar
 import com.rafdev.moneyflow.ui.screens.home.HomeScreen
 import com.rafdev.moneyflow.ui.screens.note.NoteScreen
+import com.rafdev.moneyflow.ui.screens.planned.PlannedExpensesScreen
 import com.rafdev.moneyflow.ui.screens.splash.SplashScreen
 import com.rafdev.moneyflow.ui.viewmodel.GlobalFinanceViewModel
 
@@ -33,11 +36,25 @@ fun AppNavigation(
 
     val showBars = currentRoute != Splash::class.qualifiedName
 
+
+    val (title, showBackButton) = when (currentRoute) {
+        Home::class.qualifiedName -> {
+            stringResource(R.string.app_name) to false
+        }
+        FixedExpenses::class.qualifiedName -> {
+            "Gastos programados" to true
+        }
+        else -> {
+            stringResource(R.string.app_name) to false
+        }
+    }
+
     Scaffold(
         topBar = {
             if (showBars) {
                 CustomTopBar(
-                    showBackButton = false,
+                    title,
+                    showBackButton = showBackButton,
                     onBackClick = { navController.popBackStack() }
                 )
             }
@@ -63,7 +80,9 @@ fun AppNavigation(
 
             composable<Home> {
                 HomeScreen(
-                    onNavigate = {},
+                    onNavigate = {
+                        navController.navigate(FixedExpenses)
+                    },
                     activeBottomSheet = {
                         showBottomSheet = true
                     }
@@ -75,6 +94,10 @@ fun AppNavigation(
                     onAddClick = {
                     }
                 )
+            }
+
+            composable<FixedExpenses> {
+                PlannedExpensesScreen()
             }
         }
 
