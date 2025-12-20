@@ -24,6 +24,8 @@ import androidx.compose.ui.unit.sp
 import com.rafdev.moneyflow.ui.theme.CardPalette
 import com.rafdev.moneyflow.ui.theme.Primary
 import com.rafdev.moneyflow.ui.uikit.card.UIKitCard
+import com.rafdev.moneyflow.ui.uikit.icon.UIKitIcon
+import com.rafdev.moneyflow.ui.uikit.icon.UIKitIcons
 import com.rafdev.moneyflow.ui.uikit.text.UIKitText
 
 @Composable
@@ -55,30 +57,20 @@ fun ExpenseCard(
                     modifier = Modifier,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    IconButton(
-                        onClick = onUpdate,
-                        modifier = Modifier.size(18.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Edit,
-                            contentDescription = "Actualizar",
-                            tint = Primary,
-                        )
-                    }
 
-                    Spacer(modifier = Modifier.width(10.dp))
+                    UIKitIcon(
+                        iconRes = UIKitIcons.edit,
+                        contentDescription = "Actualizar",
+                        onClick = onUpdate
+                    )
 
-                    IconButton(
-                        onClick = onDelete,
-                        modifier = Modifier.size(20.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Delete,
-                            contentDescription = "Eliminar",
-                            tint = Primary,
+                    Spacer(modifier = Modifier.width(4.dp))
 
-                            )
-                    }
+                    UIKitIcon(
+                        iconRes = UIKitIcons.delete,
+                        contentDescription = "Eliminar",
+                        onClick = onDelete
+                    )
                 }
             }
 
