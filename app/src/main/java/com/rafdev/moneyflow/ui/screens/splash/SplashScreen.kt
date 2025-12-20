@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rafdev.moneyflow.R
+import com.rafdev.moneyflow.ui.theme.Background
 import com.rafdev.moneyflow.ui.theme.Palette
 import kotlinx.coroutines.delay
 
@@ -33,7 +34,7 @@ fun SplashScreen(onNavigateNext: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Palette.background),
+            .background(Background),
         contentAlignment = Alignment.Center
     ) {
         Column(

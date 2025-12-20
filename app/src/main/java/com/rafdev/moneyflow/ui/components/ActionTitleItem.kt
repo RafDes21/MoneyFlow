@@ -10,7 +10,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.rafdev.moneyflow.R
 import com.rafdev.moneyflow.ui.uikit.icon.UIKitIcon
-import com.rafdev.moneyflow.ui.uikit.icon.UIKitIcons
 import com.rafdev.moneyflow.ui.uikit.text.UIKitText
 
 @Composable
@@ -19,6 +18,7 @@ fun ActionTitleItem(
     @DrawableRes iconRes: Int,
     iconSize: Dp = 24.dp,
     modifier: Modifier = Modifier,
+    pushIconToEnd: Boolean = true,
     onClick: () -> Unit
 ) {
     Row(
@@ -27,7 +27,7 @@ fun ActionTitleItem(
     ) {
         UIKitText(
             text = title,
-            modifier = Modifier.weight(1f)
+            modifier = if (pushIconToEnd) Modifier.weight(1f) else Modifier
         )
 
         UIKitIcon(
@@ -46,6 +46,7 @@ private fun ActionTitleItemPreview() {
     ActionTitleItem(
         title = "Gastos fijos",
         iconRes = R.drawable.ic_add,
+        pushIconToEnd = false,
         onClick = {}
     )
 }

@@ -107,7 +107,7 @@ fun HomeScreen(
                 ActionTitleItem(
                     modifier = Modifier.padding(bottom = 8.dp),
                     title = "PROGRAMADOS",
-                    iconRes = R.drawable.ic_add
+                    iconRes = R.drawable.ic_add,
                 ) {
                     activeBottomSheet()
                 }

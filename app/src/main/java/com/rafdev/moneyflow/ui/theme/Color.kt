@@ -17,7 +17,7 @@ val Surface    = Color(0xFF0B0B0B)
 val SurfaceAlt = Color(0xFF000000)
 val Primary        = Color(0xFF22C55E)
 val PrimaryVariant = Color(0xFF16A34A)
-val TextPrimary = (0xFFFFFFFF)
+val TextPrimary = Color(0xFFFFFFFF)
 val TextSecondary = Color(0xFFA1A1AA)
 val TextMuted     = Color(0xFF9CA3AF)
 val Gray = Color(0xFF1E1E1E)
@@ -32,10 +32,10 @@ object Palette {
 
     val primary = Color(0xFF111827)
 
-    val background = Color(0xFF111827)
+    //val background = Color(0xFF111827)
     val Surface = Color(0xFFFFFFFF)
 
-    val TextPrimary = Color(0xFF111827)
+    //val TextPrimary = Color(0xFF111827)
     val TextSecondary = Color(0xFF6B7280)
     val TextTertiary = Color(0xFF9CA3AF)
     val TextOnDark = Color.White

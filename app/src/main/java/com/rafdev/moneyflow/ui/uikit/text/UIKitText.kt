@@ -16,7 +16,7 @@ fun UIKitText(
     text: String,
     fontSize: TextUnit = 16.sp,
     modifier: Modifier = Modifier,
-    color: Color = Color(TextPrimary),
+    color: Color = TextPrimary,
     textAlign: TextAlign = TextAlign.Start
 ) {
 
