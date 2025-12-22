@@ -160,7 +160,7 @@ fun PlannedExpensesContent(
             ActionTitleItem(
                 title = "Agregar",
                 iconRes = UIKitIcons.Add,
-                onClick = onAddClick,
+                onClick = {onAddClick()},
                 pushIconToEnd = false
             )
         }

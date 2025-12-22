@@ -2,6 +2,8 @@ package com.rafdev.moneyflow.ui.components
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,12 +31,12 @@ fun ActionTitleItem(
             text = title,
             modifier = if (pushIconToEnd) Modifier.weight(1f) else Modifier
         )
-
+        Spacer(Modifier.width(4.dp))
         UIKitIcon(
             iconRes =iconRes,
             contentDescription = "Agregar",
             size = iconSize,
-            padding = 4.dp,
+            padding = 8.dp,
             onClick = onClick
         )
     }

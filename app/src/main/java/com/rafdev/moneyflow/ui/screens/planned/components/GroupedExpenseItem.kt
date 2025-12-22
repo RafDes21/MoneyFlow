@@ -41,7 +41,7 @@ fun GroupedExpenseItem(
     ) {
         Column(modifier = Modifier.weight(1f)) {
             UIKitText(text = title)
-            Spacer(Modifier.height(2.dp))
+            Spacer(Modifier.height(8.dp))
             UIKitText(
                 text = subtitle,
             )
@@ -53,7 +53,7 @@ fun GroupedExpenseItem(
             UIKitText(
                 text = amount,
             )
-
+            Spacer(Modifier.height(8.dp))
             Box {
                 UIKitIcon(
                     iconRes = UIKitIcons.more,

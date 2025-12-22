@@ -56,6 +56,6 @@ fun UIKitIconPreview() {
     UIKitIcon(
         iconRes = UIKitIcons.Add,
         "Add",
-        padding = 4.dp
+        padding = 8.dp
     )
 }
