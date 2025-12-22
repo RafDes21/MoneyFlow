@@ -51,7 +51,8 @@ import com.rafdev.moneyflow.utils.Constants
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     onNavigate: () -> Unit,
-    onOpenSheet: (SheetMode) -> Unit
+    onOpenSheet: (SheetMode) -> Unit,
+    onOpenOverLay: () -> Unit
 ) {
 
     val context = LocalContext.current
@@ -126,10 +127,8 @@ fun HomeScreen(
                     title = "ACTIVIDADES",
                     iconRes = R.drawable.ic_add,
                     modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
-
-                    ) {
-                    showDialogAdd = true
-                }
+                    onClick = { onOpenOverLay() }
+                )
 
             }
 
