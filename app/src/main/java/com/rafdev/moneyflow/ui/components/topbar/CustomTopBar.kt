@@ -50,7 +50,7 @@ fun CustomTopBar(
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = "Back",
-                    tint = Color(TextPrimary)
+                    tint = TextPrimary
                 )
             }
         }
@@ -58,7 +58,7 @@ fun CustomTopBar(
             text = title,
             fontSize = 20.sp
             ,
-            color = Color(TextPrimary)
+            color = TextPrimary
         )
     }
 
