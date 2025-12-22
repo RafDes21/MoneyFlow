@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.rafdev.domain.model.Expense
+import com.rafdev.moneyflow.SheetMode
 import com.rafdev.moneyflow.ui.components.ActionTitleItem
 import com.rafdev.moneyflow.ui.screens.planned.components.GroupedExpenseItem
 import com.rafdev.moneyflow.ui.theme.TextPrimary
@@ -117,13 +118,14 @@ fun PlannedExpensesScreen(viewModel: PlannedExpensesViewModel = hiltViewModel())
 
 @Composable
 fun PlannedExpensesScreen(
-    viewModel: PlannedExpensesViewModel = hiltViewModel()
+    viewModel: PlannedExpensesViewModel = hiltViewModel(),
+    onOpenSheet: (SheetMode) -> Unit
 ) {
     val state by viewModel.state.collectAsState()
 
     PlannedExpensesContent(
         state = state,
-        onAddClick = { /* abrir dialog */ },
+        onOpenSheet = onOpenSheet,
         onDelete = { id ->
             //viewModel.deleteExpenseById(id)
         }
@@ -134,7 +136,7 @@ fun PlannedExpensesScreen(
 @Composable
 fun PlannedExpensesContent(
     state: ExpenseState,
-    onAddClick: () -> Unit,
+    onOpenSheet: (SheetMode) -> Unit,
     onDelete: (Long) -> Unit
 ) {
     val context = LocalContext.current
@@ -160,7 +162,7 @@ fun PlannedExpensesContent(
             ActionTitleItem(
                 title = "Agregar",
                 iconRes = UIKitIcons.Add,
-                onClick = {onAddClick()},
+                onClick = { onOpenSheet(SheetMode.ADD)},
                 pushIconToEnd = false
             )
         }
@@ -225,7 +227,7 @@ fun PlannedExpensesScreenPreview() {
                 )
             )
         ),
-        onAddClick = {},
+        onOpenSheet = {},
         onDelete = {}
     )
 }

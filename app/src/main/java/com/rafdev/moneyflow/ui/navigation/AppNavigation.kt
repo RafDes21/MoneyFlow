@@ -14,6 +14,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.rafdev.moneyflow.R
+import com.rafdev.moneyflow.SheetMode
 import com.rafdev.moneyflow.ui.components.BottomSheet
 import com.rafdev.moneyflow.ui.components.bottombar.CustomBottomBar
 import com.rafdev.moneyflow.ui.components.topbar.CustomTopBar
@@ -33,6 +34,8 @@ fun AppNavigation(
     val currentRoute = backStackEntry?.destination?.route
 
     var showBottomSheet by remember { mutableStateOf(false) }
+    var sheetMode by remember { mutableStateOf<SheetMode?>(null) }
+
 
     val showBars = currentRoute != Splash::class.qualifiedName
 
@@ -83,8 +86,9 @@ fun AppNavigation(
                     onNavigate = {
                         navController.navigate(FixedExpenses)
                     },
-                    activeBottomSheet = {
+                    onOpenSheet = { mode ->
                         showBottomSheet = true
+                        sheetMode = mode
                     }
                 )
             }
@@ -97,12 +101,18 @@ fun AppNavigation(
             }
 
             composable<FixedExpenses> {
-                PlannedExpensesScreen()
+                PlannedExpensesScreen(
+                    onOpenSheet = { mode ->
+                        showBottomSheet = true
+                        sheetMode = mode
+                    }
+                )
             }
         }
 
-        if (showBottomSheet) {
+        if (showBottomSheet && sheetMode != null) {
             BottomSheet(
+                mode = sheetMode!!,
                 title = "Agregar monto fijo mensual",
                 onDismiss = { showBottomSheet = false }
             ) { inputTitle, description, amount, currentDaTime ->

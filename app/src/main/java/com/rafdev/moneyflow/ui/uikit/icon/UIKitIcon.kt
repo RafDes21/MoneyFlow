@@ -30,8 +30,8 @@ fun UIKitIcon(
     val clickableModifier = if (onClick != null) {
         Modifier
             .clickable(
+                onClick = onClick,
                 enabled = enabled,
-                onClick = onClick
             )
     } else {
         Modifier
