@@ -28,9 +28,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.rafdev.moneyflow.ui.theme.Primary
 import com.rafdev.moneyflow.utils.Constants
 import com.rafdev.moneyflow.utils.getCurrentDateTime
 
@@ -51,7 +53,7 @@ fun CustomDialog(
         Surface(
             modifier = Modifier
                 .fillMaxSize(),
-            color = Color.White,
+            color = Primary,
             shape = RoundedCornerShape(16.dp),
         ) {
             Column(
@@ -131,4 +133,16 @@ fun CustomDialog(
             }
         }
     }
+}
+
+@Preview(
+    showBackground = true,
+    showSystemUi = true
+)
+@Composable
+fun CustomDialogPreview() {
+    CustomDialog(
+        onDismiss = {},
+        onSave = { _, _, _, _ -> }
+    )
 }

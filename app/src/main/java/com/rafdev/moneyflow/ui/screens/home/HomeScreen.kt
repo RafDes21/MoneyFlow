@@ -1,5 +1,6 @@
 package com.rafdev.moneyflow.ui.screens.home
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -32,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.rafdev.domain.model.Expense
 import com.rafdev.moneyflow.R
+import com.rafdev.moneyflow.SheetMode
 import com.rafdev.moneyflow.ui.components.ActionTitleItem
 import com.rafdev.moneyflow.ui.components.CustomDialog
 import com.rafdev.moneyflow.ui.components.DialogApp
@@ -49,7 +51,8 @@ import com.rafdev.moneyflow.utils.Constants
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     onNavigate: () -> Unit,
-    activeBottomSheet: () -> Unit
+    onOpenSheet: (SheetMode) -> Unit,
+    onOpenOverLay: () -> Unit
 ) {
 
     val context = LocalContext.current
@@ -108,9 +111,8 @@ fun HomeScreen(
                     modifier = Modifier.padding(bottom = 8.dp),
                     title = "PROGRAMADOS",
                     iconRes = R.drawable.ic_add,
-                ) {
-                    activeBottomSheet()
-                }
+                    onClick = { onOpenSheet(SheetMode.ADD) }
+                )
                 UIKitCard(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = { onNavigate() }
@@ -125,10 +127,8 @@ fun HomeScreen(
                     title = "ACTIVIDADES",
                     iconRes = R.drawable.ic_add,
                     modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
-
-                    ) {
-                    showDialogAdd = true
-                }
+                    onClick = { onOpenOverLay() }
+                )
 
             }
 

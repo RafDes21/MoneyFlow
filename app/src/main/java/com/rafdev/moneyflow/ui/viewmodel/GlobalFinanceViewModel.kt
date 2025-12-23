@@ -16,6 +16,7 @@ class GlobalFinanceViewModel @Inject constructor(
 ) : ViewModel() {
 
     fun saveExpense(
+        id:Int,
         title: String,
         description: String,
         currentDateTime: String,
@@ -25,7 +26,7 @@ class GlobalFinanceViewModel @Inject constructor(
         val type = if (typeValue == 0) "recurring" else "fixed"
 
         val expense = Expense(
-            id = 0,
+            id = id,
             name = title,
             amount = amount,
             type = type,

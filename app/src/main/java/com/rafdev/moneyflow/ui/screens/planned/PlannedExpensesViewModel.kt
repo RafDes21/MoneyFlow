@@ -28,30 +28,6 @@ class PlannedExpensesViewModel @Inject constructor(
         fetchExpenses()
     }
 
-    fun saveExpense(title: String, description: String,currentDateTime:String, amount: Double) {
-
-        val expense = Expense(
-            id = 0,
-            name = title,
-            amount = amount,
-            type = "fixed",
-            description = description,
-            image = "",
-            color = "",
-            date = currentDateTime,
-            category = "",
-            recurring = false,
-            period = "",
-            paymentMethod = "",
-            notes = "",
-            isPaid = false
-        )
-
-        viewModelScope.launch {
-            insertExpenseUseCase.invoke(expense)
-        }
-    }
-
     fun deleteExpenseById(id:Int){
         viewModelScope.launch {
             deleteExpenseUseCase.execute(id)
@@ -68,14 +44,7 @@ class PlannedExpensesViewModel @Inject constructor(
     }
 
 
-    fun handleNumberInput(input: String): Double? {
-        val result = numberFormatter.parseAndFormatToDouble(input)
-        result?.let {
-            return it
-        }?: run {
-            return null
-        }
-    }
+
 
 }
 
