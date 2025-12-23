@@ -21,6 +21,7 @@ fun ExpenseEntity.toUi() = Expense(
 )
 
 fun Expense.toDb() = ExpenseEntity(
+    id = id,
     name = name,
     description = description,
     amount = amount,

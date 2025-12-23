@@ -25,6 +25,7 @@ import com.rafdev.moneyflow.SheetMode
 import com.rafdev.moneyflow.ui.components.BottomSheet
 import com.rafdev.moneyflow.ui.components.bottombar.CustomBottomBar
 import com.rafdev.moneyflow.ui.components.topbar.CustomTopBar
+import com.rafdev.moneyflow.ui.model.ExpenseFormUi
 import com.rafdev.moneyflow.ui.screens.home.HomeScreen
 import com.rafdev.moneyflow.ui.screens.note.NoteScreen
 import com.rafdev.moneyflow.ui.screens.overlay.AddEditFixedExpenseOverlay
@@ -33,6 +34,7 @@ import com.rafdev.moneyflow.ui.screens.splash.SplashScreen
 import com.rafdev.moneyflow.ui.theme.Background
 import com.rafdev.moneyflow.ui.theme.Primary
 import com.rafdev.moneyflow.ui.viewmodel.GlobalFinanceViewModel
+import com.rafdev.moneyflow.utils.getCurrentDateTime
 
 @Composable
 fun AppNavigation(
@@ -47,7 +49,9 @@ fun AppNavigation(
     var sheetMode by remember { mutableStateOf<SheetMode?>(null) }
     var showOverlay by remember { mutableStateOf(false) }
 
-
+    var currentForm by remember {
+        mutableStateOf(ExpenseFormUi())
+    }
     val showBars = currentRoute != Splash::class.qualifiedName
 
 
@@ -101,6 +105,7 @@ fun AppNavigation(
                             navController.navigate(FixedExpenses)
                         },
                         onOpenSheet = { mode ->
+                            currentForm = ExpenseFormUi()
                             showBottomSheet = true
                             sheetMode = mode
                         },
@@ -117,9 +122,20 @@ fun AppNavigation(
 
                 composable<FixedExpenses> {
                     PlannedExpensesScreen(
-                        onOpenSheet = { mode ->
+                        onAddExpense = {
+                            sheetMode = SheetMode.ADD
+                            currentForm = ExpenseFormUi()
                             showBottomSheet = true
-                            sheetMode = mode
+                        },
+                        onEditExpense = { expense ->
+                            sheetMode = SheetMode.EDIT
+                            currentForm = ExpenseFormUi(
+                                id = expense.id,
+                                title = expense.name,
+                                description = expense.description,
+                                amount = expense.amount.toString()
+                            )
+                            showBottomSheet = true
                         }
                     )
                 }
@@ -144,12 +160,20 @@ fun AppNavigation(
         if (showBottomSheet && sheetMode != null) {
             BottomSheet(
                 mode = sheetMode!!,
-                title = "Agregar monto fijo mensual",
-                onDismiss = { showBottomSheet = false }
-            ) { inputTitle, description, amount, currentDaTime ->
-                globalVM.saveExpense(inputTitle, description, currentDaTime, amount.toDouble(), 1)
-                showBottomSheet = false
-            }
+                form = currentForm,
+                onDismiss = { showBottomSheet = false },
+                onSave = { form ->
+                    globalVM.saveExpense(
+                        id = form.id ?: 0,
+                        title = form.title,
+                        description = form.description,
+                        currentDateTime = getCurrentDateTime(),
+                        amount = form.amount.toDouble(),
+                        typeValue = 1
+                    )
+                    showBottomSheet = false
+                }
+            )
         }
     }
 }

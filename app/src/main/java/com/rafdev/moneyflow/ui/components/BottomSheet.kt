@@ -25,6 +25,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rafdev.moneyflow.SheetMode
+import com.rafdev.moneyflow.ui.model.ExpenseFormUi
 import com.rafdev.moneyflow.ui.theme.CardBorder
 import com.rafdev.moneyflow.ui.theme.CardColor
 import com.rafdev.moneyflow.ui.theme.Primary
@@ -39,13 +40,13 @@ import com.rafdev.moneyflow.utils.getCurrentDateTime
 @Composable
 fun BottomSheet(
     mode: SheetMode,
-    title: String,
+    form: ExpenseFormUi,
     onDismiss: () -> Unit,
-    onSave: (String, String, String, String) -> Unit
+    onSave: (ExpenseFormUi) -> Unit
 ) {
-    var inputTitle by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
-    var amount by remember { mutableStateOf("") }
+    var localForm by remember(form) {
+        mutableStateOf(form)
+    }
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -53,17 +54,20 @@ fun BottomSheet(
     ) {
         ContentBottomSheet(
             mode = mode,
-            headerTitle = title,
-            inputTitle = inputTitle,
-            description = description,
-            amount = amount,
-            onTitleChange = { inputTitle = it },
-            onDescriptionChange = { description = it },
-            onAmountChange = { amount = it },
-            onSave = {
-                val currentDateTime = getCurrentDateTime()
-                onSave(inputTitle, description, amount, currentDateTime)
-            }
+            inputTitle = localForm.title,
+            description = localForm.description,
+            amount = localForm.amount,
+
+            onTitleChange = {
+                localForm = localForm.copy(title = it)
+            },
+            onDescriptionChange = {
+                localForm = localForm.copy(description = it)
+            },
+            onAmountChange = {
+                localForm = localForm.copy(amount = it)
+            },
+            onSave = { onSave(localForm) }
         )
     }
 }
@@ -71,7 +75,6 @@ fun BottomSheet(
 @Composable
 fun ContentBottomSheet(
     mode: SheetMode,
-    headerTitle: String,
     inputTitle: String,
     description: String,
     amount: String,
@@ -160,7 +163,6 @@ fun ContentBottomSheet(
 fun ContentBottomSheetPreview() {
     ContentBottomSheet(
         mode = SheetMode.ADD,
-        headerTitle = "Agregar gasto",
         inputTitle = "",
         description = "",
         amount = "",

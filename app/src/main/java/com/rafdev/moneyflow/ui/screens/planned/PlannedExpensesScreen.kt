@@ -23,112 +23,29 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rafdev.domain.model.Expense
-import com.rafdev.moneyflow.SheetMode
 import com.rafdev.moneyflow.ui.components.ActionTitleItem
+import com.rafdev.moneyflow.ui.components.DialogApp
 import com.rafdev.moneyflow.ui.screens.planned.components.GroupedExpenseItem
 import com.rafdev.moneyflow.ui.theme.TextPrimary
 import com.rafdev.moneyflow.ui.theme.Background
 import com.rafdev.moneyflow.ui.uikit.icon.UIKitIcons
 
 
-/*@Composable
-fun PlannedExpensesScreen(viewModel: PlannedExpensesViewModel = hiltViewModel()) {
-
-    val context = LocalContext.current
-
-    var showDialog by remember { mutableStateOf(false) }
-    val state by viewModel.state.collectAsState()
-
-    var showToast by remember { mutableStateOf(false) }
-
-    LaunchedEffect(showToast) {
-        if (showToast) {
-            Toast.makeText(context, "Error en el valor ingresado", Toast.LENGTH_SHORT).show()
-            showToast = false
-        }
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(10.dp, 20.dp, 10.dp, 0.dp)
-    ) {
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.End
-        ) {
-            Row(
-                modifier = Modifier
-                    .clickable { showDialog = true }
-            ) {
-                Text(text = Constants.ShortTexts.ADD)
-                Spacer(modifier = Modifier.width(8.dp))
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = Constants.Labels.NEW_BUDGET_TITLE
-                )
-            }
-        }
-
-        LazyColumn {
-            state.success?.let { expenses ->
-                items(expenses, key = { it.id }) { expense ->
-
-                    val dateTimeParts = expense.date.split(" ")
-                    val date = dateTimeParts.getOrNull(0) ?: ""
-                    val time = dateTimeParts.getOrNull(1) ?: ""
-
-                    ExpenseCard(
-                        title = expense.name,
-                        time = "",
-                        amount = expense.amount.toString(),
-                        date = "",
-                        onDetail = {},
-                        onUpdate = { /* Acción para actualizar */ },
-                        onDelete = {
-                            viewModel.deleteExpenseById(expense.id)
-                        }
-                    )
-                }
-            }
-        }
-
-
-        if (showDialog) {
-            CustomDialog(
-                onDismiss = { showDialog = false }
-            ) { title, description, amount, currentDaTime ->
-                val result = viewModel.handleNumberInput(amount)
-                result?.let {
-                    viewModel.saveExpense(title, description, currentDaTime, it)
-                    showDialog = false
-                } ?: run {
-                    showToast = true
-                }
-
-            }
-        }
-
-    }
-}*/
-
-
 @Composable
 fun PlannedExpensesScreen(
     viewModel: PlannedExpensesViewModel = hiltViewModel(),
-    onOpenSheet: (SheetMode) -> Unit
+    onAddExpense: () -> Unit,
+    onEditExpense: (Expense) -> Unit
 ) {
     val state by viewModel.state.collectAsState()
 
     PlannedExpensesContent(
         state = state,
-        onOpenSheet = onOpenSheet,
-        onDelete = { id ->
-            //viewModel.deleteExpenseById(id)
-        }
+        onAddExpense = onAddExpense,
+        onEditExpense = onEditExpense,
+        onDeleteExpense = viewModel::deleteExpenseById
     )
 }
 
@@ -136,11 +53,15 @@ fun PlannedExpensesScreen(
 @Composable
 fun PlannedExpensesContent(
     state: ExpenseState,
-    onOpenSheet: (SheetMode) -> Unit,
-    onDelete: (Long) -> Unit
+    onAddExpense: () -> Unit,
+    onEditExpense: (Expense) -> Unit,
+    onDeleteExpense: (Int) -> Unit
 ) {
     val context = LocalContext.current
     var showToast by remember { mutableStateOf(false) }
+
+    var showDialogApp by remember { mutableStateOf(false) }
+    var expenseToDelete by remember { mutableStateOf<Expense?>(null) }
 
     LaunchedEffect(showToast) {
         if (showToast) {
@@ -162,7 +83,7 @@ fun PlannedExpensesContent(
             ActionTitleItem(
                 title = "Agregar",
                 iconRes = UIKitIcons.Add,
-                onClick = { onOpenSheet(SheetMode.ADD)},
+                onClick = onAddExpense,
                 pushIconToEnd = false
             )
         }
@@ -172,16 +93,35 @@ fun PlannedExpensesContent(
                 items(expenses, key = { it.id }) { expense ->
                     GroupedExpenseItem(
                         title = expense.name,
-                        subtitle = "",
+                        subtitle = expense.description,
                         amount = expense.amount.toString(),
-                        onEdit = {},
-                        onDelete = {}
+                        onEdit = { onEditExpense(expense) },
+                        onDelete = {
+                            expenseToDelete = expense
+                            showDialogApp = true
+                        }
                     )
                     Divider(
                         color = TextPrimary.copy(alpha = 0.08f)
                     )
                 }
             }
+        }
+
+        if (showDialogApp) {
+            DialogApp(
+                title = "Eliminar",
+                description = "¿Estás seguro de que deseas eliminar este elemento? Esta acción no se puede deshacer.",
+                onConfirm = {
+                    onDeleteExpense(expenseToDelete?.id!!)
+                    expenseToDelete = null
+                    showDialogApp = false
+                },
+                onDismiss = {
+                    expenseToDelete = null
+                    showDialogApp = false
+                }
+            )
         }
     }
 }
@@ -227,8 +167,9 @@ fun PlannedExpensesScreenPreview() {
                 )
             )
         ),
-        onOpenSheet = {},
-        onDelete = {}
+        onAddExpense = {},
+        onEditExpense = {},
+        onDeleteExpense = {}
     )
 }
 
