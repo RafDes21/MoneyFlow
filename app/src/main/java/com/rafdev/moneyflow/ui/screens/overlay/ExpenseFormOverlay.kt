@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -25,8 +26,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
@@ -34,15 +38,25 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.rafdev.moneyflow.ui.components.AppTextField
 import com.rafdev.moneyflow.ui.theme.Background
+import com.rafdev.moneyflow.ui.uikit.icon.UIKitIcon
+import com.rafdev.moneyflow.ui.uikit.icon.UIKitIcons
+import com.rafdev.moneyflow.ui.uikit.text.UIKitText
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddEditFixedExpenseOverlay(
+fun ExpenseFormOverlay(
     onClose: () -> Unit
 ) {
+
+    var title by remember { mutableStateOf("") }
+    var description by remember { mutableStateOf("") }
+    var amount by remember { mutableStateOf("") }
+
+
     val offsetX = remember { Animatable(0f) }
     val scope = rememberCoroutineScope()
 
@@ -72,6 +86,8 @@ fun AddEditFixedExpenseOverlay(
                 )
             }
             .background(Background)
+            .statusBarsPadding()
+
     ) {
 
         Column(modifier = Modifier.fillMaxSize()) {
@@ -81,13 +97,14 @@ fun AddEditFixedExpenseOverlay(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(16.dp)
             ) {
-                IconButton(onClick = onClose) {
-                    Icon(Icons.Default.Close, contentDescription = "Cerrar")
-                }
+                UIKitIcon(
+                    iconRes = UIKitIcons.close,
+                    contentDescription = "Cerrar",
+                    onClick = {onClose()}
+                )
 
-                Text(
+                UIKitText(
                     text = "Agregar / Editar gasto",
-                    style = MaterialTheme.typography.titleLarge
                 )
             }
 
@@ -99,15 +116,15 @@ fun AddEditFixedExpenseOverlay(
                     .imePadding(),
                 contentPadding = PaddingValues(16.dp)
             ) {
-                items(20) {
-                    OutlinedTextField(
-                        value = "",
-                        onValueChange = {},
-                        label = { Text("Campo $it") },
-                        modifier = Modifier.fillMaxWidth()
+                item {
+                    AppTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = title,
+                        onValueChange = { title = it },
+                        label = "Título"
                     )
-                    Spacer(Modifier.height(12.dp))
                 }
+
             }
         }
     }
@@ -117,6 +134,6 @@ fun AddEditFixedExpenseOverlay(
 @Preview
 @Composable
 fun AddEditFixedExpenseOverlayPreview() {
-    AddEditFixedExpenseOverlay(onClose = {})
+    ExpenseFormOverlay(onClose = {})
 }
 

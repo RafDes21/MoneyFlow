@@ -28,7 +28,7 @@ import com.rafdev.moneyflow.ui.components.topbar.CustomTopBar
 import com.rafdev.moneyflow.ui.model.ExpenseFormUi
 import com.rafdev.moneyflow.ui.screens.home.HomeScreen
 import com.rafdev.moneyflow.ui.screens.note.NoteScreen
-import com.rafdev.moneyflow.ui.screens.overlay.AddEditFixedExpenseOverlay
+import com.rafdev.moneyflow.ui.screens.overlay.ExpenseFormOverlay
 import com.rafdev.moneyflow.ui.screens.planned.PlannedExpensesScreen
 import com.rafdev.moneyflow.ui.screens.splash.SplashScreen
 import com.rafdev.moneyflow.ui.theme.Background
@@ -152,7 +152,7 @@ fun AppNavigation(
                 targetOffsetX = { it }
             )
         ) {
-            AddEditFixedExpenseOverlay(
+            ExpenseFormOverlay(
                 onClose = { showOverlay = false }
             )
         }

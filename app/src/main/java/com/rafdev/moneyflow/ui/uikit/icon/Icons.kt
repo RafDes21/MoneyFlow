@@ -10,4 +10,5 @@ object UIKitIcons {
     val delete = R.drawable.ic_delete
     val more = R.drawable.ic_more
 
+    val close = R.drawable.ic_close
 }
