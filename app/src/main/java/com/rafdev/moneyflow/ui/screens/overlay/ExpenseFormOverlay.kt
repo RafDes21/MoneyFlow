@@ -16,15 +16,9 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,14 +28,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import com.rafdev.moneyflow.ui.components.AppTextField
 import com.rafdev.moneyflow.ui.theme.Background
+import com.rafdev.moneyflow.ui.uikit.button.UIKitButton
 import com.rafdev.moneyflow.ui.uikit.icon.UIKitIcon
 import com.rafdev.moneyflow.ui.uikit.icon.UIKitIcons
+import com.rafdev.moneyflow.ui.uikit.input.UIKitInput
 import com.rafdev.moneyflow.ui.uikit.text.UIKitText
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -92,7 +88,6 @@ fun ExpenseFormOverlay(
 
         Column(modifier = Modifier.fillMaxSize()) {
 
-            // HEADER
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(16.dp)
@@ -100,7 +95,7 @@ fun ExpenseFormOverlay(
                 UIKitIcon(
                     iconRes = UIKitIcons.close,
                     contentDescription = "Cerrar",
-                    onClick = {onClose()}
+                    onClick = { onClose() }
                 )
 
                 UIKitText(
@@ -117,12 +112,48 @@ fun ExpenseFormOverlay(
                 contentPadding = PaddingValues(16.dp)
             ) {
                 item {
-                    AppTextField(
+                    UIKitInput(
                         modifier = Modifier.fillMaxWidth(),
                         value = title,
                         onValueChange = { title = it },
                         label = "Título"
                     )
+                    Spacer(Modifier.height(12.dp))
+
+                }
+
+                item {
+                    UIKitInput(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = description,
+                        onValueChange = { description = it },
+                        label = "Descipción"
+                    )
+                    Spacer(Modifier.height(12.dp))
+
+                }
+
+                item {
+                    UIKitInput(
+                        value = amount,
+                        onValueChange = { amount = it },
+                        label = "Monto",
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                    )
+                    Spacer(Modifier.height(12.dp))
+
+                }
+
+                item {
+
+                    Spacer(Modifier.height(30.dp))
+
+                    UIKitButton(
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = {}
+                    ) {
+                        UIKitText(text = "Guardar")
+                    }
                 }
 
             }
