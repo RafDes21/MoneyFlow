@@ -16,6 +16,8 @@ class UserCardViewModel @Inject constructor(
     private val insertCreditCardUC: InsertCreditCardUC
 ) : ViewModel() {
 
+    private val _id = MutableStateFlow(0)
+    val id: StateFlow<Int> = _id.asStateFlow()
     private val _title = MutableStateFlow("")
     val title: StateFlow<String> = _title.asStateFlow()
 
@@ -46,6 +48,7 @@ class UserCardViewModel @Inject constructor(
 
     fun createCreditCard() {
         val request = CreditCardDomain(
+            id = _id.value,
             title = _title.value,
             number = _number.value,
             type = _cardType.value,

@@ -5,6 +5,7 @@ import com.rafdev.domain.model.CreditCardDomain
 
 fun CreditCardEntity.toDomain(): CreditCardDomain {
     return CreditCardDomain(
+        id = this.id,
         title = this.title,
         number = this.number,
         type = type,
@@ -12,6 +13,7 @@ fun CreditCardEntity.toDomain(): CreditCardDomain {
         total = total
     )
 }
+
 fun CreditCardDomain.toEntity(): CreditCardEntity {
     return CreditCardEntity(
         title = this.title,

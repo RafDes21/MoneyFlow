@@ -17,6 +17,6 @@ interface CreditCardDao {
     suspend fun insertCreditCard(creditCardEntity: CreditCardEntity)
 
     @Query("DELETE FROM creditCard WHERE id= :creditCardId")
-    fun deleteCreditCard(creditCardId: Int)
+    suspend fun deleteCreditCard(creditCardId: Int)
 
 }
