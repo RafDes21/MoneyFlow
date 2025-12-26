@@ -136,7 +136,8 @@ fun CreditCardContent(
                 total = "",
                 number = number,
                 backgroundColor = iconCardColor,
-                cardTypeImageRes = R.drawable.ic_visa
+                cardTypeImageRes =
+                    if (cardType == 1) R.drawable.ic_visa else R.drawable.ic_master
             )
 
             Spacer(modifier = Modifier.height(8.dp))
