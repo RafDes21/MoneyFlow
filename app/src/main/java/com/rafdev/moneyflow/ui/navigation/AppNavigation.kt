@@ -23,16 +23,17 @@ import androidx.navigation.compose.rememberNavController
 import com.rafdev.moneyflow.R
 import com.rafdev.moneyflow.SheetMode
 import com.rafdev.moneyflow.ui.components.BottomSheet
+import com.rafdev.moneyflow.ui.components.OverlayContainer
 import com.rafdev.moneyflow.ui.components.bottombar.CustomBottomBar
 import com.rafdev.moneyflow.ui.components.topbar.CustomTopBar
 import com.rafdev.moneyflow.ui.model.ExpenseFormUi
+import com.rafdev.moneyflow.ui.model.OverlayType
+import com.rafdev.moneyflow.ui.screens.card.CreditCardForm
 import com.rafdev.moneyflow.ui.screens.home.HomeScreen
-import com.rafdev.moneyflow.ui.screens.note.NoteScreen
-import com.rafdev.moneyflow.ui.screens.overlay.ExpenseFormOverlay
+import com.rafdev.moneyflow.ui.screens.note.CreditCardsScreen
+import com.rafdev.moneyflow.ui.screens.overlay.ExpenseFormContent
 import com.rafdev.moneyflow.ui.screens.planned.PlannedExpensesScreen
 import com.rafdev.moneyflow.ui.screens.splash.SplashScreen
-import com.rafdev.moneyflow.ui.theme.Background
-import com.rafdev.moneyflow.ui.theme.Primary
 import com.rafdev.moneyflow.ui.viewmodel.GlobalFinanceViewModel
 import com.rafdev.moneyflow.utils.getCurrentDateTime
 
@@ -48,6 +49,10 @@ fun AppNavigation(
     var showBottomSheet by remember { mutableStateOf(false) }
     var sheetMode by remember { mutableStateOf<SheetMode?>(null) }
     var showOverlay by remember { mutableStateOf(false) }
+
+    var overlayType by remember {
+        mutableStateOf<OverlayType>(OverlayType.None)
+    }
 
     var currentForm by remember {
         mutableStateOf(ExpenseFormUi())
@@ -109,13 +114,18 @@ fun AppNavigation(
                             showBottomSheet = true
                             sheetMode = mode
                         },
-                        onOpenOverLay = { showOverlay = true }
+                        onOpenOverLay = {
+                            overlayType = OverlayType.ExpenseForm
+                            showOverlay = true
+                        }
                     )
                 }
 
                 composable<Cards> {
-                    NoteScreen(
-                        onAddClick = {
+                    CreditCardsScreen(
+                        onAddCreditCard = {
+                            showOverlay = true
+                            overlayType = OverlayType.CreditCardForm
                         }
                     )
                 }
@@ -126,6 +136,8 @@ fun AppNavigation(
                             sheetMode = SheetMode.ADD
                             currentForm = ExpenseFormUi()
                             showBottomSheet = true
+                            overlayType = OverlayType.ExpenseForm
+
                         },
                         onEditExpense = { expense ->
                             sheetMode = SheetMode.EDIT
@@ -136,6 +148,7 @@ fun AppNavigation(
                                 amount = expense.amount.toString()
                             )
                             showBottomSheet = true
+                            overlayType = OverlayType.ExpenseForm
                         }
                     )
                 }
@@ -152,9 +165,21 @@ fun AppNavigation(
                 targetOffsetX = { it }
             )
         ) {
-            ExpenseFormOverlay(
+            OverlayContainer(
                 onClose = { showOverlay = false }
-            )
+            ) {
+                when (overlayType) {
+                    OverlayType.ExpenseForm -> {
+                        ExpenseFormContent(onClose = {showOverlay = false})
+                    }
+
+                    OverlayType.CreditCardForm -> {
+                        CreditCardForm(onClose = {showOverlay = false})
+                    }
+
+                    OverlayType.None -> Unit
+                }
+            }
         }
 
         if (showBottomSheet && sheetMode != null) {

@@ -15,6 +15,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -29,12 +30,13 @@ import com.rafdev.moneyflow.ui.theme.TextSecondary
 fun UIKitCard(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
+    background: Color = CardColor,
     content: @Composable () -> Unit
 ) {
     Card(
         modifier = modifier,
         colors = CardDefaults.cardColors(
-            containerColor = CardColor
+            containerColor = background
         ),
         border = BorderStroke(1.dp, CardBorder),
         shape = RoundedCornerShape(16.dp),

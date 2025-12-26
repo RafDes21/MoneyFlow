@@ -42,19 +42,60 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.rafdev.moneyflow.R
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
 import com.rafdev.moneyflow.ui.components.CreditCard
 import com.rafdev.moneyflow.ui.components.DialogApp
+import com.rafdev.moneyflow.ui.theme.Background
+import com.rafdev.moneyflow.ui.theme.CardColor
 import com.rafdev.moneyflow.ui.theme.Palette
+import com.rafdev.moneyflow.ui.uikit.button.UIKitButton
+import com.rafdev.moneyflow.ui.uikit.icon.UIKitIcon
+import com.rafdev.moneyflow.ui.uikit.icon.UIKitIcons
+import com.rafdev.moneyflow.ui.uikit.text.UIKitText
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserCard(viewModel: UserCardViewModel = hiltViewModel()) {
+fun CreditCardForm(
+    viewModel: UserCardViewModel = hiltViewModel(),
+    onClose: () -> Unit
+) {
 
     val title by viewModel.title.collectAsState()
     val number by viewModel.number.collectAsState()
     val cardType by viewModel.cardType.collectAsState()
     val colorId by viewModel.colorId.collectAsState()
+
+    CreditCardContent(
+        title = title,
+        number = number,
+        cardType = cardType,
+        colorId = colorId,
+        onTitleChange = viewModel::onTitleChange,
+        onNumberChange = viewModel::onNumberChange,
+        onCardTypeChange = viewModel::onCardTypeChange,
+        onColorIdChange = viewModel::onColorIdChange,
+        onCreate = viewModel::createCreditCard,
+        onClose = onClose
+    )
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CreditCardContent(
+    title: String,
+    number: String,
+    cardType: Int,
+    colorId: Int,
+    onTitleChange: (String) -> Unit,
+    onNumberChange: (String) -> Unit,
+    onCardTypeChange: (Int) -> Unit,
+    onColorIdChange: (Int) -> Unit,
+    onCreate: () -> Unit,
+    onClose: () -> Unit
+) {
+
+    var showColorDialog by remember { mutableStateOf(false) }
+    var showCardTypeDialog by remember { mutableStateOf(false) }
 
     val iconCardColor = when (colorId) {
         1 -> Color(0xFF1E88E5)
@@ -63,32 +104,45 @@ fun UserCard(viewModel: UserCardViewModel = hiltViewModel()) {
         4 -> Color(0xFFFBC02D)
         5 -> Color(0xFF6A1B9A)
         6 -> Color(0xFF00897B)
-        else -> Color.Gray
+        else -> CardColor
     }
 
-    var showColorDialog by remember { mutableStateOf(false) }
-    var showCardTypeDialog by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
-            .background(MaterialTheme.colorScheme.background)
+            .background(Background)
             .fillMaxSize()
-            .padding(10.dp)
+            .padding(16.dp)
     ) {
+
         Column {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                UIKitIcon(
+                    iconRes = UIKitIcons.close,
+                    contentDescription = "Cerrar",
+                    onClick = { onClose() }
+                )
+                Spacer(Modifier.width(4.dp))
+                UIKitText(
+                    text = "Cerrar",
+                )
+            }
+            Spacer(Modifier.height(20.dp))
             CreditCard(
                 title = title,
                 total = "",
                 number = number,
-                cardType = cardType,
-                colorId = colorId
+                backgroundColor = iconCardColor,
+                cardTypeImageRes = R.drawable.ic_visa
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
             OutlinedTextField(
                 value = title,
-                onValueChange = viewModel::onTitleChange,
+                onValueChange = onTitleChange,
                 label = { Text("Título de la tarjeta") },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -99,7 +153,7 @@ fun UserCard(viewModel: UserCardViewModel = hiltViewModel()) {
                 value = number,
                 onValueChange = {
                     if (it.length <= 4 && it.all { char -> char.isDigit() }) {
-                        viewModel.onNumberChange(it)
+                        onNumberChange(it)
                     }
                 },
                 label = { Text("Últimos 4 dígitos") },
@@ -168,8 +222,11 @@ fun UserCard(viewModel: UserCardViewModel = hiltViewModel()) {
                 }
             }
             Spacer(modifier = Modifier.height(20.dp))
-            Button(modifier = Modifier.fillMaxWidth(), onClick = { viewModel.createCreditCard() }) {
-                Text(text = "Crear Tarjeta")
+            UIKitButton(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = onCreate
+            ) {
+                UIKitText(text = "Crear Tarjeta")
             }
         }
 
@@ -190,7 +247,7 @@ fun UserCard(viewModel: UserCardViewModel = hiltViewModel()) {
                             modifier = Modifier
                                 .size(80.dp)
                                 .clickable {
-                                    viewModel.onCardTypeChange(1)
+                                    onCardTypeChange(1)
                                     showCardTypeDialog = false
                                 }
                         )
@@ -200,7 +257,7 @@ fun UserCard(viewModel: UserCardViewModel = hiltViewModel()) {
                             modifier = Modifier
                                 .size(80.dp)
                                 .clickable {
-                                    viewModel.onCardTypeChange(0)
+                                    onCardTypeChange(0)
                                     showCardTypeDialog = false
                                 }
                         )
@@ -242,7 +299,7 @@ fun UserCard(viewModel: UserCardViewModel = hiltViewModel()) {
                                 modifier = Modifier
                                     .size(60.dp)
                                     .clickable {
-                                        viewModel.onColorIdChange(id)
+                                        onColorIdChange(id)
                                         showColorDialog = false
                                     }
                             )
@@ -257,5 +314,16 @@ fun UserCard(viewModel: UserCardViewModel = hiltViewModel()) {
 @Preview(showSystemUi = true)
 @Composable
 fun UserCardPreview() {
-    UserCard()
+    CreditCardContent(
+        title = "Mi tarjeta",
+        number = "1234",
+        cardType = 1,
+        colorId = 1,
+        onTitleChange = {},
+        onNumberChange = {},
+        onCardTypeChange = {},
+        onColorIdChange = {},
+        onCreate = {},
+        onClose = {}
+    )
 }
