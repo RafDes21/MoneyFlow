@@ -96,6 +96,7 @@ fun CreditCardContent(
 
     var showColorDialog by remember { mutableStateOf(false) }
     var showCardTypeDialog by remember { mutableStateOf(false) }
+    val isFormValid = title.isNotBlank() && number.length == 4
 
     val iconCardColor = when (colorId) {
         1 -> Color(0xFF1E88E5)
@@ -143,7 +144,7 @@ fun CreditCardContent(
             OutlinedTextField(
                 value = title,
                 onValueChange = onTitleChange,
-                label = { Text("Título de la tarjeta") },
+                label = { Text("Banco Emisor") },
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -224,6 +225,7 @@ fun CreditCardContent(
             Spacer(modifier = Modifier.height(20.dp))
             UIKitButton(
                 modifier = Modifier.fillMaxWidth(),
+                enabled = isFormValid,
                 onClick = onCreate
             ) {
                 UIKitText(text = "Crear Tarjeta")

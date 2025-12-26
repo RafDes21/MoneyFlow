@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
@@ -29,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -192,6 +194,9 @@ fun SwipeCreditCardItem(
     onDelete: () -> Unit,
     content: @Composable () -> Unit
 ) {
+
+    val cardShape = RoundedCornerShape(20.dp)
+
     val dismissState = rememberDismissState(
         confirmValueChange = { value ->
             when (value) {
@@ -199,16 +204,20 @@ fun SwipeCreditCardItem(
                     onDelete()
                     false // ⛔ no desaparece hasta confirmar
                 }
+
                 DismissValue.DismissedToEnd -> {
                     onEdit()
                     false
                 }
+
                 else -> false
             }
         }
     )
 
     SwipeToDismiss(
+        modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp)
+            .clip(cardShape),
         state = dismissState,
         background = {
             SwipeBackground(dismissState)
@@ -231,6 +240,7 @@ fun SwipeBackground(dismissState: DismissState) {
             Icons.Default.Edit,
             Alignment.CenterStart
         )
+
         DismissDirection.EndToStart -> Triple(
             Color.Red,
             Icons.Default.Delete,

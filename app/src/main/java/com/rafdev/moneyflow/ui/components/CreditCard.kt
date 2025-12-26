@@ -82,7 +82,7 @@ fun CreditCard(
 }
 
 
-@Preview
+@Preview(showSystemUi = true)
 @Composable
 fun CreditCardPreview() {
     CreditCard(
