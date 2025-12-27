@@ -42,19 +42,73 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.rafdev.moneyflow.R
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.runtime.LaunchedEffect
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rafdev.moneyflow.ui.components.CreditCard
 import com.rafdev.moneyflow.ui.components.DialogApp
+import com.rafdev.moneyflow.ui.theme.Background
+import com.rafdev.moneyflow.ui.theme.CardColor
 import com.rafdev.moneyflow.ui.theme.Palette
+import com.rafdev.moneyflow.ui.theme.Primary
+import com.rafdev.moneyflow.ui.uikit.button.UIKitButton
+import com.rafdev.moneyflow.ui.uikit.icon.UIKitIcon
+import com.rafdev.moneyflow.ui.uikit.icon.UIKitIcons
+import com.rafdev.moneyflow.ui.uikit.input.UIKitInput
+import com.rafdev.moneyflow.ui.uikit.text.UIKitText
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserCard(viewModel: UserCardViewModel = hiltViewModel()) {
+fun CreditCardForm(
+    viewModel: UserCardViewModel = hiltViewModel(),
+    onClose: () -> Unit
+) {
+
+    val formState by viewModel.formState.collectAsState()
 
     val title by viewModel.title.collectAsState()
     val number by viewModel.number.collectAsState()
     val cardType by viewModel.cardType.collectAsState()
     val colorId by viewModel.colorId.collectAsState()
+
+    CreditCardContent(
+        formState = formState,
+        title = title,
+        number = number,
+        cardType = cardType,
+        colorId = colorId,
+        onTitleChange = viewModel::onTitleChange,
+        onNumberChange = viewModel::onNumberChange,
+        onCardTypeChange = viewModel::onCardTypeChange,
+        onColorIdChange = viewModel::onColorIdChange,
+        onCreate = viewModel::createCreditCard,
+        onReset = viewModel::reset,
+        onClose = onClose
+    )
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CreditCardContent(
+    formState: CreditCardFormState,
+    title: String,
+    number: String,
+    cardType: Int,
+    colorId: Int,
+    onTitleChange: (String) -> Unit,
+    onNumberChange: (String) -> Unit,
+    onCardTypeChange: (Int) -> Unit,
+    onColorIdChange: (Int) -> Unit,
+    onCreate: () -> Unit,
+    onReset: () -> Unit,
+    onClose: () -> Unit
+) {
+
+    var showColorDialog by remember { mutableStateOf(false) }
+    var showCardTypeDialog by remember { mutableStateOf(false) }
+    val isFormValid = title.isNotBlank() && number.length == 4
 
     val iconCardColor = when (colorId) {
         1 -> Color(0xFF1E88E5)
@@ -63,48 +117,70 @@ fun UserCard(viewModel: UserCardViewModel = hiltViewModel()) {
         4 -> Color(0xFFFBC02D)
         5 -> Color(0xFF6A1B9A)
         6 -> Color(0xFF00897B)
-        else -> Color.Gray
+        else -> CardColor
     }
 
-    var showColorDialog by remember { mutableStateOf(false) }
-    var showCardTypeDialog by remember { mutableStateOf(false) }
+    formState.success.takeIf { it.isNotBlank() }?.let { message ->
+        LaunchedEffect(message) {
+            delay(900)
+            onClose()
+            onReset()
+        }
+    }
+
 
     Box(
         modifier = Modifier
-            .background(MaterialTheme.colorScheme.background)
+            .background(Background)
             .fillMaxSize()
-            .padding(10.dp)
+            .padding(16.dp)
     ) {
+
         Column {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                UIKitIcon(
+                    iconRes = UIKitIcons.close,
+                    contentDescription = "Cerrar",
+                    onClick = { onClose() }
+                )
+                Spacer(Modifier.width(4.dp))
+                UIKitText(
+                    text = "Cerrar",
+                )
+            }
+            Spacer(Modifier.height(20.dp))
             CreditCard(
                 title = title,
                 total = "",
                 number = number,
-                cardType = cardType,
-                colorId = colorId
+                backgroundColor = iconCardColor,
+                cardTypeImageRes =
+                    if (cardType == 1) R.drawable.ic_visa else R.drawable.ic_master
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            OutlinedTextField(
+            UIKitInput(
                 value = title,
-                onValueChange = viewModel::onTitleChange,
-                label = { Text("Título de la tarjeta") },
+                onValueChange = onTitleChange,
+                label = "Banco Emisor",
                 modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            OutlinedTextField(
+            UIKitInput(
                 value = number,
                 onValueChange = {
                     if (it.length <= 4 && it.all { char -> char.isDigit() }) {
-                        viewModel.onNumberChange(it)
+                        onNumberChange(it)
                     }
                 },
-                label = { Text("Últimos 4 dígitos") },
+                label = "Últimos 4 dígitos",
                 modifier = Modifier.width(170.dp),
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -168,8 +244,14 @@ fun UserCard(viewModel: UserCardViewModel = hiltViewModel()) {
                 }
             }
             Spacer(modifier = Modifier.height(20.dp))
-            Button(modifier = Modifier.fillMaxWidth(), onClick = { viewModel.createCreditCard() }) {
-                Text(text = "Crear Tarjeta")
+            UIKitButton(
+                modifier = Modifier.fillMaxWidth(),
+                enabled = isFormValid && !formState.isLoading,
+                onClick = onCreate
+            ) {
+                UIKitText(
+                    text = if (formState.isLoading) "Creando..." else "Crear Tarjeta"
+                )
             }
         }
 
@@ -190,7 +272,7 @@ fun UserCard(viewModel: UserCardViewModel = hiltViewModel()) {
                             modifier = Modifier
                                 .size(80.dp)
                                 .clickable {
-                                    viewModel.onCardTypeChange(1)
+                                    onCardTypeChange(1)
                                     showCardTypeDialog = false
                                 }
                         )
@@ -200,7 +282,7 @@ fun UserCard(viewModel: UserCardViewModel = hiltViewModel()) {
                             modifier = Modifier
                                 .size(80.dp)
                                 .clickable {
-                                    viewModel.onCardTypeChange(0)
+                                    onCardTypeChange(0)
                                     showCardTypeDialog = false
                                 }
                         )
@@ -242,7 +324,7 @@ fun UserCard(viewModel: UserCardViewModel = hiltViewModel()) {
                                 modifier = Modifier
                                     .size(60.dp)
                                     .clickable {
-                                        viewModel.onColorIdChange(id)
+                                        onColorIdChange(id)
                                         showColorDialog = false
                                     }
                             )
@@ -257,5 +339,18 @@ fun UserCard(viewModel: UserCardViewModel = hiltViewModel()) {
 @Preview(showSystemUi = true)
 @Composable
 fun UserCardPreview() {
-    UserCard()
+    CreditCardContent(
+        formState = CreditCardFormState(),
+        title = "Mi tarjeta",
+        number = "1234",
+        cardType = 1,
+        colorId = 1,
+        onTitleChange = {},
+        onNumberChange = {},
+        onCardTypeChange = {},
+        onColorIdChange = {},
+        onCreate = {},
+        onReset = {},
+        onClose = {}
+    )
 }

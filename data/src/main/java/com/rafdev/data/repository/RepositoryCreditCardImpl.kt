@@ -23,7 +23,7 @@ class RepositoryCreditCardImpl @Inject constructor(private val creditCardDao: Cr
         creditCardDao.insertCreditCard(creditCardDomain.toEntity())
     }
 
-    override fun deleteCreditCard(creditCardId: Int) {
-        TODO("Not yet implemented")
+    override suspend fun deleteCreditCard(creditCardId: Int) {
+        creditCardDao.deleteCreditCard(creditCardId)
     }
 }

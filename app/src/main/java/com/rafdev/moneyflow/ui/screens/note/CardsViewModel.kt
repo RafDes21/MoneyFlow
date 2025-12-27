@@ -3,6 +3,7 @@ package com.rafdev.moneyflow.ui.screens.note
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rafdev.domain.model.CreditCardDomain
+import com.rafdev.domain.usecase.creditCard.DeleteCreditCardUC
 import com.rafdev.domain.usecase.creditCard.GetAllCreditCardUC
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -19,7 +20,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CardsViewModel @Inject constructor(
-    private val getAllCreditCardUC: GetAllCreditCardUC
+    private val getAllCreditCardUC: GetAllCreditCardUC,
+    private val deleteCreditCardUC: DeleteCreditCardUC
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(UiState())
@@ -60,6 +62,12 @@ class CardsViewModel @Inject constructor(
             }
             .flowOn(Dispatchers.IO)
             .launchIn(viewModelScope)
+    }
+
+    fun deleteCreditCardById(id: Int) {
+        viewModelScope.launch {
+            deleteCreditCardUC.invoke(id)
+        }
     }
 }
 

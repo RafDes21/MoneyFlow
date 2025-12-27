@@ -9,6 +9,6 @@ interface RepositoryCreditCard {
 
     suspend fun insertCreditCard(creditCardDomain: CreditCardDomain)
 
-    fun deleteCreditCard(creditCardId: Int)
+    suspend fun deleteCreditCard(creditCardId: Int)
 
 }

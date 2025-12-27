@@ -9,6 +9,11 @@ val Surface    = Color(0xFF0B0B0B)
 val SurfaceAlt = Color(0xFF000000)
 val Primary        = Color(0xFF22C55E)
 val PrimaryVariant = Color(0xFF16A34A)
+val OnPrimary = Color(0xFFFFFFFF)
+
+val AccentActive   = Color(0xFFFB8C00)
+val AccentInactive = Color(0xFF3A3A3A)
+
 val TextPrimary = Color(0xFFFFFFFF)
 val TextSecondary = Color(0xFFA1A1AA)
 val TextMuted     = Color(0xFF9CA3AF)

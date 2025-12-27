@@ -6,6 +6,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.rafdev.moneyflow.ui.theme.Primary
@@ -17,7 +18,8 @@ fun UIKitButton(
     onClick: () -> Unit,
     enabled: Boolean = true,
     cornerRadius: Dp = 16.dp,
-    content: @Composable () -> Unit
+    background: Color = Primary,
+    content: @Composable () -> Unit,
 ) {
     Button(
         modifier = modifier,
@@ -25,7 +27,7 @@ fun UIKitButton(
         enabled = enabled,
         shape = RoundedCornerShape(cornerRadius),
         colors = ButtonDefaults.buttonColors(
-            containerColor = Primary,
+            containerColor = background,
             contentColor = TextPrimary,
             disabledContainerColor = Primary.copy(alpha = 0.4f),
             disabledContentColor = TextPrimary.copy(alpha = 0.6f)

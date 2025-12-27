@@ -57,3 +57,25 @@ fun rememberInputConfig(
         )
     }
 }
+
+enum class IconPosition {
+    LEFT, RIGHT
+}
+
+sealed class OverlayType {
+    object None : OverlayType()
+    object ExpenseForm : OverlayType()
+    object CreditCardForm : OverlayType()
+}
+
+data class OverlayState(
+    val visible: Boolean = false,
+    val type: OverlayType = OverlayType.None,
+    val origin: OverlayOrigin = OverlayOrigin.NONE
+)
+
+enum class OverlayOrigin {
+    NONE,
+    EXPENSE_FORM,
+    PLANNED_EXPENSES
+}
