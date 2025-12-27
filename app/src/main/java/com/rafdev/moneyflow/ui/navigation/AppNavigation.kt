@@ -3,7 +3,6 @@ package com.rafdev.moneyflow.ui.navigation
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -15,7 +14,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.zIndex
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -31,7 +29,7 @@ import com.rafdev.moneyflow.ui.model.OverlayType
 import com.rafdev.moneyflow.ui.screens.card.CreditCardForm
 import com.rafdev.moneyflow.ui.screens.home.HomeScreen
 import com.rafdev.moneyflow.ui.screens.note.CreditCardsScreen
-import com.rafdev.moneyflow.ui.screens.overlay.ExpenseFormContent
+import com.rafdev.moneyflow.ui.screens.overlay.ExpenseFormOverlay
 import com.rafdev.moneyflow.ui.screens.planned.PlannedExpensesScreen
 import com.rafdev.moneyflow.ui.screens.splash.SplashScreen
 import com.rafdev.moneyflow.ui.viewmodel.GlobalFinanceViewModel
@@ -170,11 +168,17 @@ fun AppNavigation(
             ) {
                 when (overlayType) {
                     OverlayType.ExpenseForm -> {
-                        ExpenseFormContent(onClose = {showOverlay = false})
+                        ExpenseFormOverlay(
+                            onClose = { showOverlay = false },
+                            onAddCard = {
+                                overlayType = OverlayType.CreditCardForm
+                                showOverlay = true
+                            }
+                        )
                     }
 
                     OverlayType.CreditCardForm -> {
-                        CreditCardForm(onClose = {showOverlay = false})
+                        CreditCardForm(onClose = { showOverlay = false })
                     }
 
                     OverlayType.None -> Unit
