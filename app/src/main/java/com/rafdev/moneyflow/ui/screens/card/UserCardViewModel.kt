@@ -46,6 +46,10 @@ class UserCardViewModel @Inject constructor(
         _colorId.value = newColor
     }
 
+
+    private val _formState = MutableStateFlow(CreditCardFormState())
+    val formState: StateFlow<CreditCardFormState> = _formState.asStateFlow()
+
     fun createCreditCard() {
         val request = CreditCardDomain(
             id = _id.value,
@@ -57,9 +61,35 @@ class UserCardViewModel @Inject constructor(
         )
 
         viewModelScope.launch {
-            insertCreditCardUC(request)
+            _formState.value = _formState.value.copy(
+                isLoading = true
+            )
+
+            runCatching {
+                insertCreditCardUC(request)
+            }.onSuccess {
+                _formState.value = _formState.value.copy(
+                    success = "Tarjeta creada correctamente"
+                )
+            }.onFailure {
+                _formState.value = _formState.value.copy(
+                    error = "Error al crear tarjeta"
+                )
+            }
+
         }
 
     }
 
+    fun reset() {
+        _formState.value = CreditCardFormState()
+        _title.value = ""
+        _number.value = ""
+    }
 }
+
+data class CreditCardFormState(
+    val isLoading: Boolean = false,
+    val success: String = "",
+    val error: String = ""
+)

@@ -54,7 +54,6 @@ fun CreditCardsScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
 
-    // 🔴 Estado para confirmar eliminación
     var showDeleteDialog by remember { mutableStateOf(false) }
     var cardToDelete by remember { mutableStateOf<CreditCardDomain?>(null) }
 

@@ -25,6 +25,8 @@ import com.rafdev.moneyflow.ui.components.OverlayContainer
 import com.rafdev.moneyflow.ui.components.bottombar.CustomBottomBar
 import com.rafdev.moneyflow.ui.components.topbar.CustomTopBar
 import com.rafdev.moneyflow.ui.model.ExpenseFormUi
+import com.rafdev.moneyflow.ui.model.OverlayOrigin
+import com.rafdev.moneyflow.ui.model.OverlayState
 import com.rafdev.moneyflow.ui.model.OverlayType
 import com.rafdev.moneyflow.ui.screens.card.CreditCardForm
 import com.rafdev.moneyflow.ui.screens.home.HomeScreen
@@ -46,10 +48,9 @@ fun AppNavigation(
 
     var showBottomSheet by remember { mutableStateOf(false) }
     var sheetMode by remember { mutableStateOf<SheetMode?>(null) }
-    var showOverlay by remember { mutableStateOf(false) }
 
-    var overlayType by remember {
-        mutableStateOf<OverlayType>(OverlayType.None)
+    var overlayState by remember {
+        mutableStateOf(OverlayState())
     }
 
     var currentForm by remember {
@@ -113,8 +114,11 @@ fun AppNavigation(
                             sheetMode = mode
                         },
                         onOpenOverLay = {
-                            overlayType = OverlayType.ExpenseForm
-                            showOverlay = true
+                            overlayState = OverlayState(
+                                visible = true,
+                                type = OverlayType.ExpenseForm,
+                                origin = OverlayOrigin.NONE
+                            )
                         }
                     )
                 }
@@ -122,8 +126,11 @@ fun AppNavigation(
                 composable<Cards> {
                     CreditCardsScreen(
                         onAddCreditCard = {
-                            showOverlay = true
-                            overlayType = OverlayType.CreditCardForm
+                            overlayState = OverlayState(
+                                visible = true,
+                                type = OverlayType.CreditCardForm,
+                                origin = OverlayOrigin.NONE
+                            )
                         }
                     )
                 }
@@ -134,7 +141,6 @@ fun AppNavigation(
                             sheetMode = SheetMode.ADD
                             currentForm = ExpenseFormUi()
                             showBottomSheet = true
-                            overlayType = OverlayType.ExpenseForm
 
                         },
                         onEditExpense = { expense ->
@@ -146,7 +152,6 @@ fun AppNavigation(
                                 amount = expense.amount.toString()
                             )
                             showBottomSheet = true
-                            overlayType = OverlayType.ExpenseForm
                         }
                     )
                 }
@@ -155,30 +160,43 @@ fun AppNavigation(
         }
 
         AnimatedVisibility(
-            visible = showOverlay,
-            enter = slideInHorizontally(
-                initialOffsetX = { it }
-            ),
-            exit = slideOutHorizontally(
-                targetOffsetX = { it }
-            )
+            visible = overlayState.visible,
+            enter = slideInHorizontally { it },
+            exit = slideOutHorizontally { it }
         ) {
             OverlayContainer(
-                onClose = { showOverlay = false }
+                onClose = { overlayState = OverlayState() }
             ) {
-                when (overlayType) {
+                when (overlayState.type) {
                     OverlayType.ExpenseForm -> {
                         ExpenseFormOverlay(
-                            onClose = { showOverlay = false },
+                            onClose = {
+                                overlayState = OverlayState()
+                            },
                             onAddCard = {
-                                overlayType = OverlayType.CreditCardForm
-                                showOverlay = true
+                                overlayState = OverlayState(
+                                    visible = true,
+                                    type = OverlayType.CreditCardForm,
+                                    origin = OverlayOrigin.EXPENSE_FORM
+                                )
                             }
                         )
                     }
 
                     OverlayType.CreditCardForm -> {
-                        CreditCardForm(onClose = { showOverlay = false })
+                        CreditCardForm(
+                            onClose = {
+                                overlayState = when (overlayState.origin) {
+                                    OverlayOrigin.EXPENSE_FORM ->
+                                        OverlayState(
+                                            visible = true,
+                                            type = OverlayType.ExpenseForm
+                                        )
+
+                                    else -> OverlayState()
+                                }
+                            }
+                        )
                     }
 
                     OverlayType.None -> Unit
@@ -186,23 +204,25 @@ fun AppNavigation(
             }
         }
 
-        if (showBottomSheet && sheetMode != null) {
-            BottomSheet(
-                mode = sheetMode!!,
-                form = currentForm,
-                onDismiss = { showBottomSheet = false },
-                onSave = { form ->
-                    globalVM.saveExpense(
-                        id = form.id ?: 0,
-                        title = form.title,
-                        description = form.description,
-                        currentDateTime = getCurrentDateTime(),
-                        amount = form.amount.toDouble(),
-                        typeValue = 1
-                    )
-                    showBottomSheet = false
-                }
-            )
-        }
     }
+
+    if (showBottomSheet && sheetMode != null) {
+        BottomSheet(
+            mode = sheetMode!!,
+            form = currentForm,
+            onDismiss = { showBottomSheet = false },
+            onSave = { form ->
+                globalVM.saveExpense(
+                    id = form.id ?: 0,
+                    title = form.title,
+                    description = form.description,
+                    currentDateTime = getCurrentDateTime(),
+                    amount = form.amount.toDouble(),
+                    typeValue = 1
+                )
+                showBottomSheet = false
+            }
+        )
+    }
+
 }

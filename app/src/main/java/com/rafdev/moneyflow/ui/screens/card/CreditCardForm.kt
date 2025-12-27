@@ -42,15 +42,21 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.rafdev.moneyflow.R
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.runtime.LaunchedEffect
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rafdev.moneyflow.ui.components.CreditCard
 import com.rafdev.moneyflow.ui.components.DialogApp
 import com.rafdev.moneyflow.ui.theme.Background
 import com.rafdev.moneyflow.ui.theme.CardColor
 import com.rafdev.moneyflow.ui.theme.Palette
+import com.rafdev.moneyflow.ui.theme.Primary
 import com.rafdev.moneyflow.ui.uikit.button.UIKitButton
 import com.rafdev.moneyflow.ui.uikit.icon.UIKitIcon
 import com.rafdev.moneyflow.ui.uikit.icon.UIKitIcons
+import com.rafdev.moneyflow.ui.uikit.input.UIKitInput
 import com.rafdev.moneyflow.ui.uikit.text.UIKitText
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,12 +65,15 @@ fun CreditCardForm(
     onClose: () -> Unit
 ) {
 
+    val formState by viewModel.formState.collectAsState()
+
     val title by viewModel.title.collectAsState()
     val number by viewModel.number.collectAsState()
     val cardType by viewModel.cardType.collectAsState()
     val colorId by viewModel.colorId.collectAsState()
 
     CreditCardContent(
+        formState = formState,
         title = title,
         number = number,
         cardType = cardType,
@@ -74,6 +83,7 @@ fun CreditCardForm(
         onCardTypeChange = viewModel::onCardTypeChange,
         onColorIdChange = viewModel::onColorIdChange,
         onCreate = viewModel::createCreditCard,
+        onReset = viewModel::reset,
         onClose = onClose
     )
 }
@@ -82,6 +92,7 @@ fun CreditCardForm(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreditCardContent(
+    formState: CreditCardFormState,
     title: String,
     number: String,
     cardType: Int,
@@ -91,6 +102,7 @@ fun CreditCardContent(
     onCardTypeChange: (Int) -> Unit,
     onColorIdChange: (Int) -> Unit,
     onCreate: () -> Unit,
+    onReset: () -> Unit,
     onClose: () -> Unit
 ) {
 
@@ -106,6 +118,14 @@ fun CreditCardContent(
         5 -> Color(0xFF6A1B9A)
         6 -> Color(0xFF00897B)
         else -> CardColor
+    }
+
+    formState.success.takeIf { it.isNotBlank() }?.let { message ->
+        LaunchedEffect(message) {
+            delay(900)
+            onClose()
+            onReset()
+        }
     }
 
 
@@ -142,25 +162,25 @@ fun CreditCardContent(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            OutlinedTextField(
+            UIKitInput(
                 value = title,
                 onValueChange = onTitleChange,
-                label = { Text("Banco Emisor") },
+                label = "Banco Emisor",
                 modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            OutlinedTextField(
+            UIKitInput(
                 value = number,
                 onValueChange = {
                     if (it.length <= 4 && it.all { char -> char.isDigit() }) {
                         onNumberChange(it)
                     }
                 },
-                label = { Text("Últimos 4 dígitos") },
+                label = "Últimos 4 dígitos",
                 modifier = Modifier.width(170.dp),
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -226,10 +246,12 @@ fun CreditCardContent(
             Spacer(modifier = Modifier.height(20.dp))
             UIKitButton(
                 modifier = Modifier.fillMaxWidth(),
-                enabled = isFormValid,
+                enabled = isFormValid && !formState.isLoading,
                 onClick = onCreate
             ) {
-                UIKitText(text = "Crear Tarjeta")
+                UIKitText(
+                    text = if (formState.isLoading) "Creando..." else "Crear Tarjeta"
+                )
             }
         }
 
@@ -318,6 +340,7 @@ fun CreditCardContent(
 @Composable
 fun UserCardPreview() {
     CreditCardContent(
+        formState = CreditCardFormState(),
         title = "Mi tarjeta",
         number = "1234",
         cardType = 1,
@@ -327,6 +350,7 @@ fun UserCardPreview() {
         onCardTypeChange = {},
         onColorIdChange = {},
         onCreate = {},
+        onReset = {},
         onClose = {}
     )
 }
