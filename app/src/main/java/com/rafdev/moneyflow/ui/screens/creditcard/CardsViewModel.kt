@@ -1,4 +1,4 @@
-package com.rafdev.moneyflow.ui.screens.note
+package com.rafdev.moneyflow.ui.screens.creditcard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

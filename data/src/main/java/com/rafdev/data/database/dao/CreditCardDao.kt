@@ -19,4 +19,13 @@ interface CreditCardDao {
     @Query("DELETE FROM creditCard WHERE id= :creditCardId")
     suspend fun deleteCreditCard(creditCardId: Int)
 
+    @Query(
+        """
+    UPDATE creditCard 
+    SET total = :total 
+    WHERE id = :cardId
+"""
+    )
+  suspend fun updateTotal(cardId: Int, total: Double)
+
 }

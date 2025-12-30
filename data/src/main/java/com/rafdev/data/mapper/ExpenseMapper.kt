@@ -17,7 +17,8 @@ fun ExpenseEntity.toUi() = Expense(
     period = period ?: "",
     paymentMethod = paymentMethod ?: "",
     notes = notes ?: "",
-    isPaid = isPaid ?: false
+    isPaid = isPaid ?: false,
+    creditCardId = creditCardId
 )
 
 fun Expense.toDb() = ExpenseEntity(
@@ -27,5 +28,6 @@ fun Expense.toDb() = ExpenseEntity(
     amount = amount,
     date = date,
     type = type,
-    paymentMethod = paymentMethod
+    paymentMethod = paymentMethod,
+    creditCardId = creditCardId
 )

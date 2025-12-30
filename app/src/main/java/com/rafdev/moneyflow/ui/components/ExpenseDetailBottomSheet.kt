@@ -104,7 +104,8 @@ fun PreviewExpenseDetail() {
         period = "",
         paymentMethod = "Tarjeta",
         notes = "Usé la tarjeta de débito",
-        isPaid = true
+        isPaid = true,
+        creditCardId = 1
     )
     ExpenseDetailBottomSheet(expense = example, onDismiss = {})
 }

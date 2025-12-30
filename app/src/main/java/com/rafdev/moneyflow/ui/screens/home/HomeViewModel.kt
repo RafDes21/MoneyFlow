@@ -103,7 +103,8 @@ class HomeViewModel @Inject constructor(
             period = "",
             paymentMethod = "",
             notes = "",
-            isPaid = false
+            isPaid = false,
+            creditCardId = null
         )
 
         viewModelScope.launch {
@@ -111,9 +112,9 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun deleteExpenseById(id: Int) {
+    fun deleteExpenseById(id: Int, creditCardId: Int?) {
         viewModelScope.launch {
-            deleteExpenseUseCase.execute(id)
+            deleteExpenseUseCase.execute(id, creditCardId)
         }
     }
 

@@ -28,22 +28,20 @@ class PlannedExpensesViewModel @Inject constructor(
         fetchExpenses()
     }
 
-    fun deleteExpenseById(id:Int){
+    fun deleteExpenseById(id: Int, creditCardId: Int?) {
         viewModelScope.launch {
-            deleteExpenseUseCase.execute(id)
+            deleteExpenseUseCase.execute(id, creditCardId)
         }
     }
 
     private fun fetchExpenses() {
         viewModelScope.launch {
-           getExpenseUseCase.invoke().collect{expenses ->
-               val fixedExpenses = expenses.filter { it.type == "fixed" }
-               _state.value = ExpenseState(success = fixedExpenses)
-           }
+            getExpenseUseCase.invoke().collect { expenses ->
+                val fixedExpenses = expenses.filter { it.type == "fixed" }
+                _state.value = ExpenseState(success = fixedExpenses)
+            }
         }
     }
-
-
 
 
 }

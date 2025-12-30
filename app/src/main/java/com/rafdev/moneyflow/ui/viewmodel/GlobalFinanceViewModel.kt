@@ -39,7 +39,8 @@ class GlobalFinanceViewModel @Inject constructor(
             period = "",
             paymentMethod = "",
             notes = "",
-            isPaid = false
+            isPaid = false,
+            creditCardId = null
         )
 
         viewModelScope.launch {

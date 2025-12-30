@@ -24,12 +24,18 @@ object RepositoryModule {
     }
 
     @Provides
-    fun provideExpense(expenseDao: ExpenseDao): RepositoryExpense {
-        return RepositoryExpenseImpl(expenseDao)
+    fun provideExpense(
+        expenseDao: ExpenseDao,
+        creditCardDao: CreditCardDao
+    ): RepositoryExpense {
+        return RepositoryExpenseImpl(expenseDao, creditCardDao)
     }
 
     @Provides
-    fun provideCreditCard(creditCardDao: CreditCardDao):RepositoryCreditCard{
-        return RepositoryCreditCardImpl(creditCardDao)
+    fun provideCreditCard(
+        creditCardDao: CreditCardDao,
+        expenseDao: ExpenseDao
+    ): RepositoryCreditCard {
+        return RepositoryCreditCardImpl(creditCardDao, expenseDao)
     }
 }

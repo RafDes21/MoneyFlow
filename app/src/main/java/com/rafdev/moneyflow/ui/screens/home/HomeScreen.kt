@@ -1,7 +1,5 @@
 package com.rafdev.moneyflow.ui.screens.home
 
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,7 +27,6 @@ import com.rafdev.moneyflow.R
 import com.rafdev.moneyflow.SheetMode
 import com.rafdev.moneyflow.ui.components.ActionButton
 import com.rafdev.moneyflow.ui.components.ActionTitleItem
-import com.rafdev.moneyflow.ui.components.CustomDialog
 import com.rafdev.moneyflow.ui.components.DialogApp
 import com.rafdev.moneyflow.ui.components.ExpenseCard
 import com.rafdev.moneyflow.ui.components.ExpenseDetailBottomSheet
@@ -47,27 +43,16 @@ fun HomeScreen(
     onOpenOverLay: () -> Unit
 ) {
 
-    val context = LocalContext.current
     val totalExpenses by viewModel.totalExpenses.collectAsState()
     val totalFixedExpenses by viewModel.totalFixedExpenses.collectAsState()
     val totalRecurrentExpenses by viewModel.totalRecurrentExpenses.collectAsState()
 
-    var showDialog by remember { mutableStateOf(false) }
-    var showDialogAdd by remember { mutableStateOf(false) }
     var showBottomSheet by remember { mutableStateOf(false) }
     var showDialogApp by remember { mutableStateOf(false) }
     var expenseItem by remember { mutableStateOf<Expense?>(null) }
 
     val state by viewModel.state.collectAsState()
 
-    var showToast by remember { mutableStateOf(false) }
-
-    LaunchedEffect(showToast) {
-        if (showToast) {
-            Toast.makeText(context, "Error en el valor ingresado", Toast.LENGTH_SHORT).show()
-            showToast = false
-        }
-    }
 
     Box(
         modifier = Modifier
@@ -161,21 +146,13 @@ fun HomeScreen(
             onClick = {}
         )
 
-        if (showDialogAdd) {
-            CustomDialog(
-                onDismiss = { showDialogAdd = false }
-            ) { title, description, amount, currentDaTime ->
-                viewModel.saveExpense(title, description, currentDaTime, amount.toDouble())
-            }
-        }
-
         if (showDialogApp) {
             DialogApp(
                 title = "Eliminar",
                 description = "¿Estás seguro de que deseas eliminar este elemento? Esta acción no se puede deshacer.",
                 onConfirm = {
                     expenseItem?.id?.let {
-                        viewModel.deleteExpenseById(it)
+                        viewModel.deleteExpenseById(it, expenseItem?.creditCardId)
                     }
                     showDialogApp = false
                 },
