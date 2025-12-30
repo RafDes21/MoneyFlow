@@ -1,4 +1,4 @@
-package com.rafdev.moneyflow.ui.screens.note
+package com.rafdev.moneyflow.ui.screens.creditcard
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -43,7 +43,6 @@ import com.rafdev.moneyflow.ui.components.ActionButton
 import com.rafdev.moneyflow.ui.components.CreditCard
 import com.rafdev.moneyflow.ui.theme.Background
 import com.rafdev.moneyflow.ui.theme.CardColor
-import com.rafdev.moneyflow.ui.theme.Primary
 import com.rafdev.moneyflow.ui.uikit.text.UIKitText
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -147,7 +146,6 @@ fun CreditCardsScreen(
             }
         }
 
-        // 🔔 Diálogo de confirmación
         if (showDeleteDialog && cardToDelete != null) {
             AlertDialog(
                 onDismissRequest = {
@@ -201,7 +199,7 @@ fun SwipeCreditCardItem(
             when (value) {
                 DismissValue.DismissedToStart -> {
                     onDelete()
-                    false // ⛔ no desaparece hasta confirmar
+                    false
                 }
 
                 DismissValue.DismissedToEnd -> {

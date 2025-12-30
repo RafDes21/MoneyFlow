@@ -14,5 +14,6 @@ data class Expense(
     val period: String,
     val paymentMethod: String,
     val notes: String,
-    val isPaid: Boolean
+    val isPaid: Boolean,
+    val creditCardId:   Int?
 )

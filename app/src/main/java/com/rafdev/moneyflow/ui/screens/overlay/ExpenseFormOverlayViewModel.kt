@@ -155,7 +155,8 @@ class ExpenseFormOverlayViewModel @Inject constructor(
             period = "",
             paymentMethod = paymentMethod,
             notes = "",
-            isPaid = false
+            isPaid = false,
+            creditCardId = selectedCreditCardId
         )
 
         viewModelScope.launch {
@@ -188,7 +189,6 @@ class ExpenseFormOverlayViewModel @Inject constructor(
         hasTriedToSave = false
 
         _formState.value = StateForm()
-        _uiState.value= UiState()
     }
 
 }

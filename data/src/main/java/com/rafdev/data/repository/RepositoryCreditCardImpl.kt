@@ -1,6 +1,7 @@
 package com.rafdev.data.repository
 
 import com.rafdev.data.database.dao.CreditCardDao
+import com.rafdev.data.database.dao.ExpenseDao
 import com.rafdev.data.mapper.toDomain
 import com.rafdev.data.mapper.toEntity
 import com.rafdev.domain.model.CreditCardDomain
@@ -11,12 +12,19 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class RepositoryCreditCardImpl @Inject constructor(private val creditCardDao: CreditCardDao) :
-    RepositoryCreditCard {
+class RepositoryCreditCardImpl @Inject constructor(
+    private val creditCardDao: CreditCardDao,
+    private val expenseDao: ExpenseDao
+) : RepositoryCreditCard {
+
     override fun getAllCreditCard(): Flow<Result<List<CreditCardDomain>>> {
         return creditCardDao.getAllCreditCard()
-            .map { list -> Result.success(list.map { it.toDomain() }) }
-            .catch { e -> emit(Result.failure(e)) }
+            .map { list ->
+                Result.success(list.map { it.toDomain() })
+            }
+            .catch { e ->
+                emit(Result.failure(e))
+            }
     }
 
     override suspend fun insertCreditCard(creditCardDomain: CreditCardDomain) {

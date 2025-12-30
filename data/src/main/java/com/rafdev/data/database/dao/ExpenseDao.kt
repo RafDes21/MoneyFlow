@@ -17,5 +17,14 @@ interface ExpenseDao {
     suspend fun insertExpense(expenseEntity: ExpenseEntity)
 
     @Query("DELETE FROM expenses WHERE id = :expenseId")
-    fun deleteExpenseById(expenseId : Int)
+    suspend fun deleteExpenseById(expenseId: Int)
+
+    @Query(
+        """
+    SELECT SUM(amount) 
+    FROM expenses 
+    WHERE creditCardId = :cardId
+"""
+    )
+    suspend fun getTotalByCreditCard(cardId: Int): Double?
 }

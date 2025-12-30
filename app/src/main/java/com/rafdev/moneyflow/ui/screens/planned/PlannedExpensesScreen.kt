@@ -23,7 +23,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rafdev.domain.model.Expense
 import com.rafdev.moneyflow.ui.components.ActionTitleItem
 import com.rafdev.moneyflow.ui.components.DialogApp
@@ -55,7 +54,7 @@ fun PlannedExpensesContent(
     state: ExpenseState,
     onAddExpense: () -> Unit,
     onEditExpense: (Expense) -> Unit,
-    onDeleteExpense: (Int) -> Unit
+    onDeleteExpense: (Int, Int?) -> Unit
 ) {
     val context = LocalContext.current
     var showToast by remember { mutableStateOf(false) }
@@ -113,7 +112,7 @@ fun PlannedExpensesContent(
                 title = "Eliminar",
                 description = "¿Estás seguro de que deseas eliminar este elemento? Esta acción no se puede deshacer.",
                 onConfirm = {
-                    onDeleteExpense(expenseToDelete?.id!!)
+                    onDeleteExpense(expenseToDelete?.id!!, expenseToDelete?.creditCardId)
                     expenseToDelete = null
                     showDialogApp = false
                 },
@@ -147,7 +146,8 @@ fun PlannedExpensesScreenPreview() {
                     period = "",
                     paymentMethod = "",
                     notes = "",
-                    isPaid = false
+                    isPaid = false,
+                    creditCardId = 1
                 ),
                 Expense(
                     id = 1,
@@ -163,13 +163,14 @@ fun PlannedExpensesScreenPreview() {
                     period = "",
                     paymentMethod = "",
                     notes = "",
-                    isPaid = false
+                    isPaid = false,
+                    creditCardId = 1
                 )
             )
         ),
         onAddExpense = {},
         onEditExpense = {},
-        onDeleteExpense = {}
+        onDeleteExpense = {} as (Int, Int?) -> Unit
     )
 }
 

@@ -30,7 +30,7 @@ import com.rafdev.moneyflow.ui.model.OverlayState
 import com.rafdev.moneyflow.ui.model.OverlayType
 import com.rafdev.moneyflow.ui.screens.card.CreditCardForm
 import com.rafdev.moneyflow.ui.screens.home.HomeScreen
-import com.rafdev.moneyflow.ui.screens.note.CreditCardsScreen
+import com.rafdev.moneyflow.ui.screens.creditcard.CreditCardsScreen
 import com.rafdev.moneyflow.ui.screens.overlay.ExpenseFormOverlay
 import com.rafdev.moneyflow.ui.screens.planned.PlannedExpensesScreen
 import com.rafdev.moneyflow.ui.screens.splash.SplashScreen

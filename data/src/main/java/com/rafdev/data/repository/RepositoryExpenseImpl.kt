@@ -1,6 +1,7 @@
 package com.rafdev.data.repository
 
 import android.util.Log
+import com.rafdev.data.database.dao.CreditCardDao
 import com.rafdev.data.database.dao.ExpenseDao
 import com.rafdev.data.mapper.toDb
 import com.rafdev.data.mapper.toEntity
@@ -17,7 +18,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class RepositoryExpenseImpl @Inject constructor(
-    private val expenseDao: ExpenseDao
+    private val expenseDao: ExpenseDao,
+    private val creditCardDao: CreditCardDao
 ) : RepositoryExpense {
     override fun getExpense(): Flow<List<Expense>> {
         return expenseDao.getAllExpenses()
@@ -27,27 +29,28 @@ class RepositoryExpenseImpl @Inject constructor(
             .flowOn(Dispatchers.IO)
     }
 
-     override suspend fun insertExpense(expense: Expense) {
-         try {
-             expenseDao.insertExpense(expense.toDb())
-         } catch (e: Exception) {
-             Log.e(
-                 "RepositoryExpenseImpl",
-                 "Error al insertar el gasto: ${e.message}",
-                 e
-             )
-             throw e
-         }
+    override suspend fun insertExpense(expense: Expense) {
+        expenseDao.insertExpense(expense.toDb())
+
+        expense.creditCardId?.let { cardId ->
+            val total = expenseDao
+                .getTotalByCreditCard(cardId) ?: 0.0
+
+            creditCardDao.updateTotal(cardId, total)
+        }
     }
 
-    override fun deleteExpenseById(expenseId: Int) {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                expenseDao.deleteExpenseById(expenseId)
-            }catch (e:Exception){
-                Log.e("RepositoryBudgetImpl", "Error al eliminar: ${e.message}", e)
-            }
+    override suspend fun deleteExpenseById(
+        expenseId: Int,
+        creditCardId: Int?
+    ) {
+        expenseDao.deleteExpenseById(expenseId)
 
+        creditCardId?.let { cardId ->
+            val total = expenseDao
+                .getTotalByCreditCard(cardId) ?: 0.0
+
+            creditCardDao.updateTotal(cardId, total)
         }
     }
 
