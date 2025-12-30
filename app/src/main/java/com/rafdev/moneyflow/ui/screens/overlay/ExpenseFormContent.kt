@@ -51,6 +51,7 @@ fun ExpenseFormOverlay(
 
     formState.success.takeIf { it.isNotBlank() }?.let { message ->
         LaunchedEffect(message) {
+            delay(900)
             onClose()
             viewModel.onReset()
         }

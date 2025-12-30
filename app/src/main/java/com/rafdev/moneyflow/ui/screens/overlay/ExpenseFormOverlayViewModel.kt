@@ -165,7 +165,7 @@ class ExpenseFormOverlayViewModel @Inject constructor(
                 insertExpenseUseCase(expense)
             }.onSuccess {
                 _formState.value = StateForm(
-                    isLoading = false,
+                    isLoading = true,
                     success = "success"
                 )
             }.onFailure {
@@ -188,6 +188,7 @@ class ExpenseFormOverlayViewModel @Inject constructor(
         hasTriedToSave = false
 
         _formState.value = StateForm()
+        _uiState.value= UiState()
     }
 
 }
