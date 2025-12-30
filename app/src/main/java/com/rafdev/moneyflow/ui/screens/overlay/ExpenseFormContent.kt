@@ -1,6 +1,7 @@
 package com.rafdev.moneyflow.ui.screens.overlay
 
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -11,17 +12,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -30,11 +32,13 @@ import com.rafdev.domain.model.CreditCardDomain
 import com.rafdev.moneyflow.ui.screens.overlay.components.CardSelector
 import com.rafdev.moneyflow.ui.screens.overlay.components.EmptyCardsState
 import com.rafdev.moneyflow.ui.screens.overlay.components.PaymentMethodSelector
+import com.rafdev.moneyflow.ui.theme.TextPrimary
 import com.rafdev.moneyflow.ui.uikit.button.UIKitButton
 import com.rafdev.moneyflow.ui.uikit.icon.UIKitIcon
 import com.rafdev.moneyflow.ui.uikit.icon.UIKitIcons
 import com.rafdev.moneyflow.ui.uikit.input.UIKitInput
 import com.rafdev.moneyflow.ui.uikit.text.UIKitText
+import kotlinx.coroutines.delay
 
 @Composable
 fun ExpenseFormOverlay(
@@ -43,22 +47,48 @@ fun ExpenseFormOverlay(
     onAddCard: () -> Unit
 ) {
     val state by viewModel.uiState.collectAsState()
+    val formState by viewModel.formState.collectAsState()
+
+    formState.success.takeIf { it.isNotBlank() }?.let { message ->
+        LaunchedEffect(message) {
+            onClose()
+            viewModel.onReset()
+        }
+    }
 
     ExpenseFormContent(
         state = state,
+        stateForm = formState,
+        isSaveEnabled = viewModel.isSaveEnabled,
+        showCreditCardError = viewModel.showCreditCardError,
+        title = viewModel.title,
+        description = viewModel.description,
+        amount = viewModel.amount,
+        onTitleChange = viewModel::onTitleChange,
+        onDescriptionChange = viewModel::onDescriptionChange,
+        onAmountChange = viewModel::onAmountChange,
         paymentMethod = viewModel.paymentMethod,
         selectedCardId = viewModel.selectedCreditCardId,
         onPaymentMethodChange = viewModel::onPaymentMethodChange,
         onCardSelected = viewModel::onCreditCardSelected,
         onSave = viewModel::saveForm,
         onClose = onClose,
-        onOpenAddCard=onAddCard
+        onOpenAddCard = onAddCard
     )
 }
 
 @Composable
 fun ExpenseFormContent(
     state: UiState,
+    stateForm: StateForm,
+    isSaveEnabled: Boolean,
+    showCreditCardError: Boolean,
+    title: String,
+    description: String,
+    amount: String,
+    onTitleChange: (String) -> Unit,
+    onDescriptionChange: (String) -> Unit,
+    onAmountChange: (String) -> Unit,
     paymentMethod: String,
     selectedCardId: Int?,
     onPaymentMethodChange: (String) -> Unit,
@@ -67,9 +97,7 @@ fun ExpenseFormContent(
     onClose: () -> Unit,
     onOpenAddCard: () -> Unit
 ) {
-    var title by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
-    var amount by remember { mutableStateOf("") }
+
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column {
@@ -100,7 +128,7 @@ fun ExpenseFormContent(
                     UIKitInput(
                         modifier = Modifier.fillMaxWidth(),
                         value = title,
-                        onValueChange = { title = it },
+                        onValueChange = onTitleChange,
                         label = "Título"
                     )
                 }
@@ -110,7 +138,7 @@ fun ExpenseFormContent(
                     UIKitInput(
                         modifier = Modifier.fillMaxWidth(),
                         value = description,
-                        onValueChange = { description = it },
+                        onValueChange = onDescriptionChange,
                         label = "Descripción"
                     )
                 }
@@ -119,7 +147,7 @@ fun ExpenseFormContent(
                     Spacer(Modifier.height(12.dp))
                     UIKitInput(
                         value = amount,
-                        onValueChange = { amount = it },
+                        onValueChange = onAmountChange,
                         label = "Monto",
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                     )
@@ -131,14 +159,23 @@ fun ExpenseFormContent(
                         selected = paymentMethod,
                         onSelected = onPaymentMethodChange
                     )
+                    Spacer(Modifier.height(18.dp))
+                }
+
+                if (showCreditCardError) {
+                    item {
+                        UIKitText(
+                            text = "Debes elegir una tarjeta",
+                            color = Color.Red
+                        )
+                    }
+
                 }
 
                 if (paymentMethod == "CREDIT") {
                     item {
-                        Spacer(Modifier.height(18.dp))
-
                         if (state.data.isEmpty()) {
-                            EmptyCardsState(onAddCard =  onOpenAddCard)
+                            EmptyCardsState(onAddCard = onOpenAddCard)
                         } else {
                             CardSelector(
                                 cards = state.data,
@@ -153,9 +190,19 @@ fun ExpenseFormContent(
                     Spacer(Modifier.height(24.dp))
                     UIKitButton(
                         modifier = Modifier.fillMaxWidth(),
-                        onClick = onSave
+                        onClick = onSave,
+                        enabled = isSaveEnabled
                     ) {
-                        UIKitText("Guardar")
+                        Log.d("probando", "state $stateForm")
+                        if (stateForm.isLoading) {
+                            CircularProgressIndicator(
+                                color = TextPrimary,
+                                modifier = Modifier.size(20.dp),
+                                strokeWidth = 2.dp
+                            )
+                        } else {
+                            UIKitText("Guardar")
+                        }
                     }
                 }
             }
@@ -174,8 +221,19 @@ fun ExpenseFormPreview() {
                 CreditCardDomain(2, 0, "Master BBVA", "9876", 80000.0, 2)
             )
         ),
+        title = "Supermercado",
+        stateForm = StateForm(isLoading = true),
+        isSaveEnabled = false,
+        showCreditCardError = true,
+        description = "Compra mensual",
+        amount = "15000",
         paymentMethod = "CREDIT",
         selectedCardId = 1,
+
+        onTitleChange = {},
+        onDescriptionChange = {},
+        onAmountChange = {},
+
         onPaymentMethodChange = {},
         onCardSelected = {},
         onSave = {},

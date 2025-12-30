@@ -14,7 +14,7 @@ interface ExpenseDao {
     fun getAllExpenses(): Flow<List<ExpenseEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertExpense(expenseEntity: ExpenseEntity)
+    suspend fun insertExpense(expenseEntity: ExpenseEntity)
 
     @Query("DELETE FROM expenses WHERE id = :expenseId")
     fun deleteExpenseById(expenseId : Int)

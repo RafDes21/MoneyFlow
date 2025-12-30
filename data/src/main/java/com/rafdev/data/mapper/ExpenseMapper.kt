@@ -26,5 +26,6 @@ fun Expense.toDb() = ExpenseEntity(
     description = description,
     amount = amount,
     date = date,
-    type = type
+    type = type,
+    paymentMethod = paymentMethod
 )
