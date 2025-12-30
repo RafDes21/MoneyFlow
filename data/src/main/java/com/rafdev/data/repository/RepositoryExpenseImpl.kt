@@ -27,15 +27,17 @@ class RepositoryExpenseImpl @Inject constructor(
             .flowOn(Dispatchers.IO)
     }
 
-    override fun insertExpense(expense: Expense) {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                expenseDao.insertExpense(expense.toDb())
-            }catch (e:Exception){
-                Log.e("RepositoryBudgetImpl", "Error al insertar el presupuesto: ${e.message}", e)
-            }
-
-        }
+     override suspend fun insertExpense(expense: Expense) {
+         try {
+             expenseDao.insertExpense(expense.toDb())
+         } catch (e: Exception) {
+             Log.e(
+                 "RepositoryExpenseImpl",
+                 "Error al insertar el gasto: ${e.message}",
+                 e
+             )
+             throw e
+         }
     }
 
     override fun deleteExpenseById(expenseId: Int) {

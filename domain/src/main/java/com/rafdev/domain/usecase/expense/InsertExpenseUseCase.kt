@@ -6,6 +6,6 @@ import javax.inject.Inject
 
 class InsertExpenseUseCase @Inject constructor( private val repositoryExpense: RepositoryExpense) {
 
-    operator fun invoke(expense: Expense) = repositoryExpense.insertExpense(expense)
+    suspend operator fun invoke(expense: Expense) = repositoryExpense.insertExpense(expense)
 
 }
