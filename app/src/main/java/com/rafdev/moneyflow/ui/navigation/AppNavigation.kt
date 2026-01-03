@@ -20,7 +20,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.rafdev.moneyflow.R
 import com.rafdev.moneyflow.SheetMode
-import com.rafdev.moneyflow.ui.components.BottomSheet
 import com.rafdev.moneyflow.ui.components.OverlayContainer
 import com.rafdev.moneyflow.ui.components.bottombar.CustomBottomBar
 import com.rafdev.moneyflow.ui.components.topbar.CustomTopBar
@@ -31,23 +30,20 @@ import com.rafdev.moneyflow.ui.model.OverlayType
 import com.rafdev.moneyflow.ui.screens.card.CreditCardForm
 import com.rafdev.moneyflow.ui.screens.home.HomeScreen
 import com.rafdev.moneyflow.ui.screens.creditcard.CreditCardsScreen
+import com.rafdev.moneyflow.ui.screens.form.expense.fix.FormExpenseFix
 import com.rafdev.moneyflow.ui.screens.overlay.ExpenseFormOverlay
 import com.rafdev.moneyflow.ui.screens.planned.PlannedExpensesScreen
 import com.rafdev.moneyflow.ui.screens.splash.SplashScreen
-import com.rafdev.moneyflow.ui.viewmodel.GlobalFinanceViewModel
-import com.rafdev.moneyflow.utils.getCurrentDateTime
 
 @Composable
-fun AppNavigation(
-    globalVM: GlobalFinanceViewModel
-) {
+fun AppNavigation() {
 
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
 
     var showBottomSheet by remember { mutableStateOf(false) }
-    var sheetMode by remember { mutableStateOf<SheetMode?>(null) }
+    var sheetMode by remember { mutableStateOf(SheetMode.ADD) }
 
     var overlayState by remember {
         mutableStateOf(OverlayState())
@@ -206,22 +202,11 @@ fun AppNavigation(
 
     }
 
-    if (showBottomSheet && sheetMode != null) {
-        BottomSheet(
-            mode = sheetMode!!,
+    if (showBottomSheet) {
+        FormExpenseFix(
+            mode = sheetMode,
             form = currentForm,
             onDismiss = { showBottomSheet = false },
-            onSave = { form ->
-                globalVM.saveExpense(
-                    id = form.id ?: 0,
-                    title = form.title,
-                    description = form.description,
-                    currentDateTime = getCurrentDateTime(),
-                    amount = form.amount.toDouble(),
-                    typeValue = 1
-                )
-                showBottomSheet = false
-            }
         )
     }
 
