@@ -29,14 +29,16 @@ class RepositoryExpenseImpl @Inject constructor(
             .flowOn(Dispatchers.IO)
     }
 
-    override suspend fun insertExpense(expense: Expense) {
-        expenseDao.insertExpense(expense.toDb())
+    override suspend fun insertExpense(expense: Expense): Result<Unit> {
+        return runCatching {
+            expenseDao.insertExpense(expense.toDb())
 
-        expense.creditCardId?.let { cardId ->
-            val total = expenseDao
-                .getTotalByCreditCard(cardId) ?: 0.0
+            expense.creditCardId?.let { cardId ->
+                val total = expenseDao
+                    .getTotalByCreditCard(cardId) ?: 0.0
 
-            creditCardDao.updateTotal(cardId, total)
+                creditCardDao.updateTotal(cardId, total)
+            }
         }
     }
 

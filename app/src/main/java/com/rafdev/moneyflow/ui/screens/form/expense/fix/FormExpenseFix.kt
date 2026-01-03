@@ -1,4 +1,4 @@
-package com.rafdev.moneyflow.ui.components
+package com.rafdev.moneyflow.ui.screens.form.expense.fix
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -6,47 +6,63 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.rafdev.moneyflow.SheetMode
 import com.rafdev.moneyflow.ui.model.ExpenseFormUi
 import com.rafdev.moneyflow.ui.theme.CardBorder
 import com.rafdev.moneyflow.ui.theme.CardColor
 import com.rafdev.moneyflow.ui.theme.Primary
-import com.rafdev.moneyflow.ui.theme.PrimaryVariant
 import com.rafdev.moneyflow.ui.theme.Surface
 import com.rafdev.moneyflow.ui.theme.TextPrimary
 import com.rafdev.moneyflow.ui.theme.TextSecondary
+import com.rafdev.moneyflow.ui.uikit.button.UIKitButton
 import com.rafdev.moneyflow.ui.uikit.text.UIKitText
-import com.rafdev.moneyflow.utils.getCurrentDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomSheet(
+fun FormExpenseFix(
+    viewModel: FormExpenseFixViewModel = hiltViewModel(),
     mode: SheetMode,
     form: ExpenseFormUi,
     onDismiss: () -> Unit,
-    onSave: (ExpenseFormUi) -> Unit
 ) {
-    var localForm by remember(form) {
-        mutableStateOf(form)
+    LaunchedEffect(form) {
+        viewModel.initForm(form)
     }
+
+    val state by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.event.collect { event ->
+            when (event) {
+                FormExpenseEvent.Success -> {
+                    onDismiss()
+                }
+
+                is FormExpenseEvent.Error -> {
+                }
+            }
+        }
+    }
+
+
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -54,20 +70,15 @@ fun BottomSheet(
     ) {
         ContentBottomSheet(
             mode = mode,
-            inputTitle = localForm.title,
-            description = localForm.description,
-            amount = localForm.amount,
-
-            onTitleChange = {
-                localForm = localForm.copy(title = it)
-            },
-            onDescriptionChange = {
-                localForm = localForm.copy(description = it)
-            },
-            onAmountChange = {
-                localForm = localForm.copy(amount = it)
-            },
-            onSave = { onSave(localForm) }
+            inputTitle = state.title,
+            description = state.description,
+            amount = state.amount,
+            isLoading = state.isLoading,
+            isValid = state.isValid,
+            onTitleChange = viewModel::onTitleChange,
+            onDescriptionChange = viewModel::onDescriptionChange,
+            onAmountChange = viewModel::onAmountChange,
+            onSave = viewModel::saveExpense
         )
     }
 }
@@ -78,6 +89,8 @@ fun ContentBottomSheet(
     inputTitle: String,
     description: String,
     amount: String,
+    isLoading: Boolean,
+    isValid: Boolean,
     onTitleChange: (String) -> Unit,
     onDescriptionChange: (String) -> Unit,
     onAmountChange: (String) -> Unit,
@@ -93,10 +106,6 @@ fun ContentBottomSheet(
         unfocusedLabelColor = TextSecondary,
         cursorColor = Primary
     )
-
-    val buttonColor =
-        if (mode == SheetMode.ADD) Primary
-        else PrimaryVariant
 
     Column(
         modifier = Modifier
@@ -145,15 +154,22 @@ fun ContentBottomSheet(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Button(
-            colors = ButtonDefaults.buttonColors(
-                containerColor = buttonColor,
-                contentColor = TextPrimary
-            ),
+        UIKitButton(
             onClick = onSave,
+            enabled = isValid,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Guardar")
+            if (isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(20.dp),
+                    color = TextPrimary,
+                    strokeWidth = 2.dp
+                )
+            } else {
+                UIKitText(
+                    if (mode == SheetMode.ADD) "Agregar" else "Actualizar"
+                )
+            }
         }
     }
 }
@@ -166,6 +182,8 @@ fun ContentBottomSheetPreview() {
         inputTitle = "",
         description = "",
         amount = "",
+        isLoading = true,
+        isValid = false,
         onTitleChange = {},
         onDescriptionChange = {},
         onAmountChange = {},
