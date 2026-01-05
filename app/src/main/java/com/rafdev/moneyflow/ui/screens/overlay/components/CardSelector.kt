@@ -20,6 +20,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rafdev.domain.model.CreditCardDomain
+import com.rafdev.moneyflow.ui.theme.AccentActive
+import com.rafdev.moneyflow.ui.theme.AccentInactive
 import com.rafdev.moneyflow.ui.theme.Background
 import com.rafdev.moneyflow.ui.theme.CardColor
 import com.rafdev.moneyflow.ui.theme.CardFocused
@@ -49,7 +51,7 @@ fun CardSelector(
                     .clickable { onCardSelected(card.id) },
                 colors = CardDefaults.cardColors(
                     containerColor = if (card.id == selectedCardId)
-                        CardFocused else CardColor
+                        AccentActive else AccentInactive
                 ),
                 shape = RoundedCornerShape(12.dp)
             ) {
