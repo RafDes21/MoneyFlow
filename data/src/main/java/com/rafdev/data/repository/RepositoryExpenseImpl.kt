@@ -8,19 +8,23 @@ import com.rafdev.data.mapper.toEntity
 import com.rafdev.data.mapper.toUi
 import com.rafdev.domain.model.Expense
 import com.rafdev.domain.repository.RepositoryExpense
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class RepositoryExpenseImpl @Inject constructor(
     private val expenseDao: ExpenseDao,
     private val creditCardDao: CreditCardDao
 ) : RepositoryExpense {
+
+    override suspend fun getExpenseById(id: Int): Result<Expense> =
+        runCatching {
+            val entity = expenseDao.getExpenseById(id)
+            entity.toUi()
+        }
+
     override fun getExpense(): Flow<List<Expense>> {
         return expenseDao.getAllExpenses()
             .map { listOfEntities ->

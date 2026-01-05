@@ -1,8 +1,10 @@
 package com.rafdev.moneyflow.ui.screens.form.expense.fix
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rafdev.domain.model.Expense
+import com.rafdev.domain.usecase.expense.GetExpenseByIdUseCase
 import com.rafdev.domain.usecase.expense.InsertExpenseUseCase
 import com.rafdev.moneyflow.SheetMode
 import com.rafdev.moneyflow.ui.model.ExpenseFormUi
@@ -14,12 +16,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.Date
 import javax.inject.Inject
 
 
 @HiltViewModel
 class FormExpenseFixViewModel @Inject constructor(
-    private val insertExpenseUseCase: InsertExpenseUseCase
+    private val insertExpenseUseCase: InsertExpenseUseCase,
+    private val getExpenseByIdUseCase: GetExpenseByIdUseCase
 ) : ViewModel() {
 
 
@@ -30,20 +34,29 @@ class FormExpenseFixViewModel @Inject constructor(
     val event = _event.asSharedFlow()
 
 
-    fun initForm(form: ExpenseFormUi?) {
-        if (form == null) return
+    fun initForm(expenseId: Int?) {
+        if (expenseId == null) {
+            resetForm()
+            return
+        }
 
-        _uiState.update {
-            it.copy(
-                id = form.id,
-                title = form.title,
-                description = form.description,
-                amount = form.amount,
-                isValid = validate(
-                    title = form.title,
-                    amount = form.amount
-                )
-            )
+        viewModelScope.launch {
+            getExpenseByIdUseCase(expenseId)
+                .onSuccess { expense ->
+                    _uiState.update {
+                        it.copy(
+                            id = expense.id,
+                            title = expense.name,
+                            description = expense.description,
+                            amount = expense.amount.toString(),
+                            date = expense.date,
+                            isValid = true
+                        )
+                    }
+                }
+                .onFailure {
+                    _event.emit(FormExpenseEvent.Error("Expense no encontrado"))
+                }
         }
     }
 
@@ -78,6 +91,11 @@ class FormExpenseFixViewModel @Inject constructor(
 
     fun saveExpense() {
         val state = _uiState.value
+
+        val finalDate = state.date.ifBlank {
+            getCurrentDateTime()
+        }
+
         val expense = Expense(
             id = state.id ?: 0,
             name = state.title,
@@ -86,7 +104,7 @@ class FormExpenseFixViewModel @Inject constructor(
             description = state.description,
             image = "",
             color = "",
-            date = getCurrentDateTime(),
+            date = finalDate,
             category = "",
             recurring = false,
             period = "",
@@ -95,6 +113,8 @@ class FormExpenseFixViewModel @Inject constructor(
             isPaid = false,
             creditCardId = null
         )
+
+
         viewModelScope.launch {
 
             _uiState.update { it.copy(isLoading = true) }
@@ -114,6 +134,11 @@ class FormExpenseFixViewModel @Inject constructor(
         }
     }
 
+
+    fun resetForm() {
+        _uiState.value = FormExpenseUiState()
+    }
+
 }
 
 data class FormExpenseUiState(
@@ -121,6 +146,7 @@ data class FormExpenseUiState(
     val title: String = "",
     val description: String = "",
     val amount: String = "",
+    val date: String = "",
     val isValid: Boolean = false,
     val isLoading: Boolean = false,
     val error: String? = null

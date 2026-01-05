@@ -25,7 +25,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.rafdev.moneyflow.SheetMode
-import com.rafdev.moneyflow.ui.model.ExpenseFormUi
 import com.rafdev.moneyflow.ui.theme.CardBorder
 import com.rafdev.moneyflow.ui.theme.CardColor
 import com.rafdev.moneyflow.ui.theme.Primary
@@ -40,11 +39,11 @@ import com.rafdev.moneyflow.ui.uikit.text.UIKitText
 fun FormExpenseFix(
     viewModel: FormExpenseFixViewModel = hiltViewModel(),
     mode: SheetMode,
-    form: ExpenseFormUi,
+    expenseId: Int?,
     onDismiss: () -> Unit,
 ) {
-    LaunchedEffect(form) {
-        viewModel.initForm(form)
+    LaunchedEffect(expenseId) {
+        viewModel.initForm(expenseId)
     }
 
     val state by viewModel.uiState.collectAsState()

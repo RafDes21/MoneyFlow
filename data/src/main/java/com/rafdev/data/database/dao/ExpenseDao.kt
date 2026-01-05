@@ -10,6 +10,10 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ExpenseDao {
 
+
+    @Query("SELECT * FROM expenses WHERE id = :id")
+    suspend fun getExpenseById(id: Int): ExpenseEntity
+
     @Query("SELECT * FROM expenses")
     fun getAllExpenses(): Flow<List<ExpenseEntity>>
 
