@@ -49,9 +49,10 @@ fun AppNavigation() {
         mutableStateOf(OverlayState())
     }
 
-    var currentForm by remember {
-        mutableStateOf(ExpenseFormUi())
+    var expenseId by remember {
+        mutableStateOf<Int?>(null)
     }
+
     val showBars = currentRoute != Splash::class.qualifiedName
 
 
@@ -105,7 +106,7 @@ fun AppNavigation() {
                             navController.navigate(FixedExpenses)
                         },
                         onOpenSheet = { mode ->
-                            currentForm = ExpenseFormUi()
+                            expenseId = null
                             showBottomSheet = true
                             sheetMode = mode
                         },
@@ -135,18 +136,13 @@ fun AppNavigation() {
                     PlannedExpensesScreen(
                         onAddExpense = {
                             sheetMode = SheetMode.ADD
-                            currentForm = ExpenseFormUi()
+                            expenseId = null
                             showBottomSheet = true
 
                         },
-                        onEditExpense = { expense ->
+                        onEditExpense = { id ->
                             sheetMode = SheetMode.EDIT
-                            currentForm = ExpenseFormUi(
-                                id = expense.id,
-                                title = expense.name,
-                                description = expense.description,
-                                amount = expense.amount.toString()
-                            )
+                            expenseId = id
                             showBottomSheet = true
                         }
                     )
@@ -205,7 +201,7 @@ fun AppNavigation() {
     if (showBottomSheet) {
         FormExpenseFix(
             mode = sheetMode,
-            form = currentForm,
+            expenseId = expenseId,
             onDismiss = { showBottomSheet = false },
         )
     }

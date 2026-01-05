@@ -36,7 +36,7 @@ import com.rafdev.moneyflow.ui.uikit.icon.UIKitIcons
 fun PlannedExpensesScreen(
     viewModel: PlannedExpensesViewModel = hiltViewModel(),
     onAddExpense: () -> Unit,
-    onEditExpense: (Expense) -> Unit
+    onEditExpense: (Int) -> Unit
 ) {
     val state by viewModel.state.collectAsState()
 
@@ -53,7 +53,7 @@ fun PlannedExpensesScreen(
 fun PlannedExpensesContent(
     state: ExpenseState,
     onAddExpense: () -> Unit,
-    onEditExpense: (Expense) -> Unit,
+    onEditExpense: (Int) -> Unit,
     onDeleteExpense: (Int, Int?) -> Unit
 ) {
     val context = LocalContext.current
@@ -94,7 +94,7 @@ fun PlannedExpensesContent(
                         title = expense.name,
                         subtitle = expense.description,
                         amount = expense.amount.toString(),
-                        onEdit = { onEditExpense(expense) },
+                        onEdit = { onEditExpense(expense.id) },
                         onDelete = {
                             expenseToDelete = expense
                             showDialogApp = true
