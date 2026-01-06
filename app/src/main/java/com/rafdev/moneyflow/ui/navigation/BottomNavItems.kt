@@ -11,4 +11,5 @@ data class BottomNavItem(
 val bottomNavItems = listOf(
     BottomNavItem(Home, R.string.tab_home, R.drawable.ic_home),
     BottomNavItem(Cards, R.string.tab_cards, R.drawable.ic_credit_card),
+    BottomNavItem(Events, R.string.tab_events, R.drawable.ic_eventstore)
 )
