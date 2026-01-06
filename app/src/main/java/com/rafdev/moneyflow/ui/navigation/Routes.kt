@@ -14,3 +14,6 @@ data object Cards
 @Serializable
 data object FixedExpenses
 
+@Serializable
+data object Events
+

@@ -30,6 +30,7 @@ import com.rafdev.moneyflow.ui.model.OverlayType
 import com.rafdev.moneyflow.ui.screens.card.CreditCardForm
 import com.rafdev.moneyflow.ui.screens.home.HomeScreen
 import com.rafdev.moneyflow.ui.screens.creditcard.CreditCardsScreen
+import com.rafdev.moneyflow.ui.screens.events.EventsScreen
 import com.rafdev.moneyflow.ui.screens.form.expense.fix.FormExpenseFix
 import com.rafdev.moneyflow.ui.screens.overlay.ExpenseFormOverlay
 import com.rafdev.moneyflow.ui.screens.planned.PlannedExpensesScreen
@@ -146,6 +147,9 @@ fun AppNavigation() {
                             showBottomSheet = true
                         }
                     )
+                }
+                composable<Events> {
+                    EventsScreen()
                 }
             }
 

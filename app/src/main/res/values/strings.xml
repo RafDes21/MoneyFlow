@@ -3,4 +3,5 @@
 
     <string name="tab_home">Home</string>
     <string name="tab_cards">Tarjetas</string>
+    <string name="tab_events">Eventos</string>
 </resources>
