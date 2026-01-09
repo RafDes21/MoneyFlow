@@ -21,13 +21,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -52,17 +56,18 @@ fun EventsScreen() {
 @Composable
 fun EventPagerScreen() {
 
-
     var compactMode by remember { mutableStateOf(false) }
+
+    val events = fakeEvents
 
     val cardHeight by animateDpAsState(
         targetValue = if (compactMode) 180.dp else 390.dp,
-        animationSpec = tween(200, easing = FastOutSlowInEasing),
+        animationSpec = tween(300, easing = FastOutSlowInEasing),
         label = "cardHeight"
     )
 
     val pagerState = rememberPagerState(
-        pageCount = { fakeEvents.size }
+        pageCount = { events.size + 1 } // 👈 +1 para botón agregar
     )
 
     HorizontalPager(
@@ -71,42 +76,79 @@ fun EventPagerScreen() {
         modifier = Modifier.fillMaxSize()
     ) { page ->
 
-        val event = fakeEvents[page]
-        Box(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .animateContentSize()
-                    .align(
-                        if (compactMode) Alignment.TopCenter
-                        else Alignment.Center
-                    ),
-                horizontalAlignment = Alignment.CenterHorizontally,
+        val isAddPage = page == events.size
 
+        if (isAddPage) {
+            AddEventPage(
+                onAddClick = {
+                    // TODO: abrir crear evento
+                }
+            )
+        } else {
+            val event = events[page]
+
+            Box(modifier = Modifier.fillMaxSize()) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(
+                            if (compactMode) Alignment.TopCenter
+                            else Alignment.Center
+                        )
+                        .animateContentSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
 
-                // 🔝 CARD (siempre visible)
-                EventCard(
-                    event = event,
-                    cardHeight = cardHeight,
-                    pagerState = pagerState,
-                    page = page,
-                    compactMode = compactMode,
-                    onClick = {
-                        compactMode = !compactMode
+                    EventCard(
+                        event = event,
+                        pagerState = pagerState,
+                        page = page,
+                        cardHeight = cardHeight,
+                        compactMode = compactMode,
+                        onClick = {
+                            compactMode = !compactMode
+                        }
+                    )
+
+                    AnimatedVisibility(
+                        visible = compactMode,
+                        enter = expandVertically() + fadeIn(),
+                        exit = shrinkVertically() + fadeOut()
+                    ) {
+                        EventDetails(event)
                     }
-                )
-
-                AnimatedVisibility(
-                    visible = compactMode,
-                    enter = expandVertically() + fadeIn(),
-                    exit = shrinkVertically() + fadeOut()
-                ) {
-                    EventDetails(event)
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun AddEventPage(
+    onAddClick: () -> Unit
+) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.clickable { onAddClick() }
+        ) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "Agregar evento",
+                modifier = Modifier.size
+                    (64.dp),
+                tint = MaterialTheme.colorScheme.primary
+            )
+
+            Spacer(Modifier.height(8.dp))
+
+            Text(
+                text = "Agregar evento",
+                style = MaterialTheme.typography.bodyMedium
+            )
         }
     }
 }

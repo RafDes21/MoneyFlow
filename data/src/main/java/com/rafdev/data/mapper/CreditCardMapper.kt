@@ -1,6 +1,6 @@
 package com.rafdev.data.mapper
 
-import com.rafdev.data.model.entities.CreditCardEntity
+import com.rafdev.data.entities.CreditCardEntity
 import com.rafdev.domain.model.CreditCardDomain
 
 fun CreditCardEntity.toDomain(): CreditCardDomain {

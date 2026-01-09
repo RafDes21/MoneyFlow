@@ -1,10 +1,9 @@
 package com.rafdev.data.repository
 
 import android.util.Log
-import com.rafdev.data.database.dao.BudgetDao
+import com.rafdev.data.dao.BudgetDao
 import com.rafdev.data.mapper.toEntity
 import com.rafdev.data.mapper.toUi
-import com.rafdev.data.model.entities.BudgetEntity
 import com.rafdev.domain.model.Budget
 import com.rafdev.domain.repository.RepositoryBudget
 import kotlinx.coroutines.CoroutineScope

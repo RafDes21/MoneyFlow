@@ -4,9 +4,10 @@ import android.content.Context
 import androidx.room.Room
 import com.rafdev.data.database.AppDatabase
 import com.rafdev.data.database.MIGRATION_1_2
-import com.rafdev.data.database.dao.BudgetDao
-import com.rafdev.data.database.dao.CreditCardDao
-import com.rafdev.data.database.dao.ExpenseDao
+import com.rafdev.data.dao.BudgetDao
+import com.rafdev.data.dao.CreditCardDao
+import com.rafdev.data.dao.ExpenseDao
+import com.rafdev.data.database.MIGRATION_2_3
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,7 +26,9 @@ object DatabaseModule {
             context.applicationContext,
             AppDatabase::class.java,
             "money_flow_database"
-        ).addMigrations(MIGRATION_1_2).build()
+        ).addMigrations(
+            MIGRATION_1_2, MIGRATION_2_3
+        ).build()
     }
 
 

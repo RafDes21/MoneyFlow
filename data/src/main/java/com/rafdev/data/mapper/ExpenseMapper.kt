@@ -1,6 +1,6 @@
 package com.rafdev.data.mapper
 
-import com.rafdev.data.model.entities.ExpenseEntity
+import com.rafdev.data.entities.ExpenseEntity
 import com.rafdev.domain.model.Expense
 
 fun ExpenseEntity.toUi() = Expense(
