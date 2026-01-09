@@ -4,10 +4,12 @@ import android.content.Context
 import androidx.room.Room
 import com.rafdev.data.database.AppDatabase
 import com.rafdev.data.database.MIGRATION_1_2
-import com.rafdev.data.dao.BudgetDao
 import com.rafdev.data.dao.CreditCardDao
 import com.rafdev.data.dao.ExpenseDao
+import com.rafdev.data.dao.event.EventDao
+import com.rafdev.data.dao.event.EventExpenseDao
 import com.rafdev.data.database.MIGRATION_2_3
+import com.rafdev.data.database.MIGRATION_3_4
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,15 +29,22 @@ object DatabaseModule {
             AppDatabase::class.java,
             "money_flow_database"
         ).addMigrations(
-            MIGRATION_1_2, MIGRATION_2_3
+            MIGRATION_1_2,
+            MIGRATION_2_3,
+            MIGRATION_3_4
         ).build()
     }
 
+    @Singleton
+    @Provides
+    fun provideEventDao(db: AppDatabase): EventDao{
+        return db.eventDao()
+    }
 
     @Singleton
     @Provides
-    fun provideBudgetDao(db: AppDatabase): BudgetDao {
-        return db.budgetDao()
+    fun provideEventExpenseDao(db: AppDatabase): EventExpenseDao {
+        return db.eventExpenseDao()
     }
 
     @Singleton
