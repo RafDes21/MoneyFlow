@@ -1,10 +1,10 @@
-package com.rafdev.data.database.dao
+package com.rafdev.data.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.rafdev.data.model.entities.CreditCardEntity
+import com.rafdev.data.entities.CreditCardEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao

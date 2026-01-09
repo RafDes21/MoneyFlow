@@ -1,4 +1,4 @@
-package com.rafdev.data.model.entities
+package com.rafdev.data.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

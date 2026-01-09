@@ -1,8 +1,8 @@
 package com.rafdev.data.di
 
-import com.rafdev.data.database.dao.BudgetDao
-import com.rafdev.data.database.dao.CreditCardDao
-import com.rafdev.data.database.dao.ExpenseDao
+import com.rafdev.data.dao.BudgetDao
+import com.rafdev.data.dao.CreditCardDao
+import com.rafdev.data.dao.ExpenseDao
 import com.rafdev.data.repository.RepositoryBudgetImpl
 import com.rafdev.data.repository.RepositoryCreditCardImpl
 import com.rafdev.data.repository.RepositoryExpenseImpl

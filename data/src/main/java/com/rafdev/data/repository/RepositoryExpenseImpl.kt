@@ -1,10 +1,8 @@
 package com.rafdev.data.repository
 
-import android.util.Log
-import com.rafdev.data.database.dao.CreditCardDao
-import com.rafdev.data.database.dao.ExpenseDao
+import com.rafdev.data.dao.CreditCardDao
+import com.rafdev.data.dao.ExpenseDao
 import com.rafdev.data.mapper.toDb
-import com.rafdev.data.mapper.toEntity
 import com.rafdev.data.mapper.toUi
 import com.rafdev.domain.model.Expense
 import com.rafdev.domain.repository.RepositoryExpense

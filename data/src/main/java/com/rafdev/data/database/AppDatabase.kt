@@ -2,16 +2,26 @@ package com.rafdev.data.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.rafdev.data.database.dao.BudgetDao
-import com.rafdev.data.database.dao.CreditCardDao
-import com.rafdev.data.database.dao.ExpenseDao
-import com.rafdev.data.model.entities.BudgetEntity
-import com.rafdev.data.model.entities.CreditCardEntity
-import com.rafdev.data.model.entities.ExpenseEntity
+import com.rafdev.data.dao.BudgetDao
+import com.rafdev.data.dao.CreditCardDao
+import com.rafdev.data.dao.ExpenseDao
+import com.rafdev.data.dao.event.EventDao
+import com.rafdev.data.dao.event.EventExpenseDao
+import com.rafdev.data.entities.BudgetEntity
+import com.rafdev.data.entities.CreditCardEntity
+import com.rafdev.data.entities.ExpenseEntity
+import com.rafdev.data.entities.event.EventEntity
+import com.rafdev.data.entities.event.EventExpenseEntity
 
 @Database(
-    entities = [BudgetEntity::class, ExpenseEntity::class, CreditCardEntity::class],
-    version = 2
+    entities = [
+        BudgetEntity::class,
+        ExpenseEntity::class,
+        CreditCardEntity::class,
+        EventEntity::class,
+        EventExpenseEntity::class
+    ],
+    version = 3
 )
 abstract class AppDatabase : RoomDatabase() {
 
@@ -19,5 +29,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun expenseDao(): ExpenseDao
     abstract fun creditCardDao(): CreditCardDao
 
-
+    abstract fun eventDao(): EventDao
+    abstract fun eventExpenseDao(): EventExpenseDao
 }
