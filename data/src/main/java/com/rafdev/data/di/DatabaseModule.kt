@@ -8,6 +8,7 @@ import com.rafdev.data.dao.CreditCardDao
 import com.rafdev.data.dao.ExpenseDao
 import com.rafdev.data.dao.event.EventDao
 import com.rafdev.data.dao.event.EventExpenseDao
+import com.rafdev.data.dao.salary.SalaryDao
 import com.rafdev.data.database.MIGRATION_2_3
 import com.rafdev.data.database.MIGRATION_3_4
 import dagger.Module
@@ -28,10 +29,6 @@ object DatabaseModule {
             context.applicationContext,
             AppDatabase::class.java,
             "money_flow_database"
-        ).addMigrations(
-            MIGRATION_1_2,
-            MIGRATION_2_3,
-            MIGRATION_3_4
         ).build()
     }
 
@@ -57,6 +54,12 @@ object DatabaseModule {
     @Provides
     fun provideCreditCard(db: AppDatabase): CreditCardDao {
         return db.creditCardDao()
+    }
+
+    @Singleton
+    @Provides
+    fun provideSalaryDao(db: AppDatabase): SalaryDao{
+        return db.salaryDao()
     }
 
 }

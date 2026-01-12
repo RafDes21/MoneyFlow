@@ -6,8 +6,10 @@ import com.rafdev.data.dao.CreditCardDao
 import com.rafdev.data.dao.ExpenseDao
 import com.rafdev.data.dao.event.EventDao
 import com.rafdev.data.dao.event.EventExpenseDao
+import com.rafdev.data.dao.salary.SalaryDao
 import com.rafdev.data.entities.CreditCardEntity
 import com.rafdev.data.entities.ExpenseEntity
+import com.rafdev.data.entities.SalaryEntity
 import com.rafdev.data.entities.event.EventEntity
 import com.rafdev.data.entities.event.EventExpenseEntity
 
@@ -16,9 +18,10 @@ import com.rafdev.data.entities.event.EventExpenseEntity
         ExpenseEntity::class,
         CreditCardEntity::class,
         EventEntity::class,
-        EventExpenseEntity::class
+        EventExpenseEntity::class,
+        SalaryEntity::class
     ],
-    version = 4
+    version = 1
 )
 abstract class AppDatabase : RoomDatabase() {
 
@@ -27,4 +30,6 @@ abstract class AppDatabase : RoomDatabase() {
 
     abstract fun eventDao(): EventDao
     abstract fun eventExpenseDao(): EventExpenseDao
+
+    abstract fun salaryDao(): SalaryDao
 }

@@ -4,12 +4,15 @@ import com.rafdev.data.dao.CreditCardDao
 import com.rafdev.data.dao.ExpenseDao
 import com.rafdev.data.dao.event.EventDao
 import com.rafdev.data.dao.event.EventExpenseDao
+import com.rafdev.data.dao.salary.SalaryDao
 import com.rafdev.data.repository.RepositoryCreditCardImpl
 import com.rafdev.data.repository.RepositoryExpenseImpl
 import com.rafdev.data.repository.event.EventRepositoryImpl
+import com.rafdev.data.repository.salary.SalaryRepositoryImpl
 import com.rafdev.domain.repository.RepositoryCreditCard
 import com.rafdev.domain.repository.RepositoryExpense
 import com.rafdev.domain.repository.event.EventRepository
+import com.rafdev.domain.repository.salary.SalaryRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -41,5 +44,10 @@ object RepositoryModule {
         eventExpenseDao: EventExpenseDao
     ): EventRepository {
         return EventRepositoryImpl(evenDao, eventExpenseDao)
+    }
+
+    @Provides
+    fun provideSalaryRepository(dao: SalaryDao): SalaryRepository {
+        return SalaryRepositoryImpl(dao)
     }
 }
