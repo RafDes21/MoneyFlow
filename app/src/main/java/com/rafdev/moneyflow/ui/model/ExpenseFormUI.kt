@@ -58,10 +58,6 @@ fun rememberInputConfig(
     }
 }
 
-enum class IconPosition {
-    LEFT, RIGHT
-}
-
 sealed class OverlayType {
     object None : OverlayType()
     object ExpenseForm : OverlayType()

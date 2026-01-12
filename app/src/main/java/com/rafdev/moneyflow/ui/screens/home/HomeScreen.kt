@@ -1,9 +1,11 @@
 package com.rafdev.moneyflow.ui.screens.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.rafdev.domain.model.Expense
@@ -30,6 +33,8 @@ import com.rafdev.moneyflow.ui.components.ActionTitleItem
 import com.rafdev.moneyflow.ui.components.DialogApp
 import com.rafdev.moneyflow.ui.components.ExpenseCard
 import com.rafdev.moneyflow.ui.components.ExpenseDetailBottomSheet
+import com.rafdev.moneyflow.ui.components.IconText
+import com.rafdev.moneyflow.ui.icons.AppIcons
 import com.rafdev.moneyflow.ui.theme.Background
 import com.rafdev.moneyflow.ui.uikit.card.UIKitCard
 import com.rafdev.moneyflow.ui.uikit.text.UIKitText
@@ -84,6 +89,24 @@ fun HomeScreen(
 
             }
             item {
+                UIKitText(
+                    text = stringResource(R.string.monthly_expenses)
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    IconText(
+                        text = stringResource(R.string.salary),
+                        iconRes = AppIcons.Add,
+                        onClick = {}
+                    )
+                    IconText(
+                        text = stringResource(R.string.expense),
+                        iconRes = AppIcons.Add,
+                        onClick = {}
+                    )
+                }
                 ActionTitleItem(
                     modifier = Modifier.padding(bottom = 8.dp),
                     title = "PROGRAMADOS",

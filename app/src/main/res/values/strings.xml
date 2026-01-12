@@ -4,4 +4,10 @@
     <string name="tab_home">Home</string>
     <string name="tab_cards">Tarjetas</string>
     <string name="tab_events">Eventos</string>
+
+    <string name="monthly_expenses">Gastos Mensuales</string>
+    <string name="salary">Sueldo</string>
+    <string name="expense">Gasto</string>
+    <string name="credit_cards">Tarjetas</string>
+
 </resources>
