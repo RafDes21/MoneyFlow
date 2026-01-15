@@ -3,7 +3,10 @@ package com.rafdev.data.repository.salary
 import com.rafdev.data.dao.salary.SalaryDao
 import com.rafdev.data.mapper.salary.toDomain
 import com.rafdev.data.mapper.salary.toEntity
+import com.rafdev.domain.model.salary.CreateExpense
 import com.rafdev.domain.model.salary.CreateSalary
+import com.rafdev.domain.model.salary.Month
+import com.rafdev.domain.model.salary.MonthlyExpense
 import com.rafdev.domain.model.salary.Salary
 import com.rafdev.domain.model.salary.UpdateSalary
 import com.rafdev.domain.repository.salary.SalaryRepository
@@ -39,5 +42,21 @@ class SalaryRepositoryImpl @Inject constructor(
             .catch { exception ->
                 emit(Result.failure(exception))
             }
+    }
+
+    override fun getMonths(): Flow<Result<List<Month>>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun addExpense(data: CreateExpense): Result<Unit> {
+        TODO("Not yet implemented")
+    }
+
+    override fun getExpenses(monthId: Long): Flow<Result<List<MonthlyExpense>>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getAvailableBalance(monthId: Long): Result<Double> {
+        TODO("Not yet implemented")
     }
 }

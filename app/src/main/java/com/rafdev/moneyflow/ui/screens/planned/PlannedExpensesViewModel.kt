@@ -7,10 +7,13 @@ import com.rafdev.domain.usecase.expense.DeleteExpenseUseCase
 import com.rafdev.domain.usecase.expense.GetExpenseUseCase
 import com.rafdev.domain.usecase.expense.InsertExpenseUseCase
 import com.rafdev.moneyflow.utils.NumberFormatter
+import com.rafdev.moneyflow.utils.next
+import com.rafdev.moneyflow.utils.previous
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
@@ -44,10 +47,34 @@ class PlannedExpensesViewModel @Inject constructor(
     }
 
 
+    private val _currentMonth =
+        MutableStateFlow(
+            UiMonth(
+                year = LocalDate.now().year,
+                month = LocalDate.now().monthValue
+            )
+        )
+
+    val currentMonth: StateFlow<UiMonth> = _currentMonth
+
+    fun nextMonth() {
+        _currentMonth.value = _currentMonth.value.next()
+    }
+
+    fun previousMonth() {
+        _currentMonth.value = _currentMonth.value.previous()
+    }
+
+
 }
 
 data class ExpenseState(
     val isLoading: Boolean = false,
     val success: List<Expense>? = null,
     val error: String = ""
+)
+
+data class UiMonth(
+    val year: Int,
+    val month: Int
 )

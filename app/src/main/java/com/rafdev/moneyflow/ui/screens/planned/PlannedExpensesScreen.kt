@@ -4,12 +4,19 @@ import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -24,6 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.rafdev.domain.model.Expense
+import com.rafdev.domain.model.salary.Month
 import com.rafdev.moneyflow.ui.components.ActionTitleItem
 import com.rafdev.moneyflow.ui.components.DialogApp
 import com.rafdev.moneyflow.ui.screens.planned.components.GroupedExpenseItem
@@ -39,12 +47,16 @@ fun PlannedExpensesScreen(
     onEditExpense: (Int) -> Unit
 ) {
     val state by viewModel.state.collectAsState()
+    val month by viewModel.currentMonth.collectAsState()
 
     PlannedExpensesContent(
         state = state,
+        month = month,
         onAddExpense = onAddExpense,
         onEditExpense = onEditExpense,
-        onDeleteExpense = viewModel::deleteExpenseById
+        onDeleteExpense = viewModel::deleteExpenseById,
+        previous = viewModel::previousMonth,
+        nextMonth = viewModel::nextMonth
     )
 }
 
@@ -52,9 +64,12 @@ fun PlannedExpensesScreen(
 @Composable
 fun PlannedExpensesContent(
     state: ExpenseState,
+    month: UiMonth,
     onAddExpense: () -> Unit,
     onEditExpense: (Int) -> Unit,
-    onDeleteExpense: (Int, Int?) -> Unit
+    onDeleteExpense: (Int, Int?) -> Unit,
+    previous: () -> Unit,
+    nextMonth: () -> Unit
 ) {
     val context = LocalContext.current
     var showToast by remember { mutableStateOf(false) }
@@ -75,6 +90,19 @@ fun PlannedExpensesContent(
             .background(Background)
             .padding(10.dp, 20.dp, 10.dp, 0.dp)
     ) {
+        Row {
+            IconButton(onClick = previous) {
+                Icon(Icons.Default.ArrowBack, null)
+            }
+
+            Text(
+                text = "${(month.month)} ${month.year}"
+            )
+
+            IconButton(onClick = nextMonth) {
+                Icon(Icons.Default.ArrowForward, null)
+            }
+        }
         Box(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.CenterEnd
@@ -124,56 +152,6 @@ fun PlannedExpensesContent(
         }
     }
 }
-
-
-@Preview(showBackground = true)
-@Composable
-fun PlannedExpensesScreenPreview() {
-    PlannedExpensesContent(
-        state = ExpenseState(
-            success = listOf(
-                Expense(
-                    id = 0,
-                    name = "name",
-                    amount = 0.0,
-                    type = "fixed",
-                    description = "description",
-                    image = "",
-                    color = "",
-                    date = "currentDateTime",
-                    category = "",
-                    recurring = false,
-                    period = "",
-                    paymentMethod = "",
-                    notes = "",
-                    isPaid = false,
-                    creditCardId = 1
-                ),
-                Expense(
-                    id = 1,
-                    name = "name",
-                    amount = 0.0,
-                    type = "fixed",
-                    description = "description",
-                    image = "",
-                    color = "",
-                    date = "currentDateTime",
-                    category = "",
-                    recurring = false,
-                    period = "",
-                    paymentMethod = "",
-                    notes = "",
-                    isPaid = false,
-                    creditCardId = 1
-                )
-            )
-        ),
-        onAddExpense = {},
-        onEditExpense = {},
-        onDeleteExpense = {} as (Int, Int?) -> Unit
-    )
-}
-
 
 
 
