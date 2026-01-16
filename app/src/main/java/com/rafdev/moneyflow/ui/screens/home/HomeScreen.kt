@@ -90,7 +90,7 @@ fun HomeScreen(
             }
             item {
                 UIKitText(
-                    text = stringResource(R.string.monthly_expenses)
+                    text = stringResource(R.string.monthly_expenses_title)
                 )
                 Row(
                     modifier = Modifier.fillMaxWidth(),

@@ -11,6 +11,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.rafdev.moneyflow.R
+import com.rafdev.moneyflow.ui.model.IconPosition
 import com.rafdev.moneyflow.ui.uikit.icon.UIKitIcon
 import com.rafdev.moneyflow.ui.uikit.text.UIKitText
 
@@ -20,25 +21,36 @@ fun ActionTitleItem(
     @DrawableRes iconRes: Int,
     iconSize: Dp = 24.dp,
     modifier: Modifier = Modifier,
-    pushIconToEnd: Boolean = true,
+    iconPosition: IconPosition = IconPosition.END,
     onClick: () -> Unit
 ) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
+        if (iconPosition == IconPosition.START) {
+            UIKitIcon(
+                iconRes = iconRes,
+                contentDescription = title,
+                size = iconSize,
+                onClick = onClick
+            )
+            Spacer(Modifier.width(4.dp))
+        }
+
         UIKitText(
             text = title,
-            modifier = if (pushIconToEnd) Modifier.weight(1f) else Modifier
         )
-        Spacer(Modifier.width(4.dp))
-        UIKitIcon(
-            iconRes =iconRes,
-            contentDescription = "Agregar",
-            size = iconSize,
-            padding = 8.dp,
-            onClick = onClick
-        )
+
+        if (iconPosition == IconPosition.END) {
+            Spacer(Modifier.width(4.dp))
+            UIKitIcon(
+                iconRes = iconRes,
+                contentDescription = title,
+                size = iconSize,
+                onClick = onClick
+            )
+        }
     }
 }
 
@@ -48,7 +60,6 @@ private fun ActionTitleItemPreview() {
     ActionTitleItem(
         title = "Gastos fijos",
         iconRes = R.drawable.ic_add,
-        pushIconToEnd = false,
         onClick = {}
     )
 }

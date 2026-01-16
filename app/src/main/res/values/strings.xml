@@ -5,9 +5,32 @@
     <string name="tab_cards">Tarjetas</string>
     <string name="tab_events">Eventos</string>
 
-    <string name="monthly_expenses">Gastos Mensuales</string>
     <string name="salary">Sueldo</string>
     <string name="expense">Gasto</string>
     <string name="credit_cards">Tarjetas</string>
+
+    <!-- Mes / Navegación -->
+    <string name="month_previous">Mes anterior</string>
+    <string name="month_next">Mes siguiente</string>
+
+    <!-- Sueldo -->
+    <string name="salary_section_title">Sueldo del mes</string>
+    <string name="add_salary">Agregar sueldo</string>
+    <string name="edit_salary">Editar sueldo</string>
+    <string name="salary_company">Empresa</string>
+
+    <!-- Resumen mensual -->
+    <string name="monthly_summary_title">Resumen del mes</string>
+    <string name="monthly_salary">Sueldo</string>
+    <string name="monthly_expenses_label">Gastos</string>
+    <string name="monthly_available">Disponible</string>
+
+    <!-- Gastos -->
+    <string name="monthly_expenses_title">Gastos del mes</string>
+    <string name="add_expense">Agregar gasto</string>
+    <string name="no_expenses">No hay gastos para este mes</string>
+
+    <!-- Estados vacíos -->
+    <string name="no_salary_for_month">No hay sueldo registrado para este mes</string>
 
 </resources>

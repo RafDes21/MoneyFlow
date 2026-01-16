@@ -11,6 +11,7 @@ fun CreateSalary.toEntity(): SalaryEntity =
     SalaryEntity(
         companyName = companyName,
         amount = amount,
+        date = date
     )
 
 fun UpdateSalary.toEntity(): SalaryEntity =
@@ -18,13 +19,15 @@ fun UpdateSalary.toEntity(): SalaryEntity =
         id = id,
         companyName = companyName,
         amount = amount,
+        date = date
     )
 
 fun SalaryEntity.toDomain(): Salary =
     Salary(
         id = id,
         companyName = companyName,
-        amount = amount
+        amount = amount,
+        date = date
     )
 
 fun MonthPeriodEntity.toDomain(hasSalary: Boolean) = Month(
