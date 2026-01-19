@@ -32,6 +32,8 @@ import com.rafdev.moneyflow.ui.screens.home.HomeScreen
 import com.rafdev.moneyflow.ui.screens.creditcard.CreditCardsScreen
 import com.rafdev.moneyflow.ui.screens.events.EventsScreen
 import com.rafdev.moneyflow.ui.screens.form.expense.fix.FormExpenseFix
+import com.rafdev.moneyflow.ui.screens.form.salary.SalaryBottomSheet
+import com.rafdev.moneyflow.ui.screens.form.salary.model.SalarySheetMode
 import com.rafdev.moneyflow.ui.screens.overlay.ExpenseFormOverlay
 import com.rafdev.moneyflow.ui.screens.planned.PlannedExpensesScreen
 import com.rafdev.moneyflow.ui.screens.splash.SplashScreen
@@ -45,6 +47,9 @@ fun AppNavigation() {
 
     var showBottomSheet by remember { mutableStateOf(false) }
     var sheetMode by remember { mutableStateOf(SheetMode.ADD) }
+
+    var showSalarySheet by remember { mutableStateOf(false) }
+    var mode by remember { mutableStateOf(SalarySheetMode.CREATE) }
 
     var overlayState by remember {
         mutableStateOf(OverlayState())
@@ -145,6 +150,10 @@ fun AppNavigation() {
                             sheetMode = SheetMode.EDIT
                             expenseId = id
                             showBottomSheet = true
+                        },
+                        onAddSalary = {
+                            mode = SalarySheetMode.CREATE
+                            showSalarySheet = true
                         }
                     )
                 }
@@ -207,6 +216,13 @@ fun AppNavigation() {
             mode = sheetMode,
             expenseId = expenseId,
             onDismiss = { showBottomSheet = false },
+        )
+    }
+
+    if (showSalarySheet) {
+        SalaryBottomSheet(
+            mode = mode,
+            onDismiss = { showSalarySheet = false }
         )
     }
 

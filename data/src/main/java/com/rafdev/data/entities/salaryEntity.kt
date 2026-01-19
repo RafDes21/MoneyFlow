@@ -4,25 +4,19 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "salary")
+@Entity(
+    tableName = "salary",
+    indices = [
+        Index(value = ["year", "month"]),
+        Index(value = ["companyName"])
+    ]
+)
 data class SalaryEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val companyName: String,
     val amount: Double,
-    val date: String
-
-)
-
-@Entity(
-    tableName = "month_period",
-    indices = [
-        Index(value = ["year", "month"], unique = true)
-    ]
-)
-data class MonthPeriodEntity(
-    @PrimaryKey(autoGenerate = true)
-    val id: Long = 0,
-    val year: Int,
-    val month: Int
+    val year: Int?,
+    val month: Int?,
+    val createdAt: Long?
 )

@@ -38,7 +38,8 @@ import com.rafdev.moneyflow.ui.uikit.text.UIKitText
 fun PlannedExpensesScreen(
     viewModel: PlannedExpensesViewModel = hiltViewModel(),
     onAddExpense: () -> Unit,
-    onEditExpense: (Int) -> Unit
+    onEditExpense: (Int) -> Unit,
+    onAddSalary: () -> Unit
 ) {
     val state by viewModel.state.collectAsState()
     val month by viewModel.currentMonth.collectAsState()
@@ -50,7 +51,8 @@ fun PlannedExpensesScreen(
         onEditExpense = onEditExpense,
         onDeleteExpense = viewModel::deleteExpenseById,
         previous = viewModel::previousMonth,
-        nextMonth = viewModel::nextMonth
+        nextMonth = viewModel::nextMonth,
+        onAddSalary = onAddSalary
     )
 }
 
@@ -63,7 +65,8 @@ fun PlannedExpensesContent(
     onEditExpense: (Int) -> Unit,
     onDeleteExpense: (Int, Int?) -> Unit,
     previous: () -> Unit,
-    nextMonth: () -> Unit
+    nextMonth: () -> Unit,
+    onAddSalary: () -> Unit
 ) {
 
     var showDialogApp by remember { mutableStateOf(false) }
@@ -89,7 +92,7 @@ fun PlannedExpensesContent(
             iconRes = UIKitIcons.Add,
             iconPosition = IconPosition.START
         ) {
-
+            onAddSalary()
         }
         Box(
             modifier = Modifier.fillMaxWidth(),
@@ -194,7 +197,8 @@ fun PlannedExpensesContentPreview() {
         onEditExpense = {},
         onDeleteExpense = { _, _ -> },
         previous = {},
-        nextMonth = {}
+        nextMonth = {},
+        onAddSalary = {}
     )
 }
 

@@ -4,13 +4,17 @@ data class Salary(
     val id : Int,
     val companyName: String,
     val amount: Double,
-    val date: String
+    val year: Int,
+    val month: Int,
+    val createdAt: Long
 )
 
 data class CreateSalary(
     val companyName: String,
     val amount: Double,
-    val date: String
+    val year: Int,
+    val month: Int,
+    val createdAt: Long
 )
 
 data class UpdateSalary(
