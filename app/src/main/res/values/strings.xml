@@ -32,5 +32,7 @@
 
     <!-- Estados vacíos -->
     <string name="no_salary_for_month">No hay sueldo registrado para este mes</string>
+    <string name="no_expenses_this_month">Aún no tienes gastos en este mes</string>
+    <string name="view_month_detail">Ver detalle del mes</string>
 
 </resources>

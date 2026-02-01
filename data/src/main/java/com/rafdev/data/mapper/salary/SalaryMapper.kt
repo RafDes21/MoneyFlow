@@ -9,9 +9,7 @@ fun CreateSalary.toEntity(): SalaryEntity =
     SalaryEntity(
         companyName = companyName,
         amount = amount,
-        createdAt = createdAt,
-        year = year,
-        month = month
+        date = date,
     )
 
 fun UpdateSalary.toEntity(): SalaryEntity =
@@ -19,9 +17,7 @@ fun UpdateSalary.toEntity(): SalaryEntity =
         id = id,
         companyName = companyName,
         amount = amount,
-        createdAt = null,
-        year = null,
-        month = null
+        date = date
     )
 
 fun SalaryEntity.toDomain(): Salary =
@@ -29,8 +25,7 @@ fun SalaryEntity.toDomain(): Salary =
         id = id,
         companyName = companyName,
         amount = amount,
-        createdAt = createdAt ?: 0,
-        year = year ?: 0,
-        month = month ?: 0
+        date = date.orEmpty()
+
     )
 

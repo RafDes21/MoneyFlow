@@ -16,11 +16,6 @@ interface SalaryDao {
     @Query("SELECT * FROM salary")
     fun getAll(): Flow<List<SalaryEntity>>
 
-    @Query("SELECT * FROM salary WHERE year = :year AND month = :month")
-    fun getSalariesByMonth(year: Int, month: Int): Flow<List<SalaryEntity>>
-
-    @Query(" SELECT SUM(amount) FROM salary WHERE year = :year AND month = :month")
-    fun getTotalSalaryByMonth(year: Int, month: Int): Flow<Double?>
 
     @Query("SELECT * FROM salary WHERE id = :id")
     suspend fun getById(id: Int): SalaryEntity?

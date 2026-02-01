@@ -23,7 +23,6 @@ import com.rafdev.moneyflow.SheetMode
 import com.rafdev.moneyflow.ui.components.OverlayContainer
 import com.rafdev.moneyflow.ui.components.bottombar.CustomBottomBar
 import com.rafdev.moneyflow.ui.components.topbar.CustomTopBar
-import com.rafdev.moneyflow.ui.model.ExpenseFormUi
 import com.rafdev.moneyflow.ui.model.OverlayOrigin
 import com.rafdev.moneyflow.ui.model.OverlayState
 import com.rafdev.moneyflow.ui.model.OverlayType
@@ -34,8 +33,8 @@ import com.rafdev.moneyflow.ui.screens.events.EventsScreen
 import com.rafdev.moneyflow.ui.screens.form.expense.fix.FormExpenseFix
 import com.rafdev.moneyflow.ui.screens.form.salary.SalaryBottomSheet
 import com.rafdev.moneyflow.ui.screens.form.salary.model.SalarySheetMode
+import com.rafdev.moneyflow.ui.screens.monthly_overview.MonthlyOverviewScreen
 import com.rafdev.moneyflow.ui.screens.overlay.ExpenseFormOverlay
-import com.rafdev.moneyflow.ui.screens.planned.PlannedExpensesScreen
 import com.rafdev.moneyflow.ui.screens.splash.SplashScreen
 
 @Composable
@@ -59,16 +58,13 @@ fun AppNavigation() {
         mutableStateOf<Int?>(null)
     }
 
-    val showBars = currentRoute != Splash::class.qualifiedName
+    val showBars = currentRoute != Splash::class.qualifiedName &&
+            currentRoute != FixedExpenses::class.qualifiedName
 
 
     val (title, showBackButton) = when (currentRoute) {
         Home::class.qualifiedName -> {
             stringResource(R.string.app_name) to false
-        }
-
-        FixedExpenses::class.qualifiedName -> {
-            "Gastos programados" to true
         }
 
         else -> {
@@ -122,6 +118,10 @@ fun AppNavigation() {
                                 type = OverlayType.ExpenseForm,
                                 origin = OverlayOrigin.NONE
                             )
+                        },
+                        onAddSalary = {
+                            mode = SalarySheetMode.CREATE
+                            showSalarySheet = true
                         }
                     )
                 }
@@ -139,7 +139,8 @@ fun AppNavigation() {
                 }
 
                 composable<FixedExpenses> {
-                    PlannedExpensesScreen(
+                    MonthlyOverviewScreen(
+                        onBackPressed = { navController.popBackStack() },
                         onAddExpense = {
                             sheetMode = SheetMode.ADD
                             expenseId = null

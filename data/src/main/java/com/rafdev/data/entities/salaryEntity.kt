@@ -7,7 +7,6 @@ import androidx.room.PrimaryKey
 @Entity(
     tableName = "salary",
     indices = [
-        Index(value = ["year", "month"]),
         Index(value = ["companyName"])
     ]
 )
@@ -16,7 +15,5 @@ data class SalaryEntity(
     val id: Int = 0,
     val companyName: String,
     val amount: Double,
-    val year: Int?,
-    val month: Int?,
-    val createdAt: Long?
+    val date: String?
 )

@@ -1,4 +1,4 @@
-package com.rafdev.moneyflow.ui.screens.planned.components
+package com.rafdev.moneyflow.ui.screens.monthly_overview.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column

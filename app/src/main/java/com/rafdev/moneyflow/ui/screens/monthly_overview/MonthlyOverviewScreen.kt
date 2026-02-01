@@ -1,21 +1,22 @@
-package com.rafdev.moneyflow.ui.screens.planned
+package com.rafdev.moneyflow.ui.screens.monthly_overview
 
+import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,28 +26,35 @@ import com.rafdev.domain.model.Expense
 import com.rafdev.moneyflow.R
 import com.rafdev.moneyflow.ui.components.ActionTitleItem
 import com.rafdev.moneyflow.ui.components.DialogApp
+import com.rafdev.moneyflow.ui.components.FullScreenLoading
+import com.rafdev.moneyflow.ui.components.FullScreenMessage
+import com.rafdev.moneyflow.ui.icons.AppIcons
 import com.rafdev.moneyflow.ui.model.IconPosition
-import com.rafdev.moneyflow.ui.screens.planned.components.GroupedExpenseItem
-import com.rafdev.moneyflow.ui.screens.planned.components.MonthNavigator
-import com.rafdev.moneyflow.ui.theme.TextPrimary
+import com.rafdev.moneyflow.ui.screens.monthly_overview.components.ExpenseList
+import com.rafdev.moneyflow.ui.screens.monthly_overview.components.MonthNavigator
 import com.rafdev.moneyflow.ui.theme.Background
+import com.rafdev.moneyflow.ui.uikit.icon.UIKitIcon
 import com.rafdev.moneyflow.ui.uikit.icon.UIKitIcons
 import com.rafdev.moneyflow.ui.uikit.text.UIKitText
 
 
 @Composable
-fun PlannedExpensesScreen(
+fun MonthlyOverviewScreen(
     viewModel: PlannedExpensesViewModel = hiltViewModel(),
+    onBackPressed: () -> Unit,
     onAddExpense: () -> Unit,
     onEditExpense: (Int) -> Unit,
     onAddSalary: () -> Unit
 ) {
     val state by viewModel.state.collectAsState()
+    val salaryState by viewModel.salary.collectAsState()
     val month by viewModel.currentMonth.collectAsState()
 
     PlannedExpensesContent(
         state = state,
+        salary = salaryState,
         month = month,
+        onBackPressed = onBackPressed,
         onAddExpense = onAddExpense,
         onEditExpense = onEditExpense,
         onDeleteExpense = viewModel::deleteExpenseById,
@@ -60,7 +68,9 @@ fun PlannedExpensesScreen(
 @Composable
 fun PlannedExpensesContent(
     state: ExpenseState,
+    salary: String,
     month: UiMonth,
+    onBackPressed: () -> Unit,
     onAddExpense: () -> Unit,
     onEditExpense: (Int) -> Unit,
     onDeleteExpense: (Int, Int?) -> Unit,
@@ -79,49 +89,66 @@ fun PlannedExpensesContent(
             .background(Background)
             .padding(10.dp, 20.dp, 10.dp, 0.dp)
     ) {
+
+        UIKitIcon(
+            iconRes = AppIcons.BackScreen,
+            contentDescription = "Volver",
+            onClick = { onBackPressed() }
+        )
+        Spacer(Modifier.height(30.dp))
+
         MonthNavigator(
             month = month,
             onPrevious = { previous() },
             onNext = { nextMonth() },
         )
+        Spacer(Modifier.height(20.dp))
         UIKitText(
             text = stringResource(R.string.salary_section_title)
         )
-        ActionTitleItem(
-            title = stringResource(R.string.add_salary),
-            iconRes = UIKitIcons.Add,
-            iconPosition = IconPosition.START
-        ) {
-            onAddSalary()
-        }
-        Box(
+        Spacer(Modifier.height(10.dp))
+        Row(
             modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.CenterEnd
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
+
             ActionTitleItem(
-                title = "Agregar",
+                title = salary,
+                iconRes = UIKitIcons.Add,
+                iconPosition = IconPosition.START
+            ) {
+                onAddSalary()
+            }
+            ActionTitleItem(
+                title = "Gasto",
                 iconRes = UIKitIcons.Add,
                 onClick = onAddExpense,
             )
         }
+        Spacer(Modifier.height(20.dp))
 
-        LazyColumn {
-            state.success?.let { expenses ->
-                items(expenses, key = { it.id }) { expense ->
-                    GroupedExpenseItem(
-                        title = expense.name,
-                        subtitle = expense.description,
-                        amount = expense.amount.toString(),
-                        onEdit = { onEditExpense(expense.id) },
-                        onDelete = {
-                            expenseToDelete = expense
-                            showDialogApp = true
-                        }
-                    )
-                    Divider(
-                        color = TextPrimary.copy(alpha = 0.08f)
+        Box(Modifier.fillMaxSize()) {
+            Log.d("probando", "state $state")
+            when {
+                state.isLoading -> FullScreenLoading(size = 40.dp)
+
+                state.error.isNotEmpty() -> FullScreenMessage(text = state.error)
+                state.success.isEmpty() -> {
+                    FullScreenMessage(
+                        text = stringResource(R.string.no_expenses_this_month)
                     )
                 }
+
+                else -> ExpenseList(
+                    state.success,
+                    onEditExpense = { id ->
+                        onEditExpense(id)
+                    },
+                    onDeleteExpense = { expense ->
+                        expenseToDelete = expense
+                        showDialogApp = true
+                    }
+                )
             }
         }
 
@@ -189,10 +216,12 @@ fun PlannedExpensesContentPreview() {
                 )
             )
         ),
+        salary = "",
         month = UiMonth(
             month = 1,
             year = 2026
         ),
+        onBackPressed = {},
         onAddExpense = {},
         onEditExpense = {},
         onDeleteExpense = { _, _ -> },

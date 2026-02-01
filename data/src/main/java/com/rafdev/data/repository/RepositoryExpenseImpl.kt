@@ -8,6 +8,8 @@ import com.rafdev.domain.model.Expense
 import com.rafdev.domain.repository.RepositoryExpense
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -23,10 +25,13 @@ class RepositoryExpenseImpl @Inject constructor(
             entity.toUi()
         }
 
-    override fun getExpense(): Flow<List<Expense>> {
+    override fun getExpense(): Flow<Result<List<Expense>>> {
         return expenseDao.getAllExpenses()
-            .map { listOfEntities ->
-                listOfEntities.map { it.toUi() }
+            .map { entities ->
+                Result.success(entities.map { it.toUi() })
+            }
+            .catch { e ->
+                emit(Result.failure(e))
             }
             .flowOn(Dispatchers.IO)
     }

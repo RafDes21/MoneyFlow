@@ -7,6 +7,7 @@ import com.rafdev.domain.model.salary.Salary
 import com.rafdev.domain.usecase.salary.AddSalaryUseCase
 import com.rafdev.domain.usecase.salary.UpdateSalaryUseCase
 import com.rafdev.moneyflow.ui.screens.form.salary.model.SalarySheetMode
+import com.rafdev.moneyflow.utils.getCurrentDateTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -77,15 +78,11 @@ class SalaryViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
 
-            val now = LocalDate.now()
-
             val result = insertSalaryUseCase(
                 CreateSalary(
                     companyName = _uiState.value.companyName,
                     amount = _uiState.value.amount.toDouble(),
-                    year = now.year,
-                    month = now.monthValue,
-                    createdAt = System.currentTimeMillis()
+                    date = getCurrentDateTime()
                 )
             )
 

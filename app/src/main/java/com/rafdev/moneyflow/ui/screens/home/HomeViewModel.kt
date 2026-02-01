@@ -8,10 +8,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import com.rafdev.domain.usecase.expense.DeleteExpenseUseCase
 import com.rafdev.domain.usecase.expense.GetExpenseUseCase
 import com.rafdev.domain.usecase.expense.InsertExpenseUseCase
+import com.rafdev.domain.usecase.salary.GetSalariesUseCase
 import com.rafdev.moneyflow.utils.NumberFormatter
+import com.rafdev.moneyflow.utils.isSameMonth
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
@@ -19,7 +23,9 @@ class HomeViewModel @Inject constructor(
     private val getExpenseUseCase: GetExpenseUseCase,
     private val insertExpenseUseCase: InsertExpenseUseCase,
     private val deleteExpenseUseCase: DeleteExpenseUseCase,
-    private val numberFormatter: NumberFormatter
+    private val numberFormatter: NumberFormatter,
+    private val getSalariesUseCase: GetSalariesUseCase
+
 ) : ViewModel() {
 
 
@@ -66,9 +72,18 @@ class HomeViewModel @Inject constructor(
     private val _state = MutableStateFlow(ExpenseStateHome())
     val state: StateFlow<ExpenseStateHome> = _state
 
+
+    private val _salary = MutableStateFlow("Ingresa tu sueldo")
+    val salary: StateFlow<String> = _salary
+
+    private val _salaryNotLoaded = MutableStateFlow(true)
+    val salaryNotLoaded: StateFlow<Boolean> = _salaryNotLoaded
+
+
     init {
         fetchExpenses()
         observeValues()
+        getCurrentMonthSalary()
     }
 
     private fun observeValues() {
@@ -118,28 +133,46 @@ class HomeViewModel @Inject constructor(
     private fun fetchExpenses() {
         viewModelScope.launch {
             getExpenseUseCase.invoke().collect { expenses ->
-                _state.value = ExpenseStateHome(success = expenses)
-
-                val expensesRecurring = expenses.filter { it.type == "recurring" }
-                val totalRecurrentExpenses = expensesRecurring.sumOf { it.amount }
-                _numericRecurrentExpenses.value = totalRecurrentExpenses
-                _totalRecurrentExpenses.value = totalRecurrentExpenses.toString()
-
-                val formattedBudget = numberFormatter.formatToString(totalRecurrentExpenses)
-                val splitResult = numberFormatter.splitNumBer(formattedBudget)
-                _splitRecurrent.value = splitResult
 
 
-                val expensesFixed = expenses.filter { it.type == "fixed" }
-                val totalFixedExpenses = expensesFixed.sumOf { it.amount }
-                _numericFixedExpenses.value = totalFixedExpenses
-
-                val formattedFixed = numberFormatter.formatToString(totalFixedExpenses)
-                val splitFixedResult = numberFormatter.splitNumBer(formattedFixed)
-                _splitFixed.value = splitFixedResult
-                _totalFixedExpenses.value = totalFixedExpenses.toString()
+            }
+        }
+    }
 
 
+    private fun getCurrentMonthSalary() {
+        val now = LocalDate.now()
+
+        viewModelScope.launch {
+            getSalariesUseCase.invoke().collect { result ->
+                result.onSuccess { salaries ->
+
+                    val filtered = salaries.filter {
+                        isSameMonth(it.date, now.monthValue, now.year)
+                    }
+
+                    val total = filtered.sumOf { it.amount }
+
+                    _salary.update {
+                        if (total == 0.0) {
+                            "Agregar saldo"
+                        } else {
+                            total.toString()
+                        }
+                    }
+                    _salaryNotLoaded.update {
+                        if (total == 0.0) {
+                            true
+                        } else {
+                            false
+                        }
+                    }
+
+                }
+
+                result.onFailure {
+                    _salary.update { "Error" }
+                }
             }
         }
     }

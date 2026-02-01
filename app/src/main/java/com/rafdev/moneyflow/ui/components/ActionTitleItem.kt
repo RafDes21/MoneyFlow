@@ -1,6 +1,7 @@
 package com.rafdev.moneyflow.ui.components
 
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
@@ -22,10 +23,12 @@ fun ActionTitleItem(
     iconSize: Dp = 24.dp,
     modifier: Modifier = Modifier,
     iconPosition: IconPosition = IconPosition.END,
-    onClick: () -> Unit
+    onClick: (() -> Unit)? = null
 ) {
     Row(
-        modifier = modifier,
+        modifier = modifier.clickable(enabled = onClick != null) {
+            onClick?.invoke()
+        },
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (iconPosition == IconPosition.START) {
@@ -33,9 +36,8 @@ fun ActionTitleItem(
                 iconRes = iconRes,
                 contentDescription = title,
                 size = iconSize,
-                onClick = onClick
             )
-            Spacer(Modifier.width(4.dp))
+            Spacer(Modifier.width(8.dp))
         }
 
         UIKitText(
@@ -43,7 +45,7 @@ fun ActionTitleItem(
         )
 
         if (iconPosition == IconPosition.END) {
-            Spacer(Modifier.width(4.dp))
+            Spacer(Modifier.width(8.dp))
             UIKitIcon(
                 iconRes = iconRes,
                 contentDescription = title,

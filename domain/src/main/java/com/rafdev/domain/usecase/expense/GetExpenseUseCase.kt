@@ -7,5 +7,5 @@ import javax.inject.Inject
 
 class GetExpenseUseCase @Inject constructor(private val repository : RepositoryExpense) {
 
-    operator fun invoke (): Flow<List<Expense>> = repository.getExpense()
+    operator fun invoke (): Flow<Result<List<Expense>>> = repository.getExpense()
 }

@@ -35,8 +35,10 @@ import com.rafdev.moneyflow.ui.components.ExpenseCard
 import com.rafdev.moneyflow.ui.components.ExpenseDetailBottomSheet
 import com.rafdev.moneyflow.ui.components.IconText
 import com.rafdev.moneyflow.ui.icons.AppIcons
+import com.rafdev.moneyflow.ui.model.IconPosition
 import com.rafdev.moneyflow.ui.theme.Background
 import com.rafdev.moneyflow.ui.uikit.card.UIKitCard
+import com.rafdev.moneyflow.ui.uikit.icon.UIKitIcons
 import com.rafdev.moneyflow.ui.uikit.text.UIKitText
 import com.rafdev.moneyflow.utils.Constants
 
@@ -45,7 +47,8 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     onNavigate: () -> Unit,
     onOpenSheet: (SheetMode) -> Unit,
-    onOpenOverLay: () -> Unit
+    onOpenOverLay: () -> Unit,
+    onAddSalary: () -> Unit
 ) {
 
     val totalExpenses by viewModel.totalExpenses.collectAsState()
@@ -57,7 +60,15 @@ fun HomeScreen(
     var expenseItem by remember { mutableStateOf<Expense?>(null) }
 
     val state by viewModel.state.collectAsState()
+    val salaryState by viewModel.salary.collectAsState()
+    val salaryNotLoaded by viewModel.salaryNotLoaded.collectAsState()
+    var isHidden by remember { mutableStateOf(false) }
 
+    val icon = when {
+        salaryNotLoaded -> AppIcons.Add
+        isHidden -> AppIcons.EyeHide
+        else -> AppIcons.EyeShow
+    }
 
     Box(
         modifier = Modifier
@@ -90,44 +101,47 @@ fun HomeScreen(
             }
             item {
                 UIKitText(
-                    text = stringResource(R.string.monthly_expenses_title)
+                    text = stringResource(R.string.salary_section_title)
                 )
+                Spacer(Modifier.height(10.dp))
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
-                    IconText(
-                        text = stringResource(R.string.salary),
-                        iconRes = AppIcons.Add,
-                        onClick = {}
+                    ActionTitleItem(
+                        title = if (!isHidden) salaryState else "*******",
+                        iconRes = icon,
+                        iconPosition = IconPosition.START,
+                        onClick = {
+                            if (salaryNotLoaded) {
+                                onAddSalary()
+                            } else {
+                                isHidden = !isHidden
+                            }
+                        }
                     )
-                    IconText(
-                        text = stringResource(R.string.expense),
-                        iconRes = AppIcons.Add,
-                        onClick = {}
-                    )
-                }
-                ActionTitleItem(
-                    modifier = Modifier.padding(bottom = 8.dp),
-                    title = "PROGRAMADOS",
-                    iconRes = R.drawable.ic_add,
-                    onClick = { onOpenSheet(SheetMode.ADD) }
-                )
-                UIKitCard(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = { onNavigate() }
-                ) {
-                    UIKitText(
-                        modifier = Modifier.padding(16.dp),
-                        text = "$ $totalFixedExpenses"
+
+                    ActionTitleItem(
+                        title = "Gasto",
+                        iconRes = UIKitIcons.Add,
+                        onClick = { onOpenSheet(SheetMode.ADD) },
                     )
                 }
+                Spacer(Modifier.height(10.dp))
 
                 ActionTitleItem(
-                    title = "ACTIVIDADES",
+                    modifier = Modifier.padding(bottom = 8.dp),
+                    title = stringResource(R.string.view_month_detail),
+                    iconRes = AppIcons.OpenScreen,
+                    onClick = { onNavigate() }
+                )
+
+                ActionTitleItem(
+                    title = "Tarjetas",
                     iconRes = R.drawable.ic_add,
                     modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
-                    onClick = { onOpenOverLay() }
+                    onClick = {  }
                 )
 
             }

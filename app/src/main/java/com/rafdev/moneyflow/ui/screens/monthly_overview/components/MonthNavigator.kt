@@ -1,4 +1,4 @@
-package com.rafdev.moneyflow.ui.screens.planned.components
+package com.rafdev.moneyflow.ui.screens.monthly_overview.components
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rafdev.moneyflow.ui.icons.AppIcons
-import com.rafdev.moneyflow.ui.screens.planned.UiMonth
+import com.rafdev.moneyflow.ui.screens.monthly_overview.UiMonth
 import com.rafdev.moneyflow.ui.uikit.icon.UIKitIcon
 import com.rafdev.moneyflow.ui.uikit.text.UIKitText
 

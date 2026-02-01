@@ -1,20 +1,16 @@
 package com.rafdev.domain.model.salary
 
 data class Salary(
-    val id : Int,
+    val id: Int,
     val companyName: String,
     val amount: Double,
-    val year: Int,
-    val month: Int,
-    val createdAt: Long
+    val date: String,
 )
 
 data class CreateSalary(
     val companyName: String,
     val amount: Double,
-    val year: Int,
-    val month: Int,
-    val createdAt: Long
+    val date: String
 )
 
 data class UpdateSalary(
