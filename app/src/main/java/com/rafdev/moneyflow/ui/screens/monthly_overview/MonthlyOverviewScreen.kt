@@ -28,6 +28,7 @@ import com.rafdev.moneyflow.ui.components.ActionTitleItem
 import com.rafdev.moneyflow.ui.components.DialogApp
 import com.rafdev.moneyflow.ui.components.FullScreenLoading
 import com.rafdev.moneyflow.ui.components.FullScreenMessage
+import com.rafdev.moneyflow.ui.components.SalaryProgressCard
 import com.rafdev.moneyflow.ui.icons.AppIcons
 import com.rafdev.moneyflow.ui.model.IconPosition
 import com.rafdev.moneyflow.ui.screens.monthly_overview.components.ExpenseList
@@ -40,7 +41,7 @@ import com.rafdev.moneyflow.ui.uikit.text.UIKitText
 
 @Composable
 fun MonthlyOverviewScreen(
-    viewModel: PlannedExpensesViewModel = hiltViewModel(),
+    viewModel: MonthlyOverviewViewModel = hiltViewModel(),
     onBackPressed: () -> Unit,
     onAddExpense: () -> Unit,
     onEditExpense: (Int) -> Unit,
@@ -50,9 +51,26 @@ fun MonthlyOverviewScreen(
     val salaryState by viewModel.salary.collectAsState()
     val month by viewModel.currentMonth.collectAsState()
 
+    val totalExpenses by viewModel.totalExpenses.collectAsState()
+    val totalSalary by viewModel.totalSalary.collectAsState()
+
+    val salaryNotLoaded by viewModel.salaryNotLoaded.collectAsState()
+    var isHidden by remember { mutableStateOf(false) }
+
+    val icon = when {
+        salaryNotLoaded -> AppIcons.Add
+        isHidden -> AppIcons.EyeHide
+        else -> AppIcons.EyeShow
+    }
+
     PlannedExpensesContent(
         state = state,
+        icon = icon,
+        isHidden = isHidden,
+        salaryNotLoaded = salaryNotLoaded,
         salary = salaryState,
+        totalSalary = totalSalary,
+        totalExpenses = totalExpenses,
         month = month,
         onBackPressed = onBackPressed,
         onAddExpense = onAddExpense,
@@ -60,7 +78,9 @@ fun MonthlyOverviewScreen(
         onDeleteExpense = viewModel::deleteExpenseById,
         previous = viewModel::previousMonth,
         nextMonth = viewModel::nextMonth,
-        onAddSalary = onAddSalary
+        onAddSalary = onAddSalary,
+        onToggleHidden = { isHidden = !isHidden }
+
     )
 }
 
@@ -76,7 +96,13 @@ fun PlannedExpensesContent(
     onDeleteExpense: (Int, Int?) -> Unit,
     previous: () -> Unit,
     nextMonth: () -> Unit,
-    onAddSalary: () -> Unit
+    onAddSalary: () -> Unit,
+    totalSalary: Double,
+    totalExpenses: Double,
+    icon: Int,
+    isHidden: Boolean,
+    onToggleHidden: () -> Unit,
+    salaryNotLoaded: Boolean
 ) {
 
     var showDialogApp by remember { mutableStateOf(false) }
@@ -113,11 +139,15 @@ fun PlannedExpensesContent(
         ) {
 
             ActionTitleItem(
-                title = salary,
-                iconRes = UIKitIcons.Add,
+                title = if (!isHidden) salary else "*******",
+                iconRes = icon,
                 iconPosition = IconPosition.START
             ) {
-                onAddSalary()
+                if (salaryNotLoaded) {
+                    onAddSalary()
+                } else {
+                    onToggleHidden()
+                }
             }
             ActionTitleItem(
                 title = "Gasto",
@@ -126,6 +156,20 @@ fun PlannedExpensesContent(
             )
         }
         Spacer(Modifier.height(20.dp))
+
+        if (!salaryNotLoaded) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
+            ) {
+                SalaryProgressCard(
+                    salary = totalSalary,
+                    expenses = totalExpenses
+                )
+            }
+        }
+
 
         Box(Modifier.fillMaxSize()) {
             Log.d("probando", "state $state")
@@ -227,7 +271,13 @@ fun PlannedExpensesContentPreview() {
         onDeleteExpense = { _, _ -> },
         previous = {},
         nextMonth = {},
-        onAddSalary = {}
+        onAddSalary = {},
+        totalSalary = 0.0,
+        totalExpenses = 0.0,
+        onToggleHidden = {},
+        isHidden = true,
+        salaryNotLoaded = false,
+        icon = AppIcons.Add
     )
 }
 

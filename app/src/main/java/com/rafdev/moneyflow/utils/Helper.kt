@@ -10,3 +10,7 @@ fun isSameMonth(dateString: String, month: Int, year: Int): Boolean {
 
     return date.monthValue == month && date.year == year
 }
+
+fun formatMoney(value: Double): String {
+    return "$ " + "%,.0f".format(value)
+}

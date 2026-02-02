@@ -34,6 +34,7 @@ import com.rafdev.moneyflow.ui.components.DialogApp
 import com.rafdev.moneyflow.ui.components.ExpenseCard
 import com.rafdev.moneyflow.ui.components.ExpenseDetailBottomSheet
 import com.rafdev.moneyflow.ui.components.IconText
+import com.rafdev.moneyflow.ui.components.SalaryProgressCard
 import com.rafdev.moneyflow.ui.icons.AppIcons
 import com.rafdev.moneyflow.ui.model.IconPosition
 import com.rafdev.moneyflow.ui.theme.Background
@@ -52,8 +53,8 @@ fun HomeScreen(
 ) {
 
     val totalExpenses by viewModel.totalExpenses.collectAsState()
-    val totalFixedExpenses by viewModel.totalFixedExpenses.collectAsState()
-    val totalRecurrentExpenses by viewModel.totalRecurrentExpenses.collectAsState()
+    val totalSalary by viewModel.totalSalary.collectAsState()
+
 
     var showBottomSheet by remember { mutableStateOf(false) }
     var showDialogApp by remember { mutableStateOf(false) }
@@ -74,6 +75,8 @@ fun HomeScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(Background)
+            .padding(10.dp, 20.dp, 10.dp, 0.dp)
+
     ) {
         LazyColumn(
             modifier = Modifier
@@ -81,24 +84,6 @@ fun HomeScreen(
             contentPadding = PaddingValues(bottom = 96.dp)
 
         ) {
-            item {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-
-                    UIKitText(
-                        text = Constants.ShortTexts.TOTAL,
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    UIKitText(
-                        text = "$ $totalExpenses"
-                    )
-
-                }
-                Spacer(modifier = Modifier.height(50.dp))
-
-            }
             item {
                 UIKitText(
                     text = stringResource(R.string.salary_section_title)
@@ -137,11 +122,25 @@ fun HomeScreen(
                     onClick = { onNavigate() }
                 )
 
+                if (!salaryNotLoaded) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp)
+                    ) {
+                        SalaryProgressCard(
+                            salary = totalSalary,
+                            expenses = totalExpenses
+                        )
+                    }
+                }
+
+
                 ActionTitleItem(
                     title = "Tarjetas",
                     iconRes = R.drawable.ic_add,
                     modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
-                    onClick = {  }
+                    onClick = { }
                 )
 
             }
@@ -175,13 +174,6 @@ fun HomeScreen(
 
 
         }
-        ActionButton(
-            text = totalRecurrentExpenses,
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(16.dp),
-            onClick = {}
-        )
 
         if (showDialogApp) {
             DialogApp(

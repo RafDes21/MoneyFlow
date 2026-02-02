@@ -20,7 +20,7 @@ import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
-class PlannedExpensesViewModel @Inject constructor(
+class MonthlyOverviewViewModel @Inject constructor(
     private val getExpenseUseCase: GetExpenseUseCase,
     private val deleteExpenseUseCase: DeleteExpenseUseCase,
     private val getSalariesUseCase: GetSalariesUseCase
@@ -31,6 +31,15 @@ class PlannedExpensesViewModel @Inject constructor(
 
     private val _salary = MutableStateFlow("Ingresa tu sueldo")
     val salary: StateFlow<String> = _salary
+
+    private val _totalExpenses = MutableStateFlow(0.0)
+    val totalExpenses: StateFlow<Double> = _totalExpenses
+
+    private val _totalSalary = MutableStateFlow(0.0)
+    val totalSalary: StateFlow<Double> = _totalSalary
+
+    private val _salaryNotLoaded = MutableStateFlow(true)
+    val salaryNotLoaded: StateFlow<Boolean> = _salaryNotLoaded
 
 
     private val _currentMonth =
@@ -76,7 +85,8 @@ class PlannedExpensesViewModel @Inject constructor(
                         val filtered = expenses.filter {
                             isSameMonth(it.date, month, year)
                         }
-
+                        val total = filtered.sumOf { it.amount }
+                        _totalExpenses.update { total }
                         _state.update {
                             it.copy(
                                 isLoading = false,
@@ -106,12 +116,20 @@ class PlannedExpensesViewModel @Inject constructor(
                     }
 
                     val total = filtered.sumOf { it.amount }
+                    _totalSalary.update { total }
 
                     _salary.update {
                         if (total == 0.0) {
                             "Agregar saldo"
                         } else {
                             total.toString()
+                        }
+                    }
+                    _salaryNotLoaded.update {
+                        if (total == 0.0) {
+                            true
+                        } else {
+                            false
                         }
                     }
                 }

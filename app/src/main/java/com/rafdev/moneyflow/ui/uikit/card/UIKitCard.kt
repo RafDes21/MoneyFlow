@@ -29,7 +29,7 @@ import com.rafdev.moneyflow.ui.theme.TextSecondary
 @Composable
 fun UIKitCard(
     modifier: Modifier = Modifier,
-    onClick: () -> Unit,
+    onClick: (() -> Unit)? = null,
     background: Color = CardColor,
     content: @Composable () -> Unit
 ) {
@@ -40,7 +40,7 @@ fun UIKitCard(
         ),
         border = BorderStroke(1.dp, CardBorder),
         shape = RoundedCornerShape(16.dp),
-        onClick = onClick
+        onClick = {onClick?.invoke()}
     ) {
         content()
     }
