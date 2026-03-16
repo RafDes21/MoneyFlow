@@ -52,12 +52,6 @@ fun SalaryProgressCard(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
 
-            // ----- Header -----
-            UIKitText(
-                text = "Resumen del mes",
-            )
-
-            // ----- Salary + Expenses -----
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween

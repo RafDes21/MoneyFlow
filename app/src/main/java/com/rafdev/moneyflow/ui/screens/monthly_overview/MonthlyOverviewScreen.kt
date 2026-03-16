@@ -160,7 +160,7 @@ fun PlannedExpensesContent(
         if (!salaryNotLoaded) {
             Box(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .fillMaxWidth()
                     .padding(16.dp)
             ) {
                 SalaryProgressCard(

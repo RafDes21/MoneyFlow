@@ -15,5 +15,6 @@ data class SalaryEntity(
     val id: Int = 0,
     val companyName: String,
     val amount: Double,
-    val date: String?
+    val date: String?,
+    val isHidden: Boolean = false
 )

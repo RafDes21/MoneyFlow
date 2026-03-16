@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rafdev.moneyflow.ui.theme.CardPalette
 import com.rafdev.moneyflow.ui.theme.Primary
+import com.rafdev.moneyflow.ui.theme.SubtitleText
 import com.rafdev.moneyflow.ui.uikit.card.UIKitCard
 import com.rafdev.moneyflow.ui.uikit.icon.UIKitIcon
 import com.rafdev.moneyflow.ui.uikit.icon.UIKitIcons
@@ -50,7 +51,7 @@ fun ExpenseCard(
             ) {
                 UIKitText(
                     text = title,
-                    fontSize = 14.sp
+                    style = SubtitleText
                 )
 
                 Row(
@@ -77,7 +78,7 @@ fun ExpenseCard(
             Spacer(modifier = Modifier.height(4.dp))
             UIKitText(
                 text = amount,
-                fontSize = 22.sp,
+                style = SubtitleText
             )
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -88,11 +89,11 @@ fun ExpenseCard(
                 ) {
                     UIKitText(
                         text = time,
-                        fontSize = 12.sp
+                        style = SubtitleText
                     )
                     UIKitText(
                         text = date,
-                        fontSize = 12.sp
+                        style = SubtitleText
                     )
                 }
             }

@@ -16,6 +16,7 @@ fun CreditCardEntity.toDomain(): CreditCardDomain {
 
 fun CreditCardDomain.toEntity(): CreditCardEntity {
     return CreditCardEntity(
+        id =id,
         title = this.title,
         number = this.number,
         type = type,

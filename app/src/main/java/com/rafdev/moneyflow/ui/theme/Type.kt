@@ -26,7 +26,7 @@ val CustomTypography = Typography(
         fontSize = 18.sp
     ),
 
-)
+    )
 
 // Set of Material typography styles to start with
 val Typography = Typography(
@@ -54,3 +54,23 @@ val Typography = Typography(
     )
     */
 )
+
+
+val TitleText = TextStyle(
+    fontSize = 24.sp,
+    fontWeight = FontWeight.Bold,
+    color = AppColor.white
+)
+
+val SubtitleText = TextStyle(
+    fontSize = 16.sp,
+    fontWeight = FontWeight.SemiBold,
+    color = AppColor.white
+)
+
+val BodyText = TextStyle(
+    fontSize = 13.sp,
+    color = AppColor.white,
+    fontWeight = FontWeight.Light,
+
+    )

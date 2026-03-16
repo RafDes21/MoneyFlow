@@ -5,12 +5,15 @@ data class Salary(
     val companyName: String,
     val amount: Double,
     val date: String,
+    val isHidden : Boolean
 )
 
 data class CreateSalary(
+    val id: Int,
     val companyName: String,
     val amount: Double,
-    val date: String
+    val date: String,
+    val isHidden: Boolean = false
 )
 
 data class UpdateSalary(

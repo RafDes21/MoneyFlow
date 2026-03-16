@@ -18,6 +18,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.rafdev.domain.model.CreditCardDomain
 import com.rafdev.moneyflow.R
 import com.rafdev.moneyflow.SheetMode
 import com.rafdev.moneyflow.ui.components.OverlayContainer
@@ -26,9 +27,8 @@ import com.rafdev.moneyflow.ui.components.topbar.CustomTopBar
 import com.rafdev.moneyflow.ui.model.OverlayOrigin
 import com.rafdev.moneyflow.ui.model.OverlayState
 import com.rafdev.moneyflow.ui.model.OverlayType
-import com.rafdev.moneyflow.ui.screens.card.CreditCardForm
+import com.rafdev.moneyflow.ui.screens.creditcardform.CreditCardForm
 import com.rafdev.moneyflow.ui.screens.home.HomeScreen
-import com.rafdev.moneyflow.ui.screens.creditcard.CreditCardsScreen
 import com.rafdev.moneyflow.ui.screens.events.EventsScreen
 import com.rafdev.moneyflow.ui.screens.form.expense.fix.FormExpenseFix
 import com.rafdev.moneyflow.ui.screens.form.salary.SalaryBottomSheet
@@ -49,6 +49,8 @@ fun AppNavigation() {
 
     var showSalarySheet by remember { mutableStateOf(false) }
     var mode by remember { mutableStateOf(SalarySheetMode.CREATE) }
+
+    var creditCard by remember { mutableStateOf<CreditCardDomain?>(null) }
 
     var overlayState by remember {
         mutableStateOf(OverlayState())
@@ -122,13 +124,17 @@ fun AppNavigation() {
                         onAddSalary = {
                             mode = SalarySheetMode.CREATE
                             showSalarySheet = true
-                        }
-                    )
-                }
-
-                composable<Cards> {
-                    CreditCardsScreen(
+                        },
                         onAddCreditCard = {
+                            creditCard = null
+                            overlayState = OverlayState(
+                                visible = true,
+                                type = OverlayType.CreditCardForm,
+                                origin = OverlayOrigin.NONE
+                            )
+                        },
+                        onUpdateCreditCard = {
+                            creditCard = it
                             overlayState = OverlayState(
                                 visible = true,
                                 type = OverlayType.CreditCardForm,
@@ -136,6 +142,10 @@ fun AppNavigation() {
                             )
                         }
                     )
+                }
+
+                composable<Cards> {
+
                 }
 
                 composable<FixedExpenses> {
@@ -191,6 +201,7 @@ fun AppNavigation() {
 
                     OverlayType.CreditCardForm -> {
                         CreditCardForm(
+                            creditCard =creditCard,
                             onClose = {
                                 overlayState = when (overlayState.origin) {
                                     OverlayOrigin.EXPENSE_FORM ->

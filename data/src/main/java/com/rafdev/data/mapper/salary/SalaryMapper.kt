@@ -7,9 +7,11 @@ import com.rafdev.domain.model.salary.UpdateSalary
 
 fun CreateSalary.toEntity(): SalaryEntity =
     SalaryEntity(
+        id = id,
         companyName = companyName,
         amount = amount,
         date = date,
+        isHidden = isHidden
     )
 
 fun UpdateSalary.toEntity(): SalaryEntity =
@@ -25,7 +27,7 @@ fun SalaryEntity.toDomain(): Salary =
         id = id,
         companyName = companyName,
         amount = amount,
-        date = date.orEmpty()
-
+        date = date.orEmpty(),
+        isHidden = isHidden
     )
 

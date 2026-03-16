@@ -1,5 +1,6 @@
 package com.rafdev.moneyflow.ui.uikit.text
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -15,23 +16,22 @@ import com.rafdev.moneyflow.ui.theme.TextPrimary
 @Composable
 fun UIKitText(
     text: String,
-    fontSize: TextUnit = 16.sp,
     modifier: Modifier = Modifier,
+    style: TextStyle = MaterialTheme.typography.bodyLarge,
     color: Color = TextPrimary,
     textAlign: TextAlign = TextAlign.Start,
     maxLines: Int = Int.MAX_VALUE,
     overflow: TextOverflow = TextOverflow.Clip
 ) {
-
     Text(
         text = text,
-        fontSize = fontSize,
         modifier = modifier,
-        color = color,
-        textAlign = textAlign,
-        style = TextStyle(
+        style = style.copy(
+            color = color,
+            textAlign = textAlign,
             platformStyle = PlatformTextStyle(includeFontPadding = false)
-        )
+        ),
+        maxLines = maxLines,
+        overflow = overflow
     )
-
 }

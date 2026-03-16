@@ -1,4 +1,4 @@
-package com.rafdev.moneyflow.ui.screens.card
+package com.rafdev.moneyflow.ui.screens.creditcardform
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -21,7 +21,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -41,16 +40,13 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.rafdev.moneyflow.R
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.LaunchedEffect
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.rafdev.domain.model.CreditCardDomain
 import com.rafdev.moneyflow.ui.components.CreditCard
 import com.rafdev.moneyflow.ui.components.DialogApp
 import com.rafdev.moneyflow.ui.theme.Background
 import com.rafdev.moneyflow.ui.theme.CardColor
 import com.rafdev.moneyflow.ui.theme.Palette
-import com.rafdev.moneyflow.ui.theme.Primary
 import com.rafdev.moneyflow.ui.uikit.button.UIKitButton
 import com.rafdev.moneyflow.ui.uikit.icon.UIKitIcon
 import com.rafdev.moneyflow.ui.uikit.icon.UIKitIcons
@@ -61,11 +57,24 @@ import kotlinx.coroutines.delay
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreditCardForm(
-    viewModel: UserCardViewModel = hiltViewModel(),
+    creditCard: CreditCardDomain? = null,
+    viewModel: AddEditCardViewModel = hiltViewModel(),
     onClose: () -> Unit
 ) {
 
+    LaunchedEffect(creditCard) {
+        if (creditCard != null) {
+            viewModel.loadCard(creditCard)
+        } else {
+            viewModel.reset()
+        }
+    }
+
     val formState by viewModel.formState.collectAsState()
+
+    val btnMessage = creditCard?.let { "Actualizar Tarjeta" } ?: "Crear Tarjeta"
+    val isLoadingMessage = creditCard?.let { "Actualizando" } ?: "creando"
+
 
     val title by viewModel.title.collectAsState()
     val number by viewModel.number.collectAsState()
@@ -73,6 +82,7 @@ fun CreditCardForm(
     val colorId by viewModel.colorId.collectAsState()
 
     CreditCardContent(
+        creditCard= creditCard,
         formState = formState,
         title = title,
         number = number,
@@ -84,7 +94,9 @@ fun CreditCardForm(
         onColorIdChange = viewModel::onColorIdChange,
         onCreate = viewModel::createCreditCard,
         onReset = viewModel::reset,
-        onClose = onClose
+        onClose = onClose,
+        btnMessage = btnMessage,
+        isLoadingMessage = isLoadingMessage,
     )
 }
 
@@ -92,6 +104,7 @@ fun CreditCardForm(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreditCardContent(
+    creditCard: CreditCardDomain?,
     formState: CreditCardFormState,
     title: String,
     number: String,
@@ -103,7 +116,9 @@ fun CreditCardContent(
     onColorIdChange: (Int) -> Unit,
     onCreate: () -> Unit,
     onReset: () -> Unit,
-    onClose: () -> Unit
+    onClose: () -> Unit,
+    btnMessage: String,
+    isLoadingMessage: String
 ) {
 
     var showColorDialog by remember { mutableStateOf(false) }
@@ -247,10 +262,12 @@ fun CreditCardContent(
             UIKitButton(
                 modifier = Modifier.fillMaxWidth(),
                 enabled = isFormValid && !formState.isLoading,
-                onClick = onCreate
+                onClick = {
+                    onCreate()
+                }
             ) {
                 UIKitText(
-                    text = if (formState.isLoading) "Creando..." else "Crear Tarjeta"
+                    text = if (formState.isLoading) isLoadingMessage else btnMessage
                 )
             }
         }
@@ -336,21 +353,3 @@ fun CreditCardContent(
     }
 }
 
-@Preview(showSystemUi = true)
-@Composable
-fun UserCardPreview() {
-    CreditCardContent(
-        formState = CreditCardFormState(),
-        title = "Mi tarjeta",
-        number = "1234",
-        cardType = 1,
-        colorId = 1,
-        onTitleChange = {},
-        onNumberChange = {},
-        onCardTypeChange = {},
-        onColorIdChange = {},
-        onCreate = {},
-        onReset = {},
-        onClose = {}
-    )
-}

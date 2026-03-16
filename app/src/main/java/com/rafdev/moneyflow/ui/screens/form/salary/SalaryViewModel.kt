@@ -80,9 +80,10 @@ class SalaryViewModel @Inject constructor(
 
             val result = insertSalaryUseCase(
                 CreateSalary(
+                    id = 0,
                     companyName = _uiState.value.companyName,
                     amount = _uiState.value.amount.toDouble(),
-                    date = getCurrentDateTime()
+                    date = getCurrentDateTime(),
                 )
             )
 

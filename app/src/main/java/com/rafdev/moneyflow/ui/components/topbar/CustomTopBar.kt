@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rafdev.moneyflow.R
 import com.rafdev.moneyflow.ui.theme.Background
+import com.rafdev.moneyflow.ui.theme.SubtitleText
 import com.rafdev.moneyflow.ui.theme.TextPrimary
 import com.rafdev.moneyflow.ui.uikit.text.UIKitText
 
@@ -56,8 +57,7 @@ fun CustomTopBar(
         }
         UIKitText(
             text = title,
-            fontSize = 20.sp
-            ,
+            style = SubtitleText,
             color = TextPrimary
         )
     }

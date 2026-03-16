@@ -1,4 +1,4 @@
-package com.rafdev.moneyflow.ui.screens.card
+package com.rafdev.moneyflow.ui.screens.creditcardform
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,9 +12,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class UserCardViewModel @Inject constructor(
+class AddEditCardViewModel @Inject constructor(
     private val insertCreditCardUC: InsertCreditCardUC
 ) : ViewModel() {
+
 
     private val _id = MutableStateFlow(0)
     val id: StateFlow<Int> = _id.asStateFlow()
@@ -45,7 +46,13 @@ class UserCardViewModel @Inject constructor(
     fun onColorIdChange(newColor: Int) {
         _colorId.value = newColor
     }
-
+    fun loadCard(card: CreditCardDomain) {
+        _id.value = card.id
+        _title.value = card.title
+        _number.value = card.number
+        _cardType.value = card.type
+        _colorId.value = card.color
+    }
 
     private val _formState = MutableStateFlow(CreditCardFormState())
     val formState: StateFlow<CreditCardFormState> = _formState.asStateFlow()

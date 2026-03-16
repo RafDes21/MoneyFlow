@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rafdev.moneyflow.R
 import com.rafdev.moneyflow.ui.theme.CardColor
+import com.rafdev.moneyflow.ui.theme.SubtitleText
 import com.rafdev.moneyflow.ui.uikit.card.UIKitCard
 import com.rafdev.moneyflow.ui.uikit.image.UIKitImage
 import com.rafdev.moneyflow.ui.uikit.text.UIKitText
@@ -42,9 +43,9 @@ fun CreditCard(
             ) {
                 UIKitText(
                     text = title.uppercase(),
-                    fontSize = 18.sp
+                    style = SubtitleText
                 )
-                UIKitText(text = "$ $total", fontSize = 14.sp)
+                UIKitText(text = "$ $total", style = SubtitleText)
             }
 
             Spacer(modifier = Modifier.height(40.dp))
@@ -53,9 +54,9 @@ fun CreditCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
-                UIKitText(text = "XXXX  XXXX  XXX", fontSize = 20.sp)
+                UIKitText(text = "XXXX  XXXX  XXX", style = SubtitleText)
                 Spacer(modifier = Modifier.width(8.dp))
-                UIKitText(text = number, fontSize = 20.sp)
+                UIKitText(text = number, style = SubtitleText)
             }
 
             Spacer(modifier = Modifier.height(20.dp))

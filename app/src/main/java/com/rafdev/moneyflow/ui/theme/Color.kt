@@ -5,24 +5,24 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
 
 val Background = Color(0xFF121212)
-val Surface    = Color(0xFF0B0B0B)
+val Surface = Color(0xFF0B0B0B)
 val SurfaceAlt = Color(0xFF000000)
-val Primary        = Color(0xFF22C55E)
+val Primary = Color(0xFF22C55E)
 val PrimaryVariant = Color(0xFF16A34A)
 val OnPrimary = Color(0xFFFFFFFF)
 
-val AccentActive   = Color(0xFFFB8C00)
+val AccentActive = Color(0xFFFB8C00)
 val AccentInactive = Color(0xFF3A3A3A)
 
 val TextPrimary = Color(0xFFFFFFFF)
 val TextSecondary = Color(0xFFA1A1AA)
-val TextMuted     = Color(0xFF9CA3AF)
+val TextMuted = Color(0xFF9CA3AF)
 val Gray = Color(0xFF1E1E1E)
 
-val CardColor            = Color(0xFF181818)
-val CardFocused     = Color(0xFF1F1F1F)
-val CardPressed     = Color(0xFF242424)
-val CardBorder      = Color(0xFF262626)
+val CardColor = Color(0xFF181818)
+val CardFocused = Color(0xFF1F1F1F)
+val CardPressed = Color(0xFF242424)
+val CardBorder = Color(0xFF262626)
 
 
 object Palette {
@@ -106,4 +106,8 @@ val DarkColorScheme = darkColorScheme(
     error = Color(0xFFF87171),
     onError = Color(0xFF020617)
 )
+
+object AppColor {
+    val white = Color(0xFFE5E7EB)
+}
 
